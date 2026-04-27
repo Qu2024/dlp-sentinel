@@ -2,9 +2,52 @@ from schemas import ScoredEvent
 from config import DEEPSEEK_API_KEY, DEEPSEEK_BASE_URL, DEEPSEEK_MODEL
 import json
 
-SYSTEM_PROMPT = """你是一名数据防泄露研判专家。根据风险事件信息，严格以JSON格式返回，不要输出任何其他内容：
-{"explanation": "一句话说明风险原因（50字以内）", "disposition": {"action": "一句话处置动作", "suggestions": ["建议1", "建议2"]}}"""
+# SYSTEM_PROMPT = """你是一名数据防泄露研判专家。根据风险事件信息，严格以JSON格式返回，不要输出任何其他内容：
+# {"explanation": "一句话说明风险原因（50字以内）", "disposition": {"action": "一句话处置动作", "suggestions": ["建议1", "建议2"]}}"""
 
+SYSTEM_PROMPT = """你是一名数据防泄露研判专家，负责生成风险解释与处置建议。
+
+请严格基于输入数据，从【用户画像基线】、【业务合理性】、【行为链完整性】三个维度进行综合判断，并输出标准化JSON结果。
+
+【分析要求】
+
+1. 用户画像基线：
+- 判断是否偏离个人或岗位正常行为
+- 提炼关键异常（如：异常高频查询、异常导出等）
+
+2. 业务合理性：
+- 判断是否存在审批、案件、工单等支撑
+- 若缺失或不匹配，明确指出（如：无审批、无业务关联）
+
+3. 行为链完整性：
+- 判断行为链是否合理（登录→查询→导出→清痕）
+- 识别跳跃行为或清痕行为
+
+【解释生成要求】
+- explanation必须为一句话（≤50字）
+- 必须同时体现：异常行为 + 业务问题 + 链路问题（至少2个维度）
+- 风格：审计报告式，客观、简洁、无不确定词（禁止“可能/疑似”）
+
+【处置策略要求】
+- 根据风险等级生成action与suggestions
+- 极高/高风险：偏“阻断+调查”
+- 中风险：偏“复核+补充材料”
+- 低风险：偏“观察+监控”
+
+【输出格式要求】
+- 必须返回合法JSON
+- 不得输出任何额外文本
+- suggestions必须为2~4条简短措施
+
+【输出示例】
+{
+  "explanation": "行为偏离基线且无审批，存在导出及清痕链路异常",
+  "disposition": {
+    "action": "立即阻断并升级调查",
+    "suggestions": ["冻结账号", "隔离终端", "调取日志"]
+  }
+}
+"""
 
 def _fallback(event: ScoredEvent, evidence_summary: str) -> dict:
     if event.risk_level == "极高风险":

@@ -4,10 +4,10 @@
     "user_id": "U003",
     "candidate_flag": 1,
     "matched_scene_list": [
-      "跨域大量查询",
+      "未审批高敏导出",
       "外发敏感数据",
-      "截图高敏内容",
-      "未审批高敏导出"
+      "跨域大量查询",
+      "截图高敏内容"
     ],
     "rule_strength": "strong",
     "base_risk_score": 83.16,
@@ -328,11 +328,11 @@
     "user_id": "U001",
     "candidate_flag": 1,
     "matched_scene_list": [
-      "未备案USB拷贝",
-      "大批量导出",
       "未审批高敏导出",
+      "跨域大量查询",
       "非工作时间高危操作",
-      "跨域大量查询"
+      "未备案USB拷贝",
+      "大批量导出"
     ],
     "rule_strength": "strong",
     "base_risk_score": 86.51,
