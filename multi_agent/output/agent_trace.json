@@ -1,0 +1,103 @@
+[
+  {
+    "agent": "数据接入Agent",
+    "time": "2026-04-27 13:44:56",
+    "input": {
+      "csv_path": "data/test_events.csv"
+    },
+    "output": {
+      "raw_event_count": 25,
+      "unique_sessions": 8
+    }
+  },
+  {
+    "agent": "规则识别Agent",
+    "time": "2026-04-27 13:44:56",
+    "input": {
+      "raw_event_count": 25
+    },
+    "output": {
+      "session_count": 8,
+      "candidate_count": 2,
+      "matched_scene_summary": {
+        "未备案USB拷贝": 1,
+        "大批量导出": 1,
+        "未审批高敏导出": 2,
+        "非工作时间高危操作": 1,
+        "跨域大量查询": 2,
+        "外发敏感数据": 1,
+        "截图高敏内容": 1
+      }
+    }
+  },
+  {
+    "agent": "用户画像与岗位基线Agent",
+    "time": "2026-04-27 13:44:56",
+    "input": {
+      "candidate_count": 2
+    },
+    "output": {
+      "profile_analyzed_count": 2,
+      "high_deviation_count": 2
+    }
+  },
+  {
+    "agent": "业务关联分析Agent",
+    "time": "2026-04-27 13:44:56",
+    "input": {
+      "candidate_count": 2,
+      "permission_rule_count": 14
+    },
+    "output": {
+      "business_analyzed_count": 2,
+      "unreasonable_count": 2
+    }
+  },
+  {
+    "agent": "行为链重构Agent",
+    "time": "2026-04-27 13:44:56",
+    "input": {
+      "candidate_count": 2
+    },
+    "output": {
+      "chain_analyzed_count": 2,
+      "high_completeness_count": 1
+    }
+  },
+  {
+    "agent": "风险评分Agent",
+    "time": "2026-04-27 13:44:56",
+    "input": {
+      "candidate_count": 2,
+      "use_profile_result": true,
+      "use_business_result": true,
+      "use_chain_result": true
+    },
+    "output": {
+      "scored_event_count": 2,
+      "high_risk_count": 2
+    }
+  },
+  {
+    "agent": "结果研判与处置Agent",
+    "time": "2026-04-27 13:44:56",
+    "input": {
+      "scored_event_count": 2
+    },
+    "output": {
+      "report_count": 2,
+      "generated_disposition": true
+    }
+  },
+  {
+    "agent": "反馈优化Agent",
+    "time": "2026-04-27 13:44:56",
+    "input": {
+      "report_count": 2
+    },
+    "output": {
+      "feedback_items": 2,
+      "feedback_file": "output/feedback.json"
+    }
+  }
+]
