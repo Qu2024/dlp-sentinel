@@ -1,0 +1,20 @@
+[
+  {
+    "candidate_event_id": "U003_S000006",
+    "user_id": "U003",
+    "risk_level": "极高风险",
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "candidate_event_id": "U001_S000004",
+    "user_id": "U001",
+    "risk_level": "极高风险",
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  }
+]

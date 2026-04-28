@@ -1,0 +1,79 @@
+[
+  {
+    "step": "数据加载模块",
+    "input": {
+      "csv_path": "data/test_events.csv"
+    },
+    "output": {
+      "raw_event_count": 25,
+      "unique_sessions": 8
+    }
+  },
+  {
+    "agent": "规则识别Agent",
+    "time": "2026-04-28 02:48:41",
+    "input": {
+      "raw_event_count": 25
+    },
+    "output": {
+      "session_count": 8,
+      "candidate_count": 2,
+      "matched_scene_summary": {
+        "未审批高敏导出": 2,
+        "非工作时间高危操作": 1,
+        "大批量导出": 1,
+        "未备案USB拷贝": 1,
+        "跨域大量查询": 2,
+        "截图高敏内容": 1,
+        "外发敏感数据": 1
+      }
+    }
+  },
+  {
+    "agent": "行为理解Agent",
+    "time": "2026-04-28 02:48:41",
+    "input": {
+      "candidate_count": 2,
+      "permission_rule_count": 14
+    },
+    "output": {
+      "behavior_analyzed_count": 2,
+      "business_unreasonable_count": 2,
+      "high_chain_count": 1,
+      "high_deviation_count": 2
+    }
+  },
+  {
+    "agent": "风险评分Agent",
+    "time": "2026-04-28 02:48:41",
+    "input": {
+      "candidate_count": 2,
+      "use_behavior_result": true
+    },
+    "output": {
+      "scored_event_count": 2,
+      "high_risk_count": 2
+    }
+  },
+  {
+    "agent": "研判处置Agent",
+    "time": "2026-04-28 02:48:41",
+    "input": {
+      "scored_event_count": 2
+    },
+    "output": {
+      "report_count": 2,
+      "generated_disposition": true
+    }
+  },
+  {
+    "step": "反馈记录模块",
+    "input": {
+      "report_count": 2
+    },
+    "output": {
+      "feedback_items": 2,
+      "feedback_file": "output/feedback.json"
+    }
+  }
+]
