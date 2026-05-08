@@ -178,3 +178,12 @@ prompts.py
 - `EXPLAINER_SYSTEM_PROMPT`：用于最终风险解释和处置建议生成。
 
 如果没有配置 DeepSeek API Key，系统会自动使用本地规则解释，保证演示稳定。
+
+可选 LLM 超时配置：
+
+```text
+DEEPSEEK_TIMEOUT_SECONDS=20
+DEEPSEEK_MAX_RETRIES=0
+```
+
+如果希望使用通用变量名，也支持 `LLM_TIMEOUT_SECONDS` 和 `LLM_MAX_RETRIES`。展示场景建议保持较短超时，让 API 慢或不可用时快速降级到本地解释。

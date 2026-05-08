@@ -11,6 +11,30 @@ DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY")
 DEEPSEEK_BASE_URL = os.getenv("DEEPSEEK_BASE_URL", "https://api.deepseek.com")
 DEEPSEEK_MODEL = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
 
+
+def _env_float(name: str, default: float) -> float:
+    try:
+        return float(os.getenv(name, default))
+    except (TypeError, ValueError):
+        return default
+
+
+def _env_int(name: str, default: int) -> int:
+    try:
+        return int(os.getenv(name, default))
+    except (TypeError, ValueError):
+        return default
+
+
+DEEPSEEK_TIMEOUT_SECONDS = _env_float(
+    "DEEPSEEK_TIMEOUT_SECONDS",
+    _env_float("LLM_TIMEOUT_SECONDS", 20.0),
+)
+DEEPSEEK_MAX_RETRIES = _env_int(
+    "DEEPSEEK_MAX_RETRIES",
+    _env_int("LLM_MAX_RETRIES", 0),
+)
+
 # AHP 一级权重
 L1_WEIGHTS = {"C2": 0.1931, "C3": 0.0746, "C4": 0.4388, "C5": 0.2935}
 

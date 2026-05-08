@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DLP 数据防泄漏智能体监控台</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brandMark" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2.8 20 6.2v5.7c0 5.1-3.3 8.2-8 9.3-4.7-1.1-8-4.2-8-9.3V6.2l8-3.4Z" />
+              <path d="M8.5 12.2 11 14.7l4.8-5.2" />
+            </svg>
+          </div>
+          <div>
+            <h1>数据防泄漏智能体监控台</h1>
+            <p id="dataSourceLine">DLP Agent Runtime Console</p>
+          </div>
+        </div>
+        <nav class="tabs" aria-label="主导航">
+          <button class="tab active" data-view="live">实时演示</button>
+          <button class="tab" data-view="overview">总览</button>
+          <button class="tab" data-view="agents">智能体</button>
+          <button class="tab" data-view="events">风险事件</button>
+          <button class="tab" data-view="rules">自适应规则</button>
+          <button class="tab" data-view="audit">审计</button>
+        </nav>
+        <div class="operator">
+          <label class="datasetSwitch">
+            <span>数据集</span>
+            <select id="datasetSelect"></select>
+          </label>
+          <div>
+            <span>当前日期</span>
+            <strong id="todayText">--</strong>
+          </div>
+          <div class="avatar">AD</div>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <section id="view-live" class="view active">
+          <div class="liveHeader panel">
+            <div class="liveTitleBlock">
+              <span class="liveBadge strong"><i></i>LIVE</span>
+              <div>
+                <h2>实时生成与风险处理</h2>
+                <p id="liveSourceLine">等待连接本地数据流</p>
+              </div>
+            </div>
+            <div class="liveControls">
+              <label>
+                <span>速度</span>
+                <select id="liveSpeed">
+                  <option value="260">快速</option>
+                  <option value="420" selected>标准</option>
+                  <option value="760">慢速</option>
+                </select>
+              </label>
+              <label>
+                <span>异常率</span>
+                <select id="liveAnomalyRate">
+                  <option value="0.12">12%</option>
+                  <option value="0.18" selected>18%</option>
+                  <option value="0.28">28%</option>
+                </select>
+              </label>
+              <button class="primaryButton" id="liveStart">启动</button>
+              <button class="ghostButton" id="liveStop">暂停</button>
+            </div>
+          </div>
+
+          <div class="liveMetricGrid" id="liveMetricGrid"></div>
+
+          <section class="panel agentPipelinePanel">
+            <div class="panelHead">
+              <div>
+                <h2>多 Agent 协同链路</h2>
+                <p id="agentPipelineHint">等待实时事件进入</p>
+              </div>
+              <span class="countPill" id="agentPipelineCount">4</span>
+            </div>
+            <div class="agentPipeline" id="liveAgentPipeline"></div>
+          </section>
+
+          <div class="liveGrid">
+            <section class="panel liveStreamPanel">
+              <div class="panelHead">
+                <div>
+                  <h2>原始事件流</h2>
+                  <p id="liveEventCount">0 条事件</p>
+                </div>
+                <span class="statusPill" id="liveStatus">离线</span>
+              </div>
+              <div class="streamList" id="liveRawFeed"></div>
+            </section>
+
+            <section class="panel liveRiskPanel">
+              <div class="panelHead">
+                <div>
+                  <h2>风险滚动队列</h2>
+                  <p id="liveRiskCount">0 个候选</p>
+                </div>
+                <span class="countPill warn" id="liveHighCount">0</span>
+              </div>
+              <div class="streamList riskStream" id="liveRiskFeed"></div>
+            </section>
+
+            <aside class="panel liveInspector" id="liveInspector">
+              <div class="emptyState">暂无实时风险</div>
+            </aside>
+          </div>
+        </section>
+
+        <section id="view-agents" class="view">
+          <div class="agentConsoleGrid">
+            <aside class="panel agentCasePanel">
+              <div class="panelHead">
+                <div>
+                  <h2>智能体处理队列</h2>
+                  <p id="agentCaseCount">--</p>
+                </div>
+              </div>
+              <div class="agentCaseList" id="agentCaseList"></div>
+            </aside>
+
+            <section class="panel agentTracePanel">
+              <div class="panelHead">
+                <div>
+                  <h2>协同研判轨迹</h2>
+                  <p id="agentTraceTitle">选择一个风险会话</p>
+                </div>
+              </div>
+              <div class="agentTraceBody" id="agentTraceBody"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="view-overview" class="view">
+          <div class="metricGrid" id="metricGrid"></div>
+
+          <div class="overviewGrid">
+            <aside class="riskPanel panel">
+              <div class="panelHead">
+                <div>
+                  <h2>高风险会话</h2>
+                  <p id="riskListCount">--</p>
+                </div>
+                <span class="liveBadge"><i></i>实时</span>
+              </div>
+              <div class="toolbar">
+                <div class="searchBox">
+                  <svg viewBox="0 0 24 24"><path d="m21 21-4.3-4.3M10.8 18a7.2 7.2 0 1 1 0-14.4 7.2 7.2 0 0 1 0 14.4Z" /></svg>
+                  <input id="riskSearch" type="search" placeholder="搜索用户、事件、场景" />
+                </div>
+                <select id="riskLevelFilter">
+                  <option value="all">全部等级</option>
+                  <option value="极高风险">极高风险</option>
+                  <option value="高风险">高风险</option>
+                  <option value="中风险">中风险</option>
+                </select>
+              </div>
+              <div class="riskList" id="riskList"></div>
+            </aside>
+
+            <section class="detailPanel panel" id="detailPanel">
+              <div class="emptyState">正在载入风险详情</div>
+            </section>
+
+            <aside class="insightRail">
+              <section class="panel compactPanel">
+                <div class="panelHead">
+                  <div>
+                    <h2>评测表现</h2>
+                    <p>候选池命中质量</p>
+                  </div>
+                </div>
+                <div class="scoreDial" id="scoreDial">
+                  <div class="dialRing"></div>
+                  <div>
+                    <strong id="f1Value">--</strong>
+                    <span>F1</span>
+                  </div>
+                </div>
+                <div class="miniStats" id="evalMiniStats"></div>
+              </section>
+
+              <section class="panel compactPanel">
+                <div class="panelHead">
+                  <div>
+                    <h2>场景分布</h2>
+                    <p>生成器异常类型</p>
+                  </div>
+                </div>
+                <div class="barStack" id="sceneBars"></div>
+              </section>
+
+              <section class="panel compactPanel">
+                <div class="panelHead">
+                  <div>
+                    <h2>建议规则</h2>
+                    <p>人工确认后生效</p>
+                  </div>
+                  <span class="countPill" id="suggestionCount">0</span>
+                </div>
+                <div class="suggestionList" id="suggestionList"></div>
+              </section>
+            </aside>
+          </div>
+        </section>
+
+        <section id="view-events" class="view">
+          <div class="panel tablePanel">
+            <div class="panelHead">
+              <div>
+                <h2>风险事件清单</h2>
+                <p>按最终风险评分排序</p>
+              </div>
+              <div class="toolbar thin">
+                <input id="eventTableSearch" type="search" placeholder="筛选事件" />
+                <select id="eventTableLevel">
+                  <option value="all">全部</option>
+                  <option value="极高风险">极高风险</option>
+                  <option value="高风险">高风险</option>
+                  <option value="中风险">中风险</option>
+                </select>
+              </div>
+            </div>
+            <div class="tableWrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>候选事件</th>
+                    <th>用户</th>
+                    <th>风险等级</th>
+                    <th>评分</th>
+                    <th>命中场景</th>
+                    <th>证据覆盖</th>
+                    <th>处置动作</th>
+                  </tr>
+                </thead>
+                <tbody id="eventTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-rules" class="view">
+          <div class="rulesGrid">
+            <section class="panel">
+              <div class="panelHead">
+                <div>
+                  <h2>生效规则库</h2>
+                  <p>当前规则入口层配置</p>
+                </div>
+                <span class="countPill" id="activeRuleCount">0</span>
+              </div>
+              <div class="ruleGroups" id="activeRuleGroups"></div>
+            </section>
+            <section class="panel">
+              <div class="panelHead">
+                <div>
+                  <h2>机器挖掘建议</h2>
+                  <p>只进入建议池，不自动启用</p>
+                </div>
+                <span class="countPill warn" id="pendingRuleCount">0</span>
+              </div>
+              <div class="suggestedRuleTable" id="suggestedRuleTable"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="view-audit" class="view">
+          <div class="auditGrid">
+            <section class="panel">
+              <div class="panelHead">
+                <div>
+                  <h2>反馈复核队列</h2>
+                  <p>本次运行输出的待复核项</p>
+                </div>
+              </div>
+              <div class="auditList" id="feedbackList"></div>
+            </section>
+            <section class="panel">
+              <div class="panelHead">
+                <div>
+                  <h2>学习日志</h2>
+                  <p>测试规则库运行轨迹</p>
+                </div>
+              </div>
+              <div class="logBox" id="learningLog"></div>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="./app.js"></script>
+  </body>
+</html>

@@ -1,1 +1,15 @@
 .DS_Store
+__pycache__/
+*.pyc
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.env
+.venv/
+*.log
+
+# Generated data engine artifacts
+data_generator/output/
+
+# Isolated adaptive-rule experiment store
+agent/adaptive_rules_test/

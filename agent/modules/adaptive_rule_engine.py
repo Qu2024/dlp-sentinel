@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 from copy import deepcopy
 from dataclasses import asdict, is_dataclass
 from datetime import datetime
@@ -10,6 +11,7 @@ from typing import Any
 
 
 DEFAULT_RULE_DIR = Path("knowledge") / "adaptive_rules"
+RULE_DIR_ENV = "DLP_ADAPTIVE_RULE_DIR"
 ACTIVE_RULES_FILE = "active_rules.json"
 SUGGESTED_RULES_FILE = "suggested_rules.json"
 LATEST_RUN_FILE = "latest_run.json"
@@ -228,7 +230,11 @@ def _default_suggested_rules() -> dict[str, Any]:
 
 
 def _rule_dir(rule_dir: str | Path | None = None) -> Path:
-    return Path(rule_dir or DEFAULT_RULE_DIR)
+    return Path(rule_dir or os.getenv(RULE_DIR_ENV) or DEFAULT_RULE_DIR)
+
+
+def resolve_rule_dir(rule_dir: str | Path | None = None) -> Path:
+    return _rule_dir(rule_dir)
 
 
 def _read_json(path: Path, default: Any) -> Any:

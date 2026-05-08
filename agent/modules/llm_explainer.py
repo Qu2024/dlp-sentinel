@@ -1,7 +1,27 @@
 import json
 from schemas import ScoredEvent
-from config import DEEPSEEK_API_KEY, DEEPSEEK_BASE_URL, DEEPSEEK_MODEL
+from config import (
+    DEEPSEEK_API_KEY,
+    DEEPSEEK_BASE_URL,
+    DEEPSEEK_MAX_RETRIES,
+    DEEPSEEK_MODEL,
+    DEEPSEEK_TIMEOUT_SECONDS,
+)
 from prompts import ANALYST_SYSTEM_PROMPT, EXPLAINER_SYSTEM_PROMPT
+
+
+def _client():
+    from openai import OpenAI
+    return OpenAI(
+        api_key=DEEPSEEK_API_KEY,
+        base_url=DEEPSEEK_BASE_URL,
+        timeout=DEEPSEEK_TIMEOUT_SECONDS,
+        max_retries=DEEPSEEK_MAX_RETRIES,
+    )
+
+
+def _error_summary(exc: Exception) -> str:
+    return f"{type(exc).__name__}: {str(exc)}"[:80]
 
 
 def _local_analysis(event: ScoredEvent) -> str:
@@ -31,8 +51,7 @@ def analyze_context(event: ScoredEvent) -> str:
     if not DEEPSEEK_API_KEY:
         return _local_analysis(event)
     try:
-        from openai import OpenAI
-        client = OpenAI(api_key=DEEPSEEK_API_KEY, base_url=DEEPSEEK_BASE_URL)
+        client = _client()
         resp = client.chat.completions.create(
             model=DEEPSEEK_MODEL,
             messages=[
@@ -43,7 +62,7 @@ def analyze_context(event: ScoredEvent) -> str:
         )
         return resp.choices[0].message.content.strip()
     except Exception as exc:
-        return f"{_local_analysis(event)}（LLM调用失败，已使用本地规则研判：{str(exc)[:60]}）"
+        return f"{_local_analysis(event)}（LLM调用失败，已使用本地规则研判：{_error_summary(exc)}）"
 
 
 def _fallback_report(event: ScoredEvent, evidence_summary: str) -> dict:
@@ -81,8 +100,7 @@ def explain(event: ScoredEvent, evidence_summary: str) -> dict:
     if not DEEPSEEK_API_KEY:
         return _fallback_report(event, evidence_summary)
     try:
-        from openai import OpenAI
-        client = OpenAI(api_key=DEEPSEEK_API_KEY, base_url=DEEPSEEK_BASE_URL)
+        client = _client()
         resp = client.chat.completions.create(
             model=DEEPSEEK_MODEL,
             messages=[
@@ -97,5 +115,5 @@ def explain(event: ScoredEvent, evidence_summary: str) -> dict:
         return result
     except Exception as exc:
         result = _fallback_report(event, evidence_summary)
-        result["explanation"] += f"（LLM调用失败，已使用本地解释：{str(exc)[:60]}）"
+        result["explanation"] += f"（LLM调用失败，已使用本地解释：{_error_summary(exc)}）"
         return result

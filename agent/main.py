@@ -1,5 +1,6 @@
 import sys
 from orchestrator import MultiAgentOrchestrator
+from modules import adaptive_rule_engine
 
 
 def run(csv_path: str, output_dir: str = "output", mode: str = "multi_agent"):
@@ -18,9 +19,10 @@ def run(csv_path: str, output_dir: str = "output", mode: str = "multi_agent"):
     print(f">>> 已生成研判报告数：{len(result['reports'])}")
     print(f">>> 输出目录：{output_dir}/")
     print(">>> 关键输出：workflow_trace.json、agent_trace.json、risk_events.json、reports.json、feedback.json")
-    print(">>> 自适应规则目录：knowledge/adaptive_rules/")
-    print(">>> 生效规则：knowledge/adaptive_rules/active_rules.json")
-    print(">>> 建议规则：knowledge/adaptive_rules/suggested_rules.json（将 approved 改为 true 后下次运行生效）")
+    rule_dir = adaptive_rule_engine.resolve_rule_dir()
+    print(f">>> 自适应规则目录：{rule_dir}/")
+    print(f">>> 生效规则：{rule_dir / 'active_rules.json'}")
+    print(f">>> 建议规则：{rule_dir / 'suggested_rules.json'}（将 approved 改为 true 后下次运行生效）")
 
     return result
 
