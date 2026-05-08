@@ -139,7 +139,12 @@ def _risk_level(score: float) -> str:
     return "低风险"
 
 
-def score_candidate(candidate: CandidateEvent) -> ScoredEvent:
+def score_candidate(candidate: CandidateEvent, profile_result=None, business_result=None, chain_result=None) -> ScoredEvent:
+    """对候选事件进行 AHP 风险评分，并融合多个 Agent 的中间结果。"""
+    profile_result = profile_result or getattr(candidate, "profile_result", {}) or {}
+    business_result = business_result or getattr(candidate, "business_result", {}) or {}
+    chain_result = chain_result or getattr(candidate, "chain_result", {}) or {}
+
     if candidate.candidate_flag == 0:
         return ScoredEvent(
             candidate_event_id=candidate.candidate_event_id,
@@ -154,24 +159,70 @@ def score_candidate(candidate: CandidateEvent) -> ScoredEvent:
             top_drivers=[],
             behavior_chain=[],
             raw_events=candidate.events,
+            profile_result=profile_result,
+            business_result=business_result,
+            chain_result=chain_result,
         )
 
-    # 聚合事件：取最高风险的单条事件代表（简化）
-    e = max(candidate.events, key=lambda x: x.sensitivity_level * 10 + x.export_count)
-    seen = set()
-    chain = [seen.add(ev.event_type) or ev.event_type
-             for ev in sorted(candidate.events, key=lambda x: x.event_time)
-             if ev.event_type not in seen]
+    e = max(candidate.events, key=lambda x: x.sensitivity_level * 10 + x.export_count + x.external_send_count * 10 + x.copy_count * 5)
+    if chain_result.get("behavior_chain"):
+        chain = chain_result["behavior_chain"]
+    else:
+        seen = set()
+        chain = [seen.add(ev.event_type) or ev.event_type
+                 for ev in sorted(candidate.events, key=lambda x: x.event_time)
+                 if ev.event_type not in seen]
 
     c4_scores = _score_C4(e)
     c5_scores = _score_C5(e, chain)
     c2_scores = _score_C2(e)
     c3_scores = _score_C3(e)
 
-    c2, c2_w = _dim_score(c2_scores, L2_WEIGHTS["C2"])
-    c3, c3_w = _dim_score(c3_scores, L2_WEIGHTS["C3"])
-    c4, c4_w = _dim_score(c4_scores, L2_WEIGHTS["C4"])
-    c5, c5_w = _dim_score(c5_scores, L2_WEIGHTS["C5"])
+    if profile_result:
+        max_person_dev = profile_result.get("max_person_deviation", 0)
+        max_role_dev = profile_result.get("max_role_deviation", 0)
+        if max_person_dev >= 5:
+            c2_scores["B1"] = (100, True)
+        elif max_person_dev >= 3:
+            c2_scores["B1"] = (max(c2_scores["B1"][0], 75), True)
+        if max_role_dev >= 5:
+            c2_scores["B2"] = (100, True)
+        elif max_role_dev >= 3:
+            c2_scores["B2"] = (max(c2_scores["B2"][0], 70), True)
+        if profile_result.get("has_new_device") and profile_result.get("has_off_work"):
+            c2_scores["B3"] = (max(c2_scores["B3"][0], 70), True)
+
+    if business_result and not business_result.get("business_reasonable", True):
+        problems = business_result.get("business_problems", [])
+        problem_text = "；".join(problems)
+        if "审批" in problem_text:
+            c3_scores["A1"] = (max(c3_scores["A1"][0], 90), True)
+        if "业务" in problem_text or "案件" in problem_text or "任务" in problem_text:
+            c3_scores["A2"] = (max(c3_scores["A2"][0], 90), True)
+        if "权限" in problem_text or "岗位" in problem_text or "超过岗位限制" in problem_text:
+            c3_scores["A3"] = (max(c3_scores["A3"][0], 85), True)
+        if len(problems) >= 3:
+            c3_scores["A4"] = (max(c3_scores["A4"][0], 75), True)
+
+    if chain_result:
+        completeness = chain_result.get("chain_completeness", 0)
+        chain_flags = chain_result.get("chain_flags", [])
+        if completeness >= 0.8:
+            c5_scores["L1"] = (max(c5_scores["L1"][0], 95), True)
+        elif completeness >= 0.6:
+            c5_scores["L1"] = (max(c5_scores["L1"][0], 80), True)
+        elif completeness >= 0.4:
+            c5_scores["L1"] = (max(c5_scores["L1"][0], 60), True)
+        if any("外发" in f for f in chain_flags):
+            c5_scores["L2"] = (max(c5_scores["L2"][0], 85), True)
+            c5_scores["L3"] = (max(c5_scores["L3"][0], 85), True)
+        if any("清痕" in f or "规避" in f for f in chain_flags):
+            c5_scores["L4"] = (max(c5_scores["L4"][0], 75), True)
+
+    c2, _ = _dim_score(c2_scores, L2_WEIGHTS["C2"])
+    c3, _ = _dim_score(c3_scores, L2_WEIGHTS["C3"])
+    c4, _ = _dim_score(c4_scores, L2_WEIGHTS["C4"])
+    c5, _ = _dim_score(c5_scores, L2_WEIGHTS["C5"])
 
     base = (L1_WEIGHTS["C2"] * c2 + L1_WEIGHTS["C3"] * c3 +
             L1_WEIGHTS["C4"] * c4 + L1_WEIGHTS["C5"] * c5)
@@ -179,13 +230,18 @@ def score_candidate(candidate: CandidateEvent) -> ScoredEvent:
     pf = _protection_factor(e)
     final = base * pf
 
-    # 封顶规则
+    if business_result and not business_result.get("business_reasonable", True):
+        if len(business_result.get("business_problems", [])) >= 3:
+            final += 5
+    if chain_result and chain_result.get("chain_completeness", 0) >= 0.8:
+        final += 4
+    final = min(final, 100)
+
     l2_score = c5_scores["L2"][0]
     l3_score = c5_scores["L3"][0]
     if l2_score < 60 and l3_score < 85:
         final = min(final, 79)
 
-    # 证据覆盖率
     all_scores = {**c2_scores, **c3_scores, **c4_scores, **c5_scores}
     all_weights = {**{k: L2_WEIGHTS["C2"][k] * L1_WEIGHTS["C2"] for k in L2_WEIGHTS["C2"]},
                    **{k: L2_WEIGHTS["C3"][k] * L1_WEIGHTS["C3"] for k in L2_WEIGHTS["C3"]},
@@ -195,8 +251,6 @@ def score_candidate(candidate: CandidateEvent) -> ScoredEvent:
     cov_denom = sum(all_weights.values())
     coverage = cov_num / cov_denom if cov_denom > 0 else 0.0
 
-    # top_drivers
-    contributions = []
     indicator_names = {
         "S1": "对象敏感等级分", "S2": "敏感内容暴露分", "S3": "唯一识别性分",
         "S4": "高敏对象覆盖分", "S5": "泄露规模分",
@@ -205,10 +259,23 @@ def score_candidate(candidate: CandidateEvent) -> ScoredEvent:
         "B1": "个人行为偏离分", "B2": "岗位同群偏离分", "B3": "时空环境异常分", "B4": "访问范围偏离分",
         "A1": "审批缺失分", "A2": "案件/业务关联缺失分", "A3": "权限不匹配分", "A4": "协同任务缺失分",
     }
-    for code, (s, active) in all_scores.items():
+    contributions = []
+    for code, (score, active) in all_scores.items():
         if active:
-            contributions.append({"indicator": indicator_names[code], "contribution": round(all_weights[code] * s, 3)})
+            contributions.append({"indicator": indicator_names[code], "contribution": round(all_weights[code] * score, 3)})
     top_drivers = sorted(contributions, key=lambda x: -x["contribution"])[:3]
+
+    agent_trace = {
+        "profile_agent": profile_result,
+        "business_agent": business_result,
+        "chain_agent": chain_result,
+        "scoring_agent": {
+            "base_risk_score": round(base, 2),
+            "final_risk_score": round(final, 2),
+            "risk_level": _risk_level(final),
+            "top_drivers": top_drivers,
+        },
+    }
 
     return ScoredEvent(
         candidate_event_id=candidate.candidate_event_id,
@@ -223,4 +290,8 @@ def score_candidate(candidate: CandidateEvent) -> ScoredEvent:
         top_drivers=top_drivers,
         behavior_chain=chain,
         raw_events=candidate.events,
+        profile_result=profile_result,
+        business_result=business_result,
+        chain_result=chain_result,
+        agent_trace=agent_trace,
     )

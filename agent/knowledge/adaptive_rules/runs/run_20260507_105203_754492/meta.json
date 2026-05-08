@@ -1,0 +1,8 @@
+{
+  "run_id": "run_20260507_105203_754492",
+  "source_csv": "data/test_events.csv",
+  "saved_at": "2026-05-07 10:52:03",
+  "candidate_count": 8,
+  "scored_event_count": 2,
+  "report_count": 2
+}

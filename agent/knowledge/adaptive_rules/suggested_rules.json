@@ -1,0 +1,165 @@
+{
+  "generated_at": "2026-05-07 10:52:03",
+  "rules": [
+    {
+      "id": "ml_device_new_flag_eq_1__off_work_flag_eq_1",
+      "name": "建议规则-新设备 + 非工作时间",
+      "scope": "session",
+      "status": "suggested",
+      "approved": false,
+      "source": "ml_rule_mining",
+      "generated_at": "2026-05-07 10:52:03",
+      "last_seen_at": "2026-05-07 10:52:03",
+      "review_comment": "",
+      "conditions": [
+        {
+          "field": "device_new_flag",
+          "op": "==",
+          "value": 1
+        },
+        {
+          "field": "off_work_flag",
+          "op": "==",
+          "value": 1
+        }
+      ],
+      "metrics": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f05": 1.0,
+        "support_count": 2,
+        "positive_hits": 2,
+        "negative_hits": 0
+      },
+      "explanation": "根据历史反馈样本与风险分布挖掘出的候选组合规则，需人工确认后生效。"
+    },
+    {
+      "id": "ml_business_missing_eq_1__off_work_flag_eq_1",
+      "name": "建议规则-业务缺失 + 非工作时间",
+      "scope": "session",
+      "status": "suggested",
+      "approved": false,
+      "source": "ml_rule_mining",
+      "generated_at": "2026-05-07 10:52:03",
+      "last_seen_at": "2026-05-07 10:52:03",
+      "review_comment": "",
+      "conditions": [
+        {
+          "field": "business_missing",
+          "op": "==",
+          "value": 1
+        },
+        {
+          "field": "off_work_flag",
+          "op": "==",
+          "value": 1
+        }
+      ],
+      "metrics": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f05": 1.0,
+        "support_count": 2,
+        "positive_hits": 2,
+        "negative_hits": 0
+      },
+      "explanation": "根据历史反馈样本与风险分布挖掘出的候选组合规则，需人工确认后生效。"
+    },
+    {
+      "id": "ml_off_work_flag_eq_1__tool_abnormal_flag_eq_1",
+      "name": "建议规则-非工作时间 + 异常工具",
+      "scope": "session",
+      "status": "suggested",
+      "approved": false,
+      "source": "ml_rule_mining",
+      "generated_at": "2026-05-07 10:52:03",
+      "last_seen_at": "2026-05-07 10:52:03",
+      "review_comment": "",
+      "conditions": [
+        {
+          "field": "off_work_flag",
+          "op": "==",
+          "value": 1
+        },
+        {
+          "field": "tool_abnormal_flag",
+          "op": "==",
+          "value": 1
+        }
+      ],
+      "metrics": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f05": 1.0,
+        "support_count": 2,
+        "positive_hits": 2,
+        "negative_hits": 0
+      },
+      "explanation": "根据历史反馈样本与风险分布挖掘出的候选组合规则，需人工确认后生效。"
+    },
+    {
+      "id": "ml_compress_flag_eq_1__off_work_flag_eq_1",
+      "name": "建议规则-压缩打包 + 非工作时间",
+      "scope": "session",
+      "status": "suggested",
+      "approved": false,
+      "source": "ml_rule_mining",
+      "generated_at": "2026-05-07 10:52:03",
+      "last_seen_at": "2026-05-07 10:52:03",
+      "review_comment": "",
+      "conditions": [
+        {
+          "field": "compress_flag",
+          "op": "==",
+          "value": 1
+        },
+        {
+          "field": "off_work_flag",
+          "op": "==",
+          "value": 1
+        }
+      ],
+      "metrics": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f05": 1.0,
+        "support_count": 2,
+        "positive_hits": 2,
+        "negative_hits": 0
+      },
+      "explanation": "根据历史反馈样本与风险分布挖掘出的候选组合规则，需人工确认后生效。"
+    },
+    {
+      "id": "ml_off_work_flag_eq_1__sensitivity_level_ge_5",
+      "name": "建议规则-非工作时间 + 敏感等级>=5",
+      "scope": "session",
+      "status": "suggested",
+      "approved": false,
+      "source": "ml_rule_mining",
+      "generated_at": "2026-05-07 10:52:03",
+      "last_seen_at": "2026-05-07 10:52:03",
+      "review_comment": "",
+      "conditions": [
+        {
+          "field": "off_work_flag",
+          "op": "==",
+          "value": 1
+        },
+        {
+          "field": "sensitivity_level",
+          "op": ">=",
+          "value": 5
+        }
+      ],
+      "metrics": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f05": 1.0,
+        "support_count": 2,
+        "positive_hits": 2,
+        "negative_hits": 0
+      },
+      "explanation": "根据历史反馈样本与风险分布挖掘出的候选组合规则，需人工确认后生效。"
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Optional, Any
 
 
 @dataclass
@@ -40,6 +40,16 @@ class RawEvent:
     delete_flag: int
     tool_abnormal_flag: int
 
+    # 与数据引擎新增字段对齐，给默认值保证兼容旧 CSV
+    account_type: str = ""
+    action_object: str = ""
+    object_type: str = ""
+    access_count: int = 0
+    cross_table_count: int = 0
+    data_mask_flag: int = 0
+    keep_days: int = 0
+    task_id: str = ""
+
 
 @dataclass
 class CandidateEvent:
@@ -50,6 +60,11 @@ class CandidateEvent:
     matched_scene_list: list[str]
     rule_strength: str  # strong / medium / weak
     rule_priority: int
+
+    # 多 Agent 模式下的中间结果
+    profile_result: dict[str, Any] = field(default_factory=dict)
+    business_result: dict[str, Any] = field(default_factory=dict)
+    chain_result: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -68,6 +83,12 @@ class ScoredEvent:
     llm_analysis: Optional[str] = None  # Layer2 LLM 业务关联分析结果
     raw_events: list = field(default_factory=list)
 
+    # 多 Agent 模式下保留各子 Agent 输出，便于解释和展示
+    profile_result: dict[str, Any] = field(default_factory=dict)
+    business_result: dict[str, Any] = field(default_factory=dict)
+    chain_result: dict[str, Any] = field(default_factory=dict)
+    agent_trace: dict[str, Any] = field(default_factory=dict)
+
 
 @dataclass
 class RiskReport:
@@ -79,3 +100,9 @@ class RiskReport:
     risk_explanation: str
     disposition: dict
     llm_generated: bool
+
+    # 新增：把多 Agent 的关键输出写入报告，方便答辩展示
+    candidate_event_id: str = ""
+    matched_scene_list: list[str] = field(default_factory=list)
+    behavior_chain: list[str] = field(default_factory=list)
+    agent_trace: dict[str, Any] = field(default_factory=dict)
