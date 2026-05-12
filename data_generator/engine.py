@@ -40,7 +40,6 @@ EVENT_FIELDNAMES = [
     "approval_flag",
     "business_flag",
     "case_id",
-    "task_id",
     "cross_dept_flag",
     "off_work_flag",
     "deviation_person",
@@ -53,7 +52,11 @@ EVENT_FIELDNAMES = [
     "encrypt_flag",
     "delete_flag",
     "tool_abnormal_flag",
-]
+ ]
+
+# EVENT_FIELDNAMES 与《数据库表设计（可落地）》中的“统一事件日志主表”保持一致。
+# 生成器内部仍可保留 task_id 等辅助上下文字段，但写出 CSV 时会被 extrasaction="ignore" 自动过滤。
+DATABASE_EVENT_FIELDNAMES = EVENT_FIELDNAMES
 
 LABEL_FIELDNAMES = [
     "candidate_event_id",

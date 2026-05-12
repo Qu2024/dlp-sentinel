@@ -2,6 +2,22 @@
 
 这是一个用于数据防泄漏风险识别的本地原型系统。当前重点不是生产部署，而是把“数据生成 -> Agent 识别 -> 风险评分 -> 报告生成 -> 前端展示 -> 规则自适应”的完整流程跑通，并能用于演示。
 
+
+## 本次修改说明：20 个场景规则判定 + 数据格式统一
+
+本版已完成两项整合：
+
+1. **场景规则判定落地**：在 `agent/modules/adaptive_rule_engine.py` 和 `agent/knowledge/adaptive_rules/active_rules.json` 中，将 20 个内部数据泄露场景转化为可执行的固定阈值规则。规则识别 Agent 会按 `user_id + session_id` 聚合事件，并根据 `off_work_flag`、`query_count`、`export_count`、`approval_flag`、`business_flag`、`sensitivity_level` 等字段判断是否命中场景。
+2. **数据输出格式统一**：在 `data_generator/engine.py` 中，将 `EVENT_FIELDNAMES` 对齐《数据库表设计（可落地）》里的“统一事件日志主表”。生成的 `events.csv` 可直接作为 Agent 输入，也方便后续导入数据库。
+
+详细说明见：`docs/场景规则判定与数据整合说明.md`。
+
+快速验证命令：
+
+```bash
+python -m data_generator.cli batch --users 10 --days 1 --sessions-per-user-day 3 --anomaly-rate 0.2 --output-dir data_generator/output/rule_test --run-agent --evaluate
+```
+
 ## 目录说明
 
 ```text

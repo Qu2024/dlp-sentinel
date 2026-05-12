@@ -82,145 +82,7 @@ def generate_run_id() -> str:
 
 
 def _default_active_rules() -> dict[str, Any]:
-    return {
-        "version": 1,
-        "updated_at": _now(),
-        "scene_rules": [
-            {
-                "id": "scene_bulk_export",
-                "name": "大批量导出",
-                "scope": "event",
-                "status": "active",
-                "source": "seed",
-                "conditions": [
-                    {"field": "export_count", "op": ">", "value": 50, "learnable": True},
-                ],
-            },
-            {
-                "id": "scene_offwork_export",
-                "name": "非工作时间高危操作",
-                "scope": "event",
-                "status": "active",
-                "source": "seed",
-                "conditions": [
-                    {"field": "off_work_flag", "op": "==", "value": 1, "learnable": False},
-                    {"field": "export_count", "op": ">", "value": 10, "learnable": True},
-                ],
-            },
-            {
-                "id": "scene_unapproved_sensitive_export",
-                "name": "未审批高敏导出",
-                "scope": "event",
-                "status": "active",
-                "source": "seed",
-                "conditions": [
-                    {"field": "approval_flag", "op": "==", "value": 0, "learnable": False},
-                    {"field": "sensitivity_level", "op": ">=", "value": 4, "learnable": True},
-                ],
-            },
-            {
-                "id": "scene_unregistered_usb_copy",
-                "name": "未备案USB拷贝",
-                "scope": "event",
-                "status": "active",
-                "source": "seed",
-                "conditions": [
-                    {"field": "copy_count", "op": ">", "value": 0, "learnable": True},
-                    {"field": "usb_registered_flag", "op": "==", "value": 0, "learnable": False},
-                ],
-            },
-            {
-                "id": "scene_external_send_sensitive",
-                "name": "外发敏感数据",
-                "scope": "event",
-                "status": "active",
-                "source": "seed",
-                "conditions": [
-                    {"field": "external_send_count", "op": ">", "value": 0, "learnable": True},
-                    {"field": "sensitivity_level", "op": ">=", "value": 3, "learnable": True},
-                ],
-            },
-            {
-                "id": "scene_cross_domain_query",
-                "name": "跨域大量查询",
-                "scope": "event",
-                "status": "active",
-                "source": "seed",
-                "conditions": [
-                    {"field": "cross_domain_count", "op": ">=", "value": 3, "learnable": True},
-                    {"field": "query_count", "op": ">", "value": 30, "learnable": True},
-                ],
-            },
-            {
-                "id": "scene_sensitive_screenshot",
-                "name": "截图高敏内容",
-                "scope": "event",
-                "status": "active",
-                "source": "seed",
-                "conditions": [
-                    {"field": "screenshot_count", "op": ">", "value": 5, "learnable": True},
-                    {"field": "sensitivity_level", "op": ">=", "value": 4, "learnable": True},
-                ],
-            },
-        ],
-        "high_risk_thresholds": [
-            {"field": "export_count", "op": ">", "value": 100, "scope": "event", "source": "seed", "learnable": True},
-            {"field": "print_pages", "op": ">", "value": 50, "scope": "event", "source": "seed", "learnable": True},
-            {"field": "screenshot_count", "op": ">", "value": 20, "scope": "event", "source": "seed", "learnable": True},
-            {"field": "external_send_count", "op": ">", "value": 5, "scope": "event", "source": "seed", "learnable": True},
-        ],
-        "weak_rules": [
-            {
-                "id": "weak_off_work",
-                "name": "非工作时间",
-                "scope": "event",
-                "status": "active",
-                "source": "seed",
-                "conditions": [{"field": "off_work_flag", "op": "==", "value": 1}],
-            },
-            {
-                "id": "weak_new_device",
-                "name": "新设备",
-                "scope": "event",
-                "status": "active",
-                "source": "seed",
-                "conditions": [{"field": "device_new_flag", "op": "==", "value": 1}],
-            },
-            {
-                "id": "weak_cross_dept",
-                "name": "跨部门",
-                "scope": "event",
-                "status": "active",
-                "source": "seed",
-                "conditions": [{"field": "cross_dept_flag", "op": "==", "value": 1}],
-            },
-            {
-                "id": "weak_unapproved",
-                "name": "未审批",
-                "scope": "event",
-                "status": "active",
-                "source": "seed",
-                "conditions": [{"field": "approval_flag", "op": "==", "value": 0}],
-            },
-            {
-                "id": "weak_no_business",
-                "name": "无业务支撑",
-                "scope": "event",
-                "status": "active",
-                "source": "seed",
-                "conditions": [{"field": "business_flag", "op": "==", "value": 0}],
-            },
-            {
-                "id": "weak_tool_abnormal",
-                "name": "异常工具",
-                "scope": "event",
-                "status": "active",
-                "source": "seed",
-                "conditions": [{"field": "tool_abnormal_flag", "op": "==", "value": 1}],
-            },
-        ],
-    }
-
+    return {'version': 2, 'updated_at': '2026-05-11 00:00:00', 'scene_rules': [{'id': 'scene_01_offwork_sensitive_access', 'name': '场景1：非工作时段异常登录后访问敏感数据', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'off_work_flag', 'op': '==', 'value': 1, 'learnable': False}, {'field': 'access_count', 'op': '>=', 'value': 10, 'learnable': True}, {'field': 'sensitivity_level', 'op': '>=', 'value': 4, 'learnable': True}]}, {'id': 'scene_02_multi_region_device_login', 'name': '场景2：同一账号短时多地点/多设备登录', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'unique_region_count', 'op': '>=', 'value': 2, 'learnable': False}, {'field': 'unique_device_count', 'op': '>=', 'value': 2, 'learnable': False}]}, {'id': 'scene_03_new_device_high_risk_action', 'name': '场景3：新设备首次登录后立即执行高风险操作', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'device_new_flag', 'op': '==', 'value': 1, 'learnable': False}, {'field': 'high_risk_action_count', 'op': '>=', 'value': 1, 'learnable': True}]}, {'id': 'scene_04_profile_mutation', 'name': '场景4：账号行为画像突变', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'deviation_person', 'op': '>=', 'value': 3, 'learnable': True}, {'field': 'deviation_role', 'op': '>=', 'value': 2, 'learnable': True}, {'field': 'sensitivity_level', 'op': '>=', 'value': 4, 'learnable': True}]}, {'id': 'scene_05_unauthorized_no_business', 'name': '场景5：越权访问核心数据且无业务关联', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'business_flag', 'op': '==', 'value': 0, 'learnable': False}, {'field': 'approval_flag', 'op': '==', 'value': 0, 'learnable': False}, {'field': 'sensitivity_level', 'op': '>=', 'value': 4, 'learnable': True}, {'field': 'access_count', 'op': '>=', 'value': 5, 'learnable': True}]}, {'id': 'scene_06_cross_dept_sensitive_access', 'name': '场景6：跨部门敏感数据访问异常', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'cross_dept_flag', 'op': '==', 'value': 1, 'learnable': False}, {'field': 'access_count', 'op': '>=', 'value': 10, 'learnable': True}, {'field': 'business_flag', 'op': '==', 'value': 0, 'learnable': False}]}, {'id': 'scene_07_high_sensitive_page_frequency', 'name': '场景7：访问高敏感页面频率异常', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'sensitivity_level', 'op': '>=', 'value': 4, 'learnable': True}, {'field': 'access_count', 'op': '>=', 'value': 50, 'learnable': True}, {'field': 'business_flag', 'op': '==', 'value': 0, 'learnable': False}]}, {'id': 'scene_08_concentrated_multi_domain_access', 'name': '场景8：短时集中访问多个高敏对象', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'sensitivity_level', 'op': '>=', 'value': 4, 'learnable': True}, {'field': 'access_count', 'op': '>=', 'value': 20, 'learnable': True}, {'field': 'cross_domain_count', 'op': '>=', 'value': 3, 'learnable': True}]}, {'id': 'scene_09_high_precise_query', 'name': '场景9：单日精准查询异常偏高', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'query_count', 'op': '>=', 'value': 200, 'learnable': True}, {'field': 'deviation_role', 'op': '>=', 'value': 10, 'learnable': True}, {'field': 'business_flag', 'op': '==', 'value': 0, 'learnable': False}]}, {'id': 'scene_10_cross_table_reidentify', 'name': '场景10：跨表关联拼接还原敏感身份', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'cross_table_count', 'op': '>=', 'value': 5, 'learnable': True}, {'field': 'query_count', 'op': '>=', 'value': 20, 'learnable': True}, {'field': 'unique_id_ratio', 'op': '>=', 'value': 0.3, 'learnable': True}]}, {'id': 'scene_11_batch_condition_filter', 'name': '场景11：按名单/条件批量筛选敏感对象', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'query_count', 'op': '>=', 'value': 500, 'learnable': True}, {'field': 'export_count', 'op': '>=', 'value': 1, 'learnable': True}]}, {'id': 'scene_12_query_then_export_chain', 'name': '场景12：短时构建先查后导完整链路', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'query_count', 'op': '>=', 'value': 100, 'learnable': True}, {'field': 'export_count', 'op': '>=', 'value': 1, 'learnable': True}]}, {'id': 'scene_13_offwork_bulk_export', 'name': '场景13：非工作时段高频批量导出敏感数据', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'off_work_flag', 'op': '==', 'value': 1, 'learnable': False}, {'field': 'export_count', 'op': '>=', 'value': 30, 'learnable': True}, {'field': 'sensitivity_level', 'op': '>=', 'value': 4, 'learnable': True}]}, {'id': 'scene_14_unapproved_sensitive_export', 'name': '场景14：绕过审批违规导出/下载高敏数据', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'approval_flag', 'op': '==', 'value': 0, 'learnable': False}, {'field': 'sensitivity_level', 'op': '>=', 'value': 4, 'learnable': True}, {'field': 'export_count', 'op': '>=', 'value': 1, 'learnable': True}]}, {'id': 'scene_15_screenshot_external_send', 'name': '场景15：敏感页面高频截图并伴随外发', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'screenshot_count', 'op': '>=', 'value': 5, 'learnable': True}, {'field': 'external_send_count', 'op': '>=', 'value': 3, 'learnable': True}, {'field': 'sensitive_hit_ratio', 'op': '>=', 'value': 0.5, 'learnable': True}]}, {'id': 'scene_16_abnormal_sensitive_print', 'name': '场景16：敏感文档异常打印', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'print_pages', 'op': '>=', 'value': 100, 'learnable': True}, {'field': 'business_flag', 'op': '==', 'value': 0, 'learnable': False}]}, {'id': 'scene_17_prod_to_test_unmasked', 'name': '场景17：生产数据违规同步至测试/开发环境', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'target_path_type', 'op': '==', 'value': '测试环境', 'learnable': False}, {'field': 'data_mask_flag', 'op': '==', 'value': 0, 'learnable': False}, {'field': 'keep_days', 'op': '>', 'value': 7, 'learnable': True}]}, {'id': 'scene_18_sensitive_local_or_shared_landing', 'name': '场景18：敏感数据落地本地终端或共享目录', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'target_path_type', 'op': '==', 'value': '共享目录', 'learnable': False}, {'field': 'copy_count', 'op': '>=', 'value': 3, 'learnable': True}, {'field': 'sensitivity_level', 'op': '>=', 'value': 4, 'learnable': True}]}, {'id': 'scene_19_usb_sensitive_copy', 'name': '场景19：移动介质/外设拷贝敏感数据', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'target_path_type', 'op': '==', 'value': 'USB', 'learnable': False}, {'field': 'usb_registered_flag', 'op': '==', 'value': 0, 'learnable': False}, {'field': 'copy_count', 'op': '>=', 'value': 10, 'learnable': True}]}, {'id': 'scene_20_compress_encrypt_delete_trace', 'name': '场景20：异常压缩加密/清痕规避', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'compress_flag', 'op': '==', 'value': 1, 'learnable': False}, {'field': 'encrypt_flag', 'op': '==', 'value': 1, 'learnable': False}, {'field': 'delete_flag', 'op': '==', 'value': 1, 'learnable': False}, {'field': 'tool_abnormal_flag', 'op': '==', 'value': 1, 'learnable': False}]}], 'high_risk_thresholds': [{'field': 'export_count', 'op': '>=', 'value': 100, 'scope': 'session', 'source': 'seed_20_scenes', 'learnable': True}, {'field': 'print_pages', 'op': '>=', 'value': 100, 'scope': 'session', 'source': 'seed_20_scenes', 'learnable': True}, {'field': 'screenshot_count', 'op': '>=', 'value': 20, 'scope': 'session', 'source': 'seed_20_scenes', 'learnable': True}, {'field': 'external_send_count', 'op': '>=', 'value': 5, 'scope': 'session', 'source': 'seed_20_scenes', 'learnable': True}, {'field': 'deviation_person', 'op': '>=', 'value': 5, 'scope': 'session', 'source': 'seed_20_scenes', 'learnable': True}, {'field': 'tool_abnormal_flag', 'op': '==', 'value': 1, 'scope': 'session', 'source': 'seed_20_scenes', 'learnable': False}], 'weak_rules': [{'id': 'weak_off_work', 'name': '非工作时间', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'off_work_flag', 'op': '==', 'value': 1}]}, {'id': 'weak_new_device', 'name': '新设备', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'device_new_flag', 'op': '==', 'value': 1}]}, {'id': 'weak_cross_dept', 'name': '跨部门', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'cross_dept_flag', 'op': '==', 'value': 1}]}, {'id': 'weak_unapproved', 'name': '未审批', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'approval_flag', 'op': '==', 'value': 0}]}, {'id': 'weak_no_business', 'name': '无业务支撑', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'business_flag', 'op': '==', 'value': 0}]}, {'id': 'weak_sensitive', 'name': '高敏对象', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'sensitivity_level', 'op': '>=', 'value': 4}]}, {'id': 'weak_large_export', 'name': '较大导出', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'export_count', 'op': '>=', 'value': 30}]}, {'id': 'weak_abnormal_tool', 'name': '异常工具', 'scope': 'session', 'status': 'active', 'source': 'seed_20_scenes', 'conditions': [{'field': 'tool_abnormal_flag', 'op': '==', 'value': 1}]}]}
 
 def _default_suggested_rules() -> dict[str, Any]:
     return {
@@ -399,7 +261,14 @@ def summarize_session_events(events: list[Any]) -> dict[str, Any]:
         "screenshot_count",
         "external_send_count",
         "copy_count",
+        "access_count",
+        "cross_table_count",
         "cross_domain_count",
+        "file_size_mb",
+        "sensitive_hit_ratio",
+        "unique_id_ratio",
+        "data_mask_flag",
+        "keep_days",
         "deviation_person",
         "deviation_role",
         "tool_abnormal_flag",
@@ -418,6 +287,21 @@ def summarize_session_events(events: list[Any]) -> dict[str, Any]:
     summary["approval_missing"] = 1 if any(_to_number(row.get("approval_flag", 1)) == 0 for row in rows) else 0
     summary["business_missing"] = 1 if any(_to_number(row.get("business_flag", 1)) == 0 for row in rows) else 0
     summary["usb_unregistered"] = 1 if any(_to_number(row.get("usb_registered_flag", 1)) == 0 for row in rows) else 0
+    summary["unique_device_count"] = len({str(row.get("device_id", "")) for row in rows if row.get("device_id")})
+    summary["unique_region_count"] = len({str(row.get("ip_region", "")) for row in rows if row.get("ip_region")})
+    summary["target_path_type"] = next((str(row.get("target_path_type")) for row in rows if row.get("target_path_type") in {"USB", "共享目录", "测试环境"}), str(rows[-1].get("target_path_type", "")))
+    summary["high_risk_action_count"] = sum(
+        1 for row in rows
+        if str(row.get("event_type", "")) in {"export", "download", "print", "query", "screenshot", "copy", "external_send"}
+        and (
+            _to_number(row.get("export_count", 0)) > 0
+            or _to_number(row.get("print_pages", 0)) > 0
+            or _to_number(row.get("query_count", 0)) > 0
+            or _to_number(row.get("screenshot_count", 0)) > 0
+            or _to_number(row.get("copy_count", 0)) > 0
+            or _to_number(row.get("external_send_count", 0)) > 0
+        )
+    )
     summary["event_count"] = len(rows)
     return summary
 
