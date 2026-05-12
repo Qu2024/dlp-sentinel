@@ -1,0 +1,18 @@
+{
+  "total_sessions": 16,
+  "predicted_candidate_sessions": 3,
+  "actual_anomaly_sessions": 1,
+  "tp": 1,
+  "fp": 2,
+  "tn": 13,
+  "fn": 0,
+  "precision": 0.3333,
+  "recall": 1.0,
+  "f1": 0.5,
+  "missing_predictions": [],
+  "false_positive_examples": [
+    "U0003_S00000003",
+    "U0009_S00000013"
+  ],
+  "false_negative_examples": []
+}

@@ -1,0 +1,2 @@
+﻿candidate_event_id,session_id,user_id,is_anomaly,scene_type,scene_hint,expected_risk,start_time,object_domain
+U0002_S00000001,S00000001,U0002,1,cross_dept_query_export,跨部门高频查询后导出,high,2026-04-20 21:03:42,案件

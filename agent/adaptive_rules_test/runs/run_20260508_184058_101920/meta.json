@@ -1,0 +1,8 @@
+{
+  "run_id": "run_20260508_184058_101920",
+  "source_csv": "/Users/oo/Documents/proj/dlp-sentinel/data_generator/output/adaptive_rules_test_large/events.csv",
+  "saved_at": "2026-05-08 18:41:01",
+  "candidate_count": 7400,
+  "scored_event_count": 266,
+  "report_count": 266
+}

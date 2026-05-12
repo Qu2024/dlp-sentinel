@@ -1,0 +1,123 @@
+[
+  {
+    "step": "自适应规则准备模块",
+    "input": {
+      "output_dir": "/Users/oo/Documents/proj/dlp-sentinel/data_generator/output/rebase_smoke/agent_output"
+    },
+    "output": {
+      "feedback_sync": {
+        "synced": false,
+        "updated_items": 0
+      },
+      "activated_rules": 0,
+      "active_scene_rules": 20,
+      "active_high_risk_thresholds": 6,
+      "active_weak_rules": 8,
+      "pending_suggested_rules": 0
+    }
+  },
+  {
+    "step": "数据加载模块",
+    "input": {
+      "csv_path": "/Users/oo/Documents/proj/dlp-sentinel/data_generator/output/rebase_smoke/events.csv"
+    },
+    "output": {
+      "raw_event_count": 48,
+      "unique_sessions": 16
+    }
+  },
+  {
+    "agent": "规则识别Agent",
+    "time": "2026-05-12 11:02:45",
+    "input": {
+      "raw_event_count": 48
+    },
+    "output": {
+      "session_count": 16,
+      "candidate_count": 3,
+      "matched_scene_summary": {
+        "场景1：非工作时段异常登录后访问敏感数据": 1,
+        "场景3：新设备首次登录后立即执行高风险操作": 1,
+        "场景4：账号行为画像突变": 1,
+        "场景5：越权访问核心数据且无业务关联": 1,
+        "场景8：短时集中访问多个高敏对象": 1,
+        "场景9：单日精准查询异常偏高": 1,
+        "场景12：短时构建先查后导完整链路": 1,
+        "场景13：非工作时段高频批量导出敏感数据": 1,
+        "场景14：绕过审批违规导出/下载高敏数据": 1,
+        "场景19：移动介质/外设拷贝敏感数据": 1,
+        "场景20：异常压缩加密/清痕规避": 1
+      },
+      "runtime_rules": {
+        "scene_rule_count": 20,
+        "high_risk_threshold_count": 6,
+        "weak_rule_count": 8,
+        "approved_ml_rule_count": 0
+      }
+    }
+  },
+  {
+    "agent": "行为理解Agent",
+    "time": "2026-05-12 11:02:45",
+    "input": {
+      "candidate_count": 3,
+      "permission_rule_count": 14
+    },
+    "output": {
+      "behavior_analyzed_count": 3,
+      "business_unreasonable_count": 1,
+      "high_chain_count": 1,
+      "high_deviation_count": 3
+    }
+  },
+  {
+    "agent": "风险评分Agent",
+    "time": "2026-05-12 11:02:45",
+    "input": {
+      "candidate_count": 3,
+      "use_behavior_result": true
+    },
+    "output": {
+      "scored_event_count": 3,
+      "high_risk_count": 1
+    }
+  },
+  {
+    "agent": "研判处置Agent",
+    "time": "2026-05-12 11:02:45",
+    "input": {
+      "scored_event_count": 3
+    },
+    "output": {
+      "report_count": 3,
+      "generated_disposition": true
+    }
+  },
+  {
+    "step": "反馈记录模块",
+    "input": {
+      "report_count": 3,
+      "run_id": "run_20260512_110245_512504"
+    },
+    "output": {
+      "feedback_items": 3,
+      "feedback_file": "/Users/oo/Documents/proj/dlp-sentinel/data_generator/output/rebase_smoke/agent_output/feedback.json"
+    }
+  },
+  {
+    "step": "规则自适应模块",
+    "input": {
+      "run_id": "run_20260512_110245_512504",
+      "candidate_count": 16,
+      "report_count": 3
+    },
+    "output": {
+      "run_id": "run_20260512_110245_512504",
+      "history_run_count": 1,
+      "labeled_sample_count": 0,
+      "threshold_updates": [],
+      "suggested_rule_count": 0,
+      "pending_suggested_rules": 0
+    }
+  }
+]

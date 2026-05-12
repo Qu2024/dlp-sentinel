@@ -1,0 +1,19 @@
+[
+  {
+    "run_id": "run_20260509_000841_954460",
+    "candidate_event_id": "U0002_S00000001",
+    "user_id": "U0002",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  }
+]

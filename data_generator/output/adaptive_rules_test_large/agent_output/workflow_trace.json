@@ -1,0 +1,119 @@
+[
+  {
+    "step": "自适应规则准备模块",
+    "input": {
+      "output_dir": "/Users/oo/Documents/proj/dlp-sentinel/data_generator/output/adaptive_rules_test_large/agent_output"
+    },
+    "output": {
+      "feedback_sync": {
+        "synced": false,
+        "updated_items": 0
+      },
+      "activated_rules": 0,
+      "active_scene_rules": 7,
+      "active_high_risk_thresholds": 4,
+      "active_weak_rules": 6,
+      "pending_suggested_rules": 0
+    }
+  },
+  {
+    "step": "数据加载模块",
+    "input": {
+      "csv_path": "/Users/oo/Documents/proj/dlp-sentinel/data_generator/output/adaptive_rules_test_large/events.csv"
+    },
+    "output": {
+      "raw_event_count": 21318,
+      "unique_sessions": 7400
+    }
+  },
+  {
+    "agent": "规则识别Agent",
+    "time": "2026-05-08 18:40:59",
+    "input": {
+      "raw_event_count": 21318
+    },
+    "output": {
+      "session_count": 7400,
+      "candidate_count": 266,
+      "matched_scene_summary": {
+        "大批量导出": 219,
+        "非工作时间高危操作": 188,
+        "未审批高敏导出": 266,
+        "跨域大量查询": 266,
+        "外发敏感数据": 47,
+        "截图高敏内容": 47,
+        "未备案USB拷贝": 43
+      },
+      "runtime_rules": {
+        "scene_rule_count": 7,
+        "high_risk_threshold_count": 4,
+        "weak_rule_count": 6,
+        "approved_ml_rule_count": 0
+      }
+    }
+  },
+  {
+    "agent": "行为理解Agent",
+    "time": "2026-05-08 18:40:59",
+    "input": {
+      "candidate_count": 266,
+      "permission_rule_count": 14
+    },
+    "output": {
+      "behavior_analyzed_count": 266,
+      "business_unreasonable_count": 266,
+      "high_chain_count": 167,
+      "high_deviation_count": 256
+    }
+  },
+  {
+    "agent": "风险评分Agent",
+    "time": "2026-05-08 18:40:59",
+    "input": {
+      "candidate_count": 266,
+      "use_behavior_result": true
+    },
+    "output": {
+      "scored_event_count": 266,
+      "high_risk_count": 266
+    }
+  },
+  {
+    "agent": "研判处置Agent",
+    "time": "2026-05-08 18:40:59",
+    "input": {
+      "scored_event_count": 266
+    },
+    "output": {
+      "report_count": 266,
+      "generated_disposition": true
+    }
+  },
+  {
+    "step": "反馈记录模块",
+    "input": {
+      "report_count": 266,
+      "run_id": "run_20260508_184058_101920"
+    },
+    "output": {
+      "feedback_items": 266,
+      "feedback_file": "/Users/oo/Documents/proj/dlp-sentinel/data_generator/output/adaptive_rules_test_large/agent_output/feedback.json"
+    }
+  },
+  {
+    "step": "规则自适应模块",
+    "input": {
+      "run_id": "run_20260508_184058_101920",
+      "candidate_count": 7400,
+      "report_count": 266
+    },
+    "output": {
+      "run_id": "run_20260508_184058_101920",
+      "history_run_count": 1,
+      "labeled_sample_count": 0,
+      "threshold_updates": [],
+      "suggested_rule_count": 5,
+      "pending_suggested_rules": 5
+    }
+  }
+]

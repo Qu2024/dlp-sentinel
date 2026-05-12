@@ -1,0 +1,8 @@
+{
+  "run_id": "run_20260509_000841_954460",
+  "source_csv": "/Users/oo/Documents/proj/dlp-sentinel/data_generator/output/llm_smoke_pair/events.csv",
+  "saved_at": "2026-05-09 00:10:44",
+  "candidate_count": 3,
+  "scored_event_count": 1,
+  "report_count": 1
+}

@@ -1,0 +1,895 @@
+[
+  {
+    "candidate_event_id": "U0004_S00000005",
+    "user_id": "U0004",
+    "candidate_flag": 1,
+    "matched_scene_list": [
+      "场景1：非工作时段异常登录后访问敏感数据",
+      "场景3：新设备首次登录后立即执行高风险操作",
+      "场景4：账号行为画像突变",
+      "场景5：越权访问核心数据且无业务关联",
+      "场景8：短时集中访问多个高敏对象",
+      "场景9：单日精准查询异常偏高",
+      "场景12：短时构建先查后导完整链路",
+      "场景13：非工作时段高频批量导出敏感数据",
+      "场景14：绕过审批违规导出/下载高敏数据",
+      "场景19：移动介质/外设拷贝敏感数据",
+      "场景20：异常压缩加密/清痕规避"
+    ],
+    "rule_strength": "strong",
+    "base_risk_score": 81.76,
+    "final_risk_score": 79,
+    "coverage": 0.817,
+    "risk_level": "极高风险",
+    "top_drivers": [
+      {
+        "indicator": "对象敏感等级分",
+        "contribution": 11.601
+      },
+      {
+        "indicator": "唯一识别性分",
+        "contribution": 8.668
+      },
+      {
+        "indicator": "个人行为偏离分",
+        "contribution": 8.471
+      }
+    ],
+    "behavior_chain": [
+      "login",
+      "query",
+      "export",
+      "copy",
+      "delete"
+    ],
+    "llm_analysis": "业务关联存在问题：缺少明确业务关联、高敏操作缺少案件或任务编号、未匹配到岗位权限规则：运维-通信-query；行为链异常：形成登录-查询-导出链条、存在本地/USB/共享目录拷贝、存在清痕删除行为",
+    "raw_events": [
+      {
+        "event_id": "E00000001",
+        "session_id": "S00000005",
+        "event_time": "2026-04-20 02:17:33",
+        "user_id": "U0004",
+        "dept": "运维",
+        "role": "运维",
+        "device_id": "D9741X",
+        "device_new_flag": 1,
+        "ip_region": "上海",
+        "event_type": "login",
+        "object_domain": "认证域",
+        "sensitivity_level": 1,
+        "query_count": 0,
+        "export_count": 0,
+        "file_size_mb": 0.0,
+        "print_pages": 0,
+        "screenshot_count": 0,
+        "external_send_count": 0,
+        "copy_count": 0,
+        "target_path_type": "本地",
+        "usb_registered_flag": 1,
+        "approval_flag": 0,
+        "business_flag": 0,
+        "case_id": "",
+        "cross_dept_flag": 0,
+        "off_work_flag": 1,
+        "deviation_person": 1.0,
+        "deviation_role": 1.0,
+        "sensitive_hit_ratio": 0.79,
+        "unique_id_ratio": 0.69,
+        "cross_domain_count": 0,
+        "compress_flag": 0,
+        "encrypt_flag": 0,
+        "delete_flag": 0,
+        "tool_abnormal_flag": 0,
+        "account_type": "内部",
+        "action_object": "异常登录",
+        "object_type": "系统",
+        "access_count": 1,
+        "cross_table_count": 0,
+        "data_mask_flag": 0,
+        "keep_days": 0,
+        "task_id": ""
+      },
+      {
+        "event_id": "E00000002",
+        "session_id": "S00000005",
+        "event_time": "2026-04-20 02:19:10",
+        "user_id": "U0004",
+        "dept": "运维",
+        "role": "运维",
+        "device_id": "D9741X",
+        "device_new_flag": 1,
+        "ip_region": "上海",
+        "event_type": "query",
+        "object_domain": "通信",
+        "sensitivity_level": 4,
+        "query_count": 318,
+        "export_count": 0,
+        "file_size_mb": 0.0,
+        "print_pages": 0,
+        "screenshot_count": 0,
+        "external_send_count": 0,
+        "copy_count": 0,
+        "target_path_type": "本地",
+        "usb_registered_flag": 1,
+        "approval_flag": 0,
+        "business_flag": 0,
+        "case_id": "",
+        "cross_dept_flag": 0,
+        "off_work_flag": 1,
+        "deviation_person": 15.9,
+        "deviation_role": 12.72,
+        "sensitive_hit_ratio": 0.64,
+        "unique_id_ratio": 0.48,
+        "cross_domain_count": 4,
+        "compress_flag": 0,
+        "encrypt_flag": 0,
+        "delete_flag": 0,
+        "tool_abnormal_flag": 0,
+        "account_type": "内部",
+        "action_object": "通信高敏查询",
+        "object_type": "表",
+        "access_count": 36,
+        "cross_table_count": 4,
+        "data_mask_flag": 0,
+        "keep_days": 0,
+        "task_id": ""
+      },
+      {
+        "event_id": "E00000003",
+        "session_id": "S00000005",
+        "event_time": "2026-04-20 02:32:19",
+        "user_id": "U0004",
+        "dept": "运维",
+        "role": "运维",
+        "device_id": "D9741X",
+        "device_new_flag": 1,
+        "ip_region": "上海",
+        "event_type": "export",
+        "object_domain": "通信",
+        "sensitivity_level": 4,
+        "query_count": 0,
+        "export_count": 204,
+        "file_size_mb": 89.28,
+        "print_pages": 0,
+        "screenshot_count": 0,
+        "external_send_count": 0,
+        "copy_count": 0,
+        "target_path_type": "本地",
+        "usb_registered_flag": 1,
+        "approval_flag": 0,
+        "business_flag": 0,
+        "case_id": "",
+        "cross_dept_flag": 0,
+        "off_work_flag": 1,
+        "deviation_person": 408.0,
+        "deviation_role": 204.0,
+        "sensitive_hit_ratio": 0.79,
+        "unique_id_ratio": 0.74,
+        "cross_domain_count": 0,
+        "compress_flag": 0,
+        "encrypt_flag": 0,
+        "delete_flag": 0,
+        "tool_abnormal_flag": 0,
+        "account_type": "内部",
+        "action_object": "通信批量导出",
+        "object_type": "文件",
+        "access_count": 0,
+        "cross_table_count": 0,
+        "data_mask_flag": 0,
+        "keep_days": 0,
+        "task_id": ""
+      },
+      {
+        "event_id": "E00000004",
+        "session_id": "S00000005",
+        "event_time": "2026-04-20 02:43:53",
+        "user_id": "U0004",
+        "dept": "运维",
+        "role": "运维",
+        "device_id": "D9741X",
+        "device_new_flag": 1,
+        "ip_region": "上海",
+        "event_type": "copy",
+        "object_domain": "通信",
+        "sensitivity_level": 4,
+        "query_count": 0,
+        "export_count": 0,
+        "file_size_mb": 754.81,
+        "print_pages": 0,
+        "screenshot_count": 0,
+        "external_send_count": 0,
+        "copy_count": 36,
+        "target_path_type": "USB",
+        "usb_registered_flag": 0,
+        "approval_flag": 0,
+        "business_flag": 0,
+        "case_id": "",
+        "cross_dept_flag": 0,
+        "off_work_flag": 1,
+        "deviation_person": 1.0,
+        "deviation_role": 1.0,
+        "sensitive_hit_ratio": 0.84,
+        "unique_id_ratio": 0.61,
+        "cross_domain_count": 0,
+        "compress_flag": 0,
+        "encrypt_flag": 0,
+        "delete_flag": 0,
+        "tool_abnormal_flag": 0,
+        "account_type": "内部",
+        "action_object": "敏感文件拷贝",
+        "object_type": "文件",
+        "access_count": 0,
+        "cross_table_count": 0,
+        "data_mask_flag": 0,
+        "keep_days": 0,
+        "task_id": ""
+      },
+      {
+        "event_id": "E00000005",
+        "session_id": "S00000005",
+        "event_time": "2026-04-20 02:45:58",
+        "user_id": "U0004",
+        "dept": "运维",
+        "role": "运维",
+        "device_id": "D9741X",
+        "device_new_flag": 1,
+        "ip_region": "上海",
+        "event_type": "delete",
+        "object_domain": "通信",
+        "sensitivity_level": 4,
+        "query_count": 0,
+        "export_count": 0,
+        "file_size_mb": 0.0,
+        "print_pages": 0,
+        "screenshot_count": 0,
+        "external_send_count": 0,
+        "copy_count": 0,
+        "target_path_type": "本地",
+        "usb_registered_flag": 1,
+        "approval_flag": 0,
+        "business_flag": 0,
+        "case_id": "",
+        "cross_dept_flag": 0,
+        "off_work_flag": 1,
+        "deviation_person": 1.0,
+        "deviation_role": 1.0,
+        "sensitive_hit_ratio": 0.56,
+        "unique_id_ratio": 0.28,
+        "cross_domain_count": 0,
+        "compress_flag": 1,
+        "encrypt_flag": 1,
+        "delete_flag": 1,
+        "tool_abnormal_flag": 1,
+        "account_type": "内部",
+        "action_object": "删除原文件/日志",
+        "object_type": "文件",
+        "access_count": 0,
+        "cross_table_count": 0,
+        "data_mask_flag": 0,
+        "keep_days": 0,
+        "task_id": ""
+      }
+    ],
+    "profile_result": {
+      "max_person_deviation": 408.0,
+      "max_role_deviation": 204.0,
+      "has_new_device": true,
+      "has_off_work": true,
+      "cross_dept": false,
+      "max_cross_domain": 4,
+      "profile_abnormal_flags": [
+        "个人历史行为极端偏离",
+        "岗位群体行为极端偏离",
+        "新设备登录",
+        "非工作时间操作",
+        "跨域访问范围偏大"
+      ]
+    },
+    "business_result": {
+      "business_reasonable": false,
+      "business_problems": [
+        "缺少明确业务关联",
+        "高敏操作缺少案件或任务编号",
+        "未匹配到岗位权限规则：运维-通信-query",
+        "导出/打印行为缺少审批",
+        "未匹配到岗位权限规则：运维-通信-export"
+      ],
+      "business_evidence": [],
+      "matched_permissions": [],
+      "permission_rule_count": 14
+    },
+    "chain_result": {
+      "behavior_chain": [
+        "login",
+        "query",
+        "export",
+        "copy",
+        "delete"
+      ],
+      "chain_completeness": 0.8333,
+      "chain_flags": [
+        "形成登录-查询-导出链条",
+        "存在本地/USB/共享目录拷贝",
+        "存在清痕删除行为",
+        "存在压缩或加密规避行为"
+      ]
+    },
+    "agent_trace": {
+      "profile_agent": {
+        "max_person_deviation": 408.0,
+        "max_role_deviation": 204.0,
+        "has_new_device": true,
+        "has_off_work": true,
+        "cross_dept": false,
+        "max_cross_domain": 4,
+        "profile_abnormal_flags": [
+          "个人历史行为极端偏离",
+          "岗位群体行为极端偏离",
+          "新设备登录",
+          "非工作时间操作",
+          "跨域访问范围偏大"
+        ]
+      },
+      "business_agent": {
+        "business_reasonable": false,
+        "business_problems": [
+          "缺少明确业务关联",
+          "高敏操作缺少案件或任务编号",
+          "未匹配到岗位权限规则：运维-通信-query",
+          "导出/打印行为缺少审批",
+          "未匹配到岗位权限规则：运维-通信-export"
+        ],
+        "business_evidence": [],
+        "matched_permissions": [],
+        "permission_rule_count": 14
+      },
+      "chain_agent": {
+        "behavior_chain": [
+          "login",
+          "query",
+          "export",
+          "copy",
+          "delete"
+        ],
+        "chain_completeness": 0.8333,
+        "chain_flags": [
+          "形成登录-查询-导出链条",
+          "存在本地/USB/共享目录拷贝",
+          "存在清痕删除行为",
+          "存在压缩或加密规避行为"
+        ]
+      },
+      "scoring_agent": {
+        "base_risk_score": 81.76,
+        "final_risk_score": 79,
+        "risk_level": "极高风险",
+        "top_drivers": [
+          {
+            "indicator": "对象敏感等级分",
+            "contribution": 11.601
+          },
+          {
+            "indicator": "唯一识别性分",
+            "contribution": 8.668
+          },
+          {
+            "indicator": "个人行为偏离分",
+            "contribution": 8.471
+          }
+        ]
+      }
+    }
+  },
+  {
+    "candidate_event_id": "U0003_S00000003",
+    "user_id": "U0003",
+    "candidate_flag": 1,
+    "matched_scene_list": [],
+    "rule_strength": "strong",
+    "base_risk_score": 52.29,
+    "final_risk_score": 36.6,
+    "coverage": 0.775,
+    "risk_level": "中风险",
+    "top_drivers": [
+      {
+        "indicator": "个人行为偏离分",
+        "contribution": 8.471
+      },
+      {
+        "indicator": "泄露链条完整度分",
+        "contribution": 6.646
+      },
+      {
+        "indicator": "岗位同群偏离分",
+        "contribution": 4.237
+      }
+    ],
+    "behavior_chain": [
+      "login",
+      "query",
+      "export"
+    ],
+    "llm_analysis": "行为链异常：形成登录-查询-导出链条",
+    "raw_events": [
+      {
+        "event_id": "E00000015",
+        "session_id": "S00000003",
+        "event_time": "2026-04-20 10:55:24",
+        "user_id": "U0003",
+        "dept": "科信",
+        "role": "管理员",
+        "device_id": "D0003B",
+        "device_new_flag": 0,
+        "ip_region": "北京",
+        "event_type": "login",
+        "object_domain": "认证域",
+        "sensitivity_level": 1,
+        "query_count": 0,
+        "export_count": 0,
+        "file_size_mb": 0.0,
+        "print_pages": 0,
+        "screenshot_count": 0,
+        "external_send_count": 0,
+        "copy_count": 0,
+        "target_path_type": "本地",
+        "usb_registered_flag": 1,
+        "approval_flag": 1,
+        "business_flag": 1,
+        "case_id": "C202604200003",
+        "cross_dept_flag": 0,
+        "off_work_flag": 0,
+        "deviation_person": 1.0,
+        "deviation_role": 1.0,
+        "sensitive_hit_ratio": 0.07,
+        "unique_id_ratio": 0.11,
+        "cross_domain_count": 0,
+        "compress_flag": 0,
+        "encrypt_flag": 0,
+        "delete_flag": 0,
+        "tool_abnormal_flag": 0,
+        "account_type": "内部",
+        "action_object": "系统登录",
+        "object_type": "系统",
+        "access_count": 1,
+        "cross_table_count": 0,
+        "data_mask_flag": 1,
+        "keep_days": 0,
+        "task_id": ""
+      },
+      {
+        "event_id": "E00000017",
+        "session_id": "S00000003",
+        "event_time": "2026-04-20 11:11:10",
+        "user_id": "U0003",
+        "dept": "科信",
+        "role": "管理员",
+        "device_id": "D0003B",
+        "device_new_flag": 0,
+        "ip_region": "北京",
+        "event_type": "query",
+        "object_domain": "系统",
+        "sensitivity_level": 2,
+        "query_count": 15,
+        "export_count": 0,
+        "file_size_mb": 0.0,
+        "print_pages": 0,
+        "screenshot_count": 0,
+        "external_send_count": 0,
+        "copy_count": 0,
+        "target_path_type": "本地",
+        "usb_registered_flag": 1,
+        "approval_flag": 1,
+        "business_flag": 1,
+        "case_id": "C202604200003",
+        "cross_dept_flag": 0,
+        "off_work_flag": 0,
+        "deviation_person": 0.5,
+        "deviation_role": 0.43,
+        "sensitive_hit_ratio": 0.21,
+        "unique_id_ratio": 0.04,
+        "cross_domain_count": 1,
+        "compress_flag": 0,
+        "encrypt_flag": 0,
+        "delete_flag": 0,
+        "tool_abnormal_flag": 0,
+        "account_type": "内部",
+        "action_object": "系统信息查询",
+        "object_type": "表",
+        "access_count": 2,
+        "cross_table_count": 1,
+        "data_mask_flag": 1,
+        "keep_days": 0,
+        "task_id": ""
+      },
+      {
+        "event_id": "E00000020",
+        "session_id": "S00000003",
+        "event_time": "2026-04-20 11:24:58",
+        "user_id": "U0003",
+        "dept": "科信",
+        "role": "管理员",
+        "device_id": "D0003B",
+        "device_new_flag": 0,
+        "ip_region": "北京",
+        "event_type": "export",
+        "object_domain": "系统",
+        "sensitivity_level": 2,
+        "query_count": 0,
+        "export_count": 5,
+        "file_size_mb": 4.67,
+        "print_pages": 0,
+        "screenshot_count": 0,
+        "external_send_count": 0,
+        "copy_count": 0,
+        "target_path_type": "本地",
+        "usb_registered_flag": 1,
+        "approval_flag": 1,
+        "business_flag": 1,
+        "case_id": "C202604200003",
+        "cross_dept_flag": 0,
+        "off_work_flag": 0,
+        "deviation_person": 5.0,
+        "deviation_role": 5.0,
+        "sensitive_hit_ratio": 0.24,
+        "unique_id_ratio": 0.11,
+        "cross_domain_count": 0,
+        "compress_flag": 0,
+        "encrypt_flag": 0,
+        "delete_flag": 0,
+        "tool_abnormal_flag": 0,
+        "account_type": "内部",
+        "action_object": "系统数据导出",
+        "object_type": "文件",
+        "access_count": 0,
+        "cross_table_count": 0,
+        "data_mask_flag": 1,
+        "keep_days": 0,
+        "task_id": ""
+      }
+    ],
+    "profile_result": {
+      "max_person_deviation": 5.0,
+      "max_role_deviation": 5.0,
+      "has_new_device": false,
+      "has_off_work": false,
+      "cross_dept": false,
+      "max_cross_domain": 1,
+      "profile_abnormal_flags": [
+        "个人历史行为极端偏离",
+        "岗位群体行为极端偏离"
+      ]
+    },
+    "business_result": {
+      "business_reasonable": true,
+      "business_problems": [],
+      "business_evidence": [
+        "案件编号：C202604200003"
+      ],
+      "matched_permissions": [
+        "管理员-系统-query",
+        "管理员-系统-export"
+      ],
+      "permission_rule_count": 14
+    },
+    "chain_result": {
+      "behavior_chain": [
+        "login",
+        "query",
+        "export"
+      ],
+      "chain_completeness": 0.5,
+      "chain_flags": [
+        "形成登录-查询-导出链条"
+      ]
+    },
+    "agent_trace": {
+      "profile_agent": {
+        "max_person_deviation": 5.0,
+        "max_role_deviation": 5.0,
+        "has_new_device": false,
+        "has_off_work": false,
+        "cross_dept": false,
+        "max_cross_domain": 1,
+        "profile_abnormal_flags": [
+          "个人历史行为极端偏离",
+          "岗位群体行为极端偏离"
+        ]
+      },
+      "business_agent": {
+        "business_reasonable": true,
+        "business_problems": [],
+        "business_evidence": [
+          "案件编号：C202604200003"
+        ],
+        "matched_permissions": [
+          "管理员-系统-query",
+          "管理员-系统-export"
+        ],
+        "permission_rule_count": 14
+      },
+      "chain_agent": {
+        "behavior_chain": [
+          "login",
+          "query",
+          "export"
+        ],
+        "chain_completeness": 0.5,
+        "chain_flags": [
+          "形成登录-查询-导出链条"
+        ]
+      },
+      "scoring_agent": {
+        "base_risk_score": 52.29,
+        "final_risk_score": 36.6,
+        "risk_level": "中风险",
+        "top_drivers": [
+          {
+            "indicator": "个人行为偏离分",
+            "contribution": 8.471
+          },
+          {
+            "indicator": "泄露链条完整度分",
+            "contribution": 6.646
+          },
+          {
+            "indicator": "岗位同群偏离分",
+            "contribution": 4.237
+          }
+        ]
+      }
+    }
+  },
+  {
+    "candidate_event_id": "U0009_S00000013",
+    "user_id": "U0009",
+    "candidate_flag": 1,
+    "matched_scene_list": [],
+    "rule_strength": "strong",
+    "base_risk_score": 40.86,
+    "final_risk_score": 28.6,
+    "coverage": 0.598,
+    "risk_level": "低风险",
+    "top_drivers": [
+      {
+        "indicator": "个人行为偏离分",
+        "contribution": 8.471
+      },
+      {
+        "indicator": "泄露链条完整度分",
+        "contribution": 6.646
+      },
+      {
+        "indicator": "对象敏感等级分",
+        "contribution": 3.867
+      }
+    ],
+    "behavior_chain": [
+      "login",
+      "query",
+      "print"
+    ],
+    "llm_analysis": "该事件风险等级为低风险，建议结合审批和业务记录复核。",
+    "raw_events": [
+      {
+        "event_id": "E00000018",
+        "session_id": "S00000013",
+        "event_time": "2026-04-20 11:17:03",
+        "user_id": "U0009",
+        "dept": "运维",
+        "role": "运维",
+        "device_id": "D0009B",
+        "device_new_flag": 0,
+        "ip_region": "北京",
+        "event_type": "login",
+        "object_domain": "认证域",
+        "sensitivity_level": 1,
+        "query_count": 0,
+        "export_count": 0,
+        "file_size_mb": 0.0,
+        "print_pages": 0,
+        "screenshot_count": 0,
+        "external_send_count": 0,
+        "copy_count": 0,
+        "target_path_type": "本地",
+        "usb_registered_flag": 1,
+        "approval_flag": 1,
+        "business_flag": 1,
+        "case_id": "C202604200009",
+        "cross_dept_flag": 0,
+        "off_work_flag": 0,
+        "deviation_person": 1.0,
+        "deviation_role": 1.0,
+        "sensitive_hit_ratio": 0.25,
+        "unique_id_ratio": 0.11,
+        "cross_domain_count": 0,
+        "compress_flag": 0,
+        "encrypt_flag": 0,
+        "delete_flag": 0,
+        "tool_abnormal_flag": 0,
+        "account_type": "内部",
+        "action_object": "系统登录",
+        "object_type": "系统",
+        "access_count": 1,
+        "cross_table_count": 0,
+        "data_mask_flag": 1,
+        "keep_days": 0,
+        "task_id": ""
+      },
+      {
+        "event_id": "E00000019",
+        "session_id": "S00000013",
+        "event_time": "2026-04-20 11:19:18",
+        "user_id": "U0009",
+        "dept": "运维",
+        "role": "运维",
+        "device_id": "D0009B",
+        "device_new_flag": 0,
+        "ip_region": "北京",
+        "event_type": "query",
+        "object_domain": "系统",
+        "sensitivity_level": 2,
+        "query_count": 16,
+        "export_count": 0,
+        "file_size_mb": 0.0,
+        "print_pages": 0,
+        "screenshot_count": 0,
+        "external_send_count": 0,
+        "copy_count": 0,
+        "target_path_type": "本地",
+        "usb_registered_flag": 1,
+        "approval_flag": 1,
+        "business_flag": 1,
+        "case_id": "C202604200009",
+        "cross_dept_flag": 0,
+        "off_work_flag": 0,
+        "deviation_person": 0.8,
+        "deviation_role": 0.64,
+        "sensitive_hit_ratio": 0.1,
+        "unique_id_ratio": 0.09,
+        "cross_domain_count": 0,
+        "compress_flag": 0,
+        "encrypt_flag": 0,
+        "delete_flag": 0,
+        "tool_abnormal_flag": 0,
+        "account_type": "内部",
+        "action_object": "系统信息查询",
+        "object_type": "表",
+        "access_count": 1,
+        "cross_table_count": 1,
+        "data_mask_flag": 1,
+        "keep_days": 0,
+        "task_id": ""
+      },
+      {
+        "event_id": "E00000022",
+        "session_id": "S00000013",
+        "event_time": "2026-04-20 11:32:49",
+        "user_id": "U0009",
+        "dept": "运维",
+        "role": "运维",
+        "device_id": "D0009B",
+        "device_new_flag": 0,
+        "ip_region": "北京",
+        "event_type": "print",
+        "object_domain": "系统",
+        "sensitivity_level": 2,
+        "query_count": 0,
+        "export_count": 0,
+        "file_size_mb": 0.0,
+        "print_pages": 11,
+        "screenshot_count": 0,
+        "external_send_count": 0,
+        "copy_count": 0,
+        "target_path_type": "本地",
+        "usb_registered_flag": 1,
+        "approval_flag": 1,
+        "business_flag": 1,
+        "case_id": "C202604200009",
+        "cross_dept_flag": 0,
+        "off_work_flag": 0,
+        "deviation_person": 5.5,
+        "deviation_role": 1.0,
+        "sensitive_hit_ratio": 0.11,
+        "unique_id_ratio": 0.03,
+        "cross_domain_count": 0,
+        "compress_flag": 0,
+        "encrypt_flag": 0,
+        "delete_flag": 0,
+        "tool_abnormal_flag": 0,
+        "account_type": "内部",
+        "action_object": "系统文档打印",
+        "object_type": "文件",
+        "access_count": 0,
+        "cross_table_count": 0,
+        "data_mask_flag": 1,
+        "keep_days": 0,
+        "task_id": ""
+      }
+    ],
+    "profile_result": {
+      "max_person_deviation": 5.5,
+      "max_role_deviation": 1.0,
+      "has_new_device": false,
+      "has_off_work": false,
+      "cross_dept": false,
+      "max_cross_domain": 0,
+      "profile_abnormal_flags": [
+        "个人历史行为极端偏离"
+      ]
+    },
+    "business_result": {
+      "business_reasonable": true,
+      "business_problems": [],
+      "business_evidence": [
+        "案件编号：C202604200009"
+      ],
+      "matched_permissions": [
+        "运维-系统-query",
+        "运维-系统-export"
+      ],
+      "permission_rule_count": 14
+    },
+    "chain_result": {
+      "behavior_chain": [
+        "login",
+        "query",
+        "print"
+      ],
+      "chain_completeness": 0.3333,
+      "chain_flags": []
+    },
+    "agent_trace": {
+      "profile_agent": {
+        "max_person_deviation": 5.5,
+        "max_role_deviation": 1.0,
+        "has_new_device": false,
+        "has_off_work": false,
+        "cross_dept": false,
+        "max_cross_domain": 0,
+        "profile_abnormal_flags": [
+          "个人历史行为极端偏离"
+        ]
+      },
+      "business_agent": {
+        "business_reasonable": true,
+        "business_problems": [],
+        "business_evidence": [
+          "案件编号：C202604200009"
+        ],
+        "matched_permissions": [
+          "运维-系统-query",
+          "运维-系统-export"
+        ],
+        "permission_rule_count": 14
+      },
+      "chain_agent": {
+        "behavior_chain": [
+          "login",
+          "query",
+          "print"
+        ],
+        "chain_completeness": 0.3333,
+        "chain_flags": []
+      },
+      "scoring_agent": {
+        "base_risk_score": 40.86,
+        "final_risk_score": 28.6,
+        "risk_level": "低风险",
+        "top_drivers": [
+          {
+            "indicator": "个人行为偏离分",
+            "contribution": 8.471
+          },
+          {
+            "indicator": "泄露链条完整度分",
+            "contribution": 6.646
+          },
+          {
+            "indicator": "对象敏感等级分",
+            "contribution": 3.867
+          }
+        ]
+      }
+    }
+  }
+]

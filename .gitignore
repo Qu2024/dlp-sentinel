@@ -7,9 +7,3 @@ __pycache__/
 .env
 .venv/
 *.log
-
-# Generated data engine artifacts
-data_generator/output/
-
-# Isolated adaptive-rule experiment store
-agent/adaptive_rules_test/

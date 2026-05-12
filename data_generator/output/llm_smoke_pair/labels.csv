@@ -1,0 +1,4 @@
+candidate_event_id,session_id,user_id,is_anomaly,scene_type,scene_hint,expected_risk,start_time,object_domain
+U0002_S00000001,S00000001,U0002,1,cross_dept_query_export,跨部门高频查询后导出,high,2026-04-20 21:03:42,案件
+U0001_S00000001,S00000001,U0001,0,normal,正常业务会话,low,2026-04-20 11:43:25,人口
+U0004_S00000002,S00000002,U0004,0,normal,正常业务会话,low,2026-04-20 13:02:59,系统

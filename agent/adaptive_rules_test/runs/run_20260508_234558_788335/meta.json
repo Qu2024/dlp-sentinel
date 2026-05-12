@@ -1,0 +1,8 @@
+{
+  "run_id": "run_20260508_234558_788335",
+  "source_csv": "/Users/oo/Documents/proj/dlp-sentinel/data_generator/output/llm_smoke_high/events.csv",
+  "saved_at": "2026-05-08 23:48:06",
+  "candidate_count": 1,
+  "scored_event_count": 1,
+  "report_count": 1
+}

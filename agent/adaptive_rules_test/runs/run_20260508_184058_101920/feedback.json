@@ -1,0 +1,4536 @@
+[
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0004_S00002299",
+    "user_id": "U0004",
+    "risk_level": "极高风险",
+    "final_risk_score": 90.66,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0049_S00005494",
+    "user_id": "U0049",
+    "risk_level": "极高风险",
+    "final_risk_score": 90.66,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0093_S00006579",
+    "user_id": "U0093",
+    "risk_level": "极高风险",
+    "final_risk_score": 90.66,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0094_S00002227",
+    "user_id": "U0094",
+    "risk_level": "极高风险",
+    "final_risk_score": 90.66,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0053_S00003350",
+    "user_id": "U0053",
+    "risk_level": "极高风险",
+    "final_risk_score": 89.39,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0021_S00006778",
+    "user_id": "U0021",
+    "risk_level": "极高风险",
+    "final_risk_score": 89.36,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0071_S00006404",
+    "user_id": "U0071",
+    "risk_level": "极高风险",
+    "final_risk_score": 88.09,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0040_S00006179",
+    "user_id": "U0040",
+    "risk_level": "极高风险",
+    "final_risk_score": 87.72,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0015_S00001623",
+    "user_id": "U0015",
+    "risk_level": "极高风险",
+    "final_risk_score": 87.68,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0069_S00002747",
+    "user_id": "U0069",
+    "risk_level": "极高风险",
+    "final_risk_score": 87.68,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0098_S00005865",
+    "user_id": "U0098",
+    "risk_level": "极高风险",
+    "final_risk_score": 87.68,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0100_S00001501",
+    "user_id": "U0100",
+    "risk_level": "极高风险",
+    "final_risk_score": 87.68,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0025_S00005318",
+    "user_id": "U0025",
+    "risk_level": "极高风险",
+    "final_risk_score": 86.38,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0014_S00004523",
+    "user_id": "U0014",
+    "risk_level": "极高风险",
+    "final_risk_score": 86.04,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0011_S00005210",
+    "user_id": "U0011",
+    "risk_level": "极高风险",
+    "final_risk_score": 85.97,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0085_S00002864",
+    "user_id": "U0085",
+    "risk_level": "极高风险",
+    "final_risk_score": 84.68,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0041_S00001076",
+    "user_id": "U0041",
+    "risk_level": "极高风险",
+    "final_risk_score": 84.33,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0056_S00004117",
+    "user_id": "U0056",
+    "risk_level": "极高风险",
+    "final_risk_score": 83.47,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0085_S00004329",
+    "user_id": "U0085",
+    "risk_level": "极高风险",
+    "final_risk_score": 83.38,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0028_S00003904",
+    "user_id": "U0028",
+    "risk_level": "极高风险",
+    "final_risk_score": 83.21,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0038_S00005418",
+    "user_id": "U0038",
+    "risk_level": "极高风险",
+    "final_risk_score": 83.04,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0075_S00001328",
+    "user_id": "U0075",
+    "risk_level": "极高风险",
+    "final_risk_score": 83.04,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0037_S00006915",
+    "user_id": "U0037",
+    "risk_level": "极高风险",
+    "final_risk_score": 82.99,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0003_S00003717",
+    "user_id": "U0003",
+    "risk_level": "极高风险",
+    "final_risk_score": 81.7,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0043_S00001832",
+    "user_id": "U0043",
+    "risk_level": "极高风险",
+    "final_risk_score": 81.32,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0085_S00005761",
+    "user_id": "U0085",
+    "risk_level": "极高风险",
+    "final_risk_score": 80.4,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0098_S00005864",
+    "user_id": "U0098",
+    "risk_level": "极高风险",
+    "final_risk_score": 79.82,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0002_S00000012",
+    "user_id": "U0002",
+    "risk_level": "极高风险",
+    "final_risk_score": 79.65,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0001_S00000003",
+    "user_id": "U0001",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0001_S00002988",
+    "user_id": "U0001",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0001_S00003708",
+    "user_id": "U0001",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0001_S00003709",
+    "user_id": "U0001",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0001_S00006637",
+    "user_id": "U0001",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0002_S00000013",
+    "user_id": "U0002",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0002_S00001517",
+    "user_id": "U0002",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0003_S00000785",
+    "user_id": "U0003",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0003_S00001524",
+    "user_id": "U0003",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0003_S00002290",
+    "user_id": "U0003",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0003_S00005162",
+    "user_id": "U0003",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0004_S00001529",
+    "user_id": "U0004",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0004_S00003727",
+    "user_id": "U0004",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0004_S00006653",
+    "user_id": "U0004",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0005_S00005178",
+    "user_id": "U0005",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0005_S00006661",
+    "user_id": "U0005",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0006_S00001550",
+    "user_id": "U0006",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0006_S00003743",
+    "user_id": "U0006",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0007_S00003753",
+    "user_id": "U0007",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0008_S00000826",
+    "user_id": "U0008",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0008_S00003041",
+    "user_id": "U0008",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0009_S00001580",
+    "user_id": "U0009",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0009_S00004485",
+    "user_id": "U0009",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0010_S00005203",
+    "user_id": "U0010",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0011_S00005211",
+    "user_id": "U0011",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0012_S00003795",
+    "user_id": "U0012",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0013_S00004510",
+    "user_id": "U0013",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0014_S00000101",
+    "user_id": "U0014",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0014_S00005237",
+    "user_id": "U0014",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0014_S00005240",
+    "user_id": "U0014",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0014_S00006727",
+    "user_id": "U0014",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0016_S00002377",
+    "user_id": "U0016",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0017_S00000901",
+    "user_id": "U0017",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0017_S00006754",
+    "user_id": "U0017",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0018_S00000906",
+    "user_id": "U0018",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0018_S00001647",
+    "user_id": "U0018",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0018_S00002389",
+    "user_id": "U0018",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0018_S00006002",
+    "user_id": "U0018",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0018_S00006757",
+    "user_id": "U0018",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0019_S00000918",
+    "user_id": "U0019",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0021_S00003863",
+    "user_id": "U0021",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0021_S00006780",
+    "user_id": "U0021",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0026_S00001701",
+    "user_id": "U0026",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0026_S00003172",
+    "user_id": "U0026",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0026_S00004601",
+    "user_id": "U0026",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0026_S00005325",
+    "user_id": "U0026",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0027_S00004609",
+    "user_id": "U0027",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0028_S00002461",
+    "user_id": "U0028",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0028_S00006079",
+    "user_id": "U0028",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0029_S00000984",
+    "user_id": "U0029",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0031_S00000227",
+    "user_id": "U0031",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0031_S00002488",
+    "user_id": "U0031",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0031_S00004631",
+    "user_id": "U0031",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0032_S00001010",
+    "user_id": "U0032",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0032_S00002495",
+    "user_id": "U0032",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0032_S00006116",
+    "user_id": "U0032",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0035_S00001027",
+    "user_id": "U0035",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0035_S00003229",
+    "user_id": "U0035",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0036_S00004666",
+    "user_id": "U0036",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0036_S00004671",
+    "user_id": "U0036",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0036_S00006149",
+    "user_id": "U0036",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0037_S00006918",
+    "user_id": "U0037",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0038_S00003984",
+    "user_id": "U0038",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0038_S00005415",
+    "user_id": "U0038",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0039_S00000292",
+    "user_id": "U0039",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0040_S00002551",
+    "user_id": "U0040",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0041_S00001078",
+    "user_id": "U0041",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0041_S00001079",
+    "user_id": "U0041",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0042_S00000319",
+    "user_id": "U0042",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0042_S00003273",
+    "user_id": "U0042",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0042_S00005436",
+    "user_id": "U0042",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0043_S00001098",
+    "user_id": "U0043",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0043_S00004026",
+    "user_id": "U0043",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0044_S00000332",
+    "user_id": "U0044",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0044_S00000337",
+    "user_id": "U0044",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0044_S00004031",
+    "user_id": "U0044",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0044_S00004726",
+    "user_id": "U0044",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0046_S00006987",
+    "user_id": "U0046",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0047_S00000354",
+    "user_id": "U0047",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0048_S00000361",
+    "user_id": "U0048",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0048_S00001123",
+    "user_id": "U0048",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0049_S00003330",
+    "user_id": "U0049",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0049_S00004759",
+    "user_id": "U0049",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0050_S00001892",
+    "user_id": "U0050",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0050_S00004074",
+    "user_id": "U0050",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0051_S00001150",
+    "user_id": "U0051",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0051_S00006255",
+    "user_id": "U0051",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0052_S00001903",
+    "user_id": "U0052",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0052_S00001909",
+    "user_id": "U0052",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0052_S00007034",
+    "user_id": "U0052",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0053_S00000399",
+    "user_id": "U0053",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0053_S00002640",
+    "user_id": "U0053",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0053_S00002641",
+    "user_id": "U0053",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0053_S00006274",
+    "user_id": "U0053",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0053_S00007051",
+    "user_id": "U0053",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0054_S00005532",
+    "user_id": "U0054",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0055_S00002652",
+    "user_id": "U0055",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0055_S00003368",
+    "user_id": "U0055",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0057_S00001205",
+    "user_id": "U0057",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0057_S00007077",
+    "user_id": "U0057",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0058_S00002672",
+    "user_id": "U0058",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0058_S00003388",
+    "user_id": "U0058",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0059_S00002673",
+    "user_id": "U0059",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0059_S00005565",
+    "user_id": "U0059",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0059_S00005567",
+    "user_id": "U0059",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0059_S00007091",
+    "user_id": "U0059",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0060_S00003398",
+    "user_id": "U0060",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0061_S00001228",
+    "user_id": "U0061",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0061_S00002688",
+    "user_id": "U0061",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0061_S00004844",
+    "user_id": "U0061",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0062_S00000477",
+    "user_id": "U0062",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0062_S00007108",
+    "user_id": "U0062",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0063_S00002702",
+    "user_id": "U0063",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0063_S00002706",
+    "user_id": "U0063",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0063_S00004855",
+    "user_id": "U0063",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0064_S00002005",
+    "user_id": "U0064",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0064_S00004178",
+    "user_id": "U0064",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0065_S00005607",
+    "user_id": "U0065",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0066_S00000499",
+    "user_id": "U0066",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0066_S00001262",
+    "user_id": "U0066",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0066_S00002016",
+    "user_id": "U0066",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0067_S00002024",
+    "user_id": "U0067",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0068_S00000515",
+    "user_id": "U0068",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0068_S00000519",
+    "user_id": "U0068",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0068_S00001281",
+    "user_id": "U0068",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0068_S00002739",
+    "user_id": "U0068",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0068_S00003452",
+    "user_id": "U0068",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0071_S00001297",
+    "user_id": "U0071",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0072_S00007169",
+    "user_id": "U0072",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0072_S00007172",
+    "user_id": "U0072",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0075_S00002084",
+    "user_id": "U0075",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0075_S00002786",
+    "user_id": "U0075",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0076_S00000592",
+    "user_id": "U0076",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0076_S00001334",
+    "user_id": "U0076",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0076_S00004955",
+    "user_id": "U0076",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0076_S00006446",
+    "user_id": "U0076",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0076_S00006448",
+    "user_id": "U0076",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0077_S00004261",
+    "user_id": "U0077",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0077_S00004265",
+    "user_id": "U0077",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0077_S00005701",
+    "user_id": "U0077",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0078_S00001348",
+    "user_id": "U0078",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0078_S00004971",
+    "user_id": "U0078",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0078_S00004975",
+    "user_id": "U0078",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0079_S00002821",
+    "user_id": "U0079",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0079_S00002823",
+    "user_id": "U0079",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0079_S00005716",
+    "user_id": "U0079",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0079_S00005717",
+    "user_id": "U0079",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0079_S00005718",
+    "user_id": "U0079",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0079_S00007227",
+    "user_id": "U0079",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0081_S00006486",
+    "user_id": "U0081",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0082_S00001375",
+    "user_id": "U0082",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0082_S00005737",
+    "user_id": "U0082",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0083_S00005010",
+    "user_id": "U0083",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0083_S00006502",
+    "user_id": "U0083",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0084_S00005751",
+    "user_id": "U0084",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0085_S00000652",
+    "user_id": "U0085",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0085_S00001395",
+    "user_id": "U0085",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0085_S00003573",
+    "user_id": "U0085",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0086_S00000655",
+    "user_id": "U0086",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0086_S00004335",
+    "user_id": "U0086",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0086_S00007281",
+    "user_id": "U0086",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0087_S00000670",
+    "user_id": "U0087",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0087_S00005030",
+    "user_id": "U0087",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0087_S00005771",
+    "user_id": "U0087",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0089_S00000682",
+    "user_id": "U0089",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0089_S00007315",
+    "user_id": "U0089",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0091_S00001433",
+    "user_id": "U0091",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0091_S00002912",
+    "user_id": "U0091",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0092_S00004375",
+    "user_id": "U0092",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0092_S00004376",
+    "user_id": "U0092",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0092_S00007331",
+    "user_id": "U0092",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0093_S00002219",
+    "user_id": "U0093",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0094_S00006582",
+    "user_id": "U0094",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0094_S00007352",
+    "user_id": "U0094",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0095_S00001465",
+    "user_id": "U0095",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0095_S00005100",
+    "user_id": "U0095",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0096_S00003670",
+    "user_id": "U0096",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0096_S00005102",
+    "user_id": "U0096",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0097_S00000739",
+    "user_id": "U0097",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0097_S00005854",
+    "user_id": "U0097",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0098_S00000749",
+    "user_id": "U0098",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0098_S00004420",
+    "user_id": "U0098",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0098_S00006617",
+    "user_id": "U0098",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0099_S00002266",
+    "user_id": "U0099",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0099_S00003691",
+    "user_id": "U0099",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0100_S00003706",
+    "user_id": "U0100",
+    "risk_level": "极高风险",
+    "final_risk_score": 79,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0046_S00006990",
+    "user_id": "U0046",
+    "risk_level": "极高风险",
+    "final_risk_score": 78.35,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0096_S00005101",
+    "user_id": "U0096",
+    "risk_level": "极高风险",
+    "final_risk_score": 78.32,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0004_S00004459",
+    "user_id": "U0004",
+    "risk_level": "极高风险",
+    "final_risk_score": 78.31,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0052_S00005509",
+    "user_id": "U0052",
+    "risk_level": "极高风险",
+    "final_risk_score": 78.31,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0027_S00002451",
+    "user_id": "U0027",
+    "risk_level": "极高风险",
+    "final_risk_score": 78.07,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0028_S00003911",
+    "user_id": "U0028",
+    "risk_level": "极高风险",
+    "final_risk_score": 78.07,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0063_S00005600",
+    "user_id": "U0063",
+    "risk_level": "极高风险",
+    "final_risk_score": 78.07,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0099_S00002267",
+    "user_id": "U0099",
+    "risk_level": "极高风险",
+    "final_risk_score": 78.07,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0002_S00002288",
+    "user_id": "U0002",
+    "risk_level": "极高风险",
+    "final_risk_score": 77.61,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0004_S00006654",
+    "user_id": "U0004",
+    "risk_level": "极高风险",
+    "final_risk_score": 77.61,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0018_S00003842",
+    "user_id": "U0018",
+    "risk_level": "极高风险",
+    "final_risk_score": 77.61,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0021_S00003135",
+    "user_id": "U0021",
+    "risk_level": "极高风险",
+    "final_risk_score": 77.61,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0032_S00001009",
+    "user_id": "U0032",
+    "risk_level": "极高风险",
+    "final_risk_score": 77.61,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0053_S00007048",
+    "user_id": "U0053",
+    "risk_level": "极高风险",
+    "final_risk_score": 77.61,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0054_S00001923",
+    "user_id": "U0054",
+    "risk_level": "极高风险",
+    "final_risk_score": 77.61,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0063_S00001243",
+    "user_id": "U0063",
+    "risk_level": "极高风险",
+    "final_risk_score": 77.61,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0091_S00002202",
+    "user_id": "U0091",
+    "risk_level": "极高风险",
+    "final_risk_score": 77.61,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0093_S00002929",
+    "user_id": "U0093",
+    "risk_level": "极高风险",
+    "final_risk_score": 77.61,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "未备案USB拷贝",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0011_S00005209",
+    "user_id": "U0011",
+    "risk_level": "极高风险",
+    "final_risk_score": 76.89,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0068_S00003451",
+    "user_id": "U0068",
+    "risk_level": "极高风险",
+    "final_risk_score": 76.86,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0042_S00004015",
+    "user_id": "U0042",
+    "risk_level": "极高风险",
+    "final_risk_score": 76.65,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0022_S00003144",
+    "user_id": "U0022",
+    "risk_level": "极高风险",
+    "final_risk_score": 76.43,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0098_S00001488",
+    "user_id": "U0098",
+    "risk_level": "极高风险",
+    "final_risk_score": 76.43,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0042_S00002568",
+    "user_id": "U0042",
+    "risk_level": "极高风险",
+    "final_risk_score": 75.35,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0005_S00004463",
+    "user_id": "U0005",
+    "risk_level": "极高风险",
+    "final_risk_score": 75.07,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0008_S00005936",
+    "user_id": "U0008",
+    "risk_level": "极高风险",
+    "final_risk_score": 75.07,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0030_S00002480",
+    "user_id": "U0030",
+    "risk_level": "极高风险",
+    "final_risk_score": 75.07,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0048_S00000365",
+    "user_id": "U0048",
+    "risk_level": "极高风险",
+    "final_risk_score": 75.07,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0058_S00003386",
+    "user_id": "U0058",
+    "risk_level": "极高风险",
+    "final_risk_score": 75.07,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0075_S00006439",
+    "user_id": "U0075",
+    "risk_level": "极高风险",
+    "final_risk_score": 75.07,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0094_S00001459",
+    "user_id": "U0094",
+    "risk_level": "极高风险",
+    "final_risk_score": 75.07,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0096_S00006598",
+    "user_id": "U0096",
+    "risk_level": "极高风险",
+    "final_risk_score": 75.07,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0086_S00005023",
+    "user_id": "U0086",
+    "risk_level": "高风险",
+    "final_risk_score": 74.67,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0027_S00000199",
+    "user_id": "U0027",
+    "risk_level": "高风险",
+    "final_risk_score": 73.6,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0089_S00006549",
+    "user_id": "U0089",
+    "risk_level": "高风险",
+    "final_risk_score": 73.43,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0092_S00002211",
+    "user_id": "U0092",
+    "risk_level": "高风险",
+    "final_risk_score": 73.14,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0031_S00006102",
+    "user_id": "U0031",
+    "risk_level": "高风险",
+    "final_risk_score": 72.09,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0087_S00001405",
+    "user_id": "U0087",
+    "risk_level": "高风险",
+    "final_risk_score": 72.09,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0017_S00006751",
+    "user_id": "U0017",
+    "risk_level": "高风险",
+    "final_risk_score": 71.97,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0061_S00004157",
+    "user_id": "U0061",
+    "risk_level": "高风险",
+    "final_risk_score": 71.97,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0037_S00000279",
+    "user_id": "U0037",
+    "risk_level": "高风险",
+    "final_risk_score": 70.88,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0047_S00000349",
+    "user_id": "U0047",
+    "risk_level": "高风险",
+    "final_risk_score": 70.67,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0077_S00004263",
+    "user_id": "U0077",
+    "risk_level": "高风险",
+    "final_risk_score": 70.67,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0032_S00006872",
+    "user_id": "U0032",
+    "risk_level": "高风险",
+    "final_risk_score": 70.5,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0044_S00004030",
+    "user_id": "U0044",
+    "risk_level": "高风险",
+    "final_risk_score": 70.45,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0056_S00000422",
+    "user_id": "U0056",
+    "risk_level": "高风险",
+    "final_risk_score": 70.45,
+    "matched_scene_list": [
+      "大批量导出",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0091_S00002206",
+    "user_id": "U0091",
+    "risk_level": "高风险",
+    "final_risk_score": 70.33,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0097_S00003679",
+    "user_id": "U0097",
+    "risk_level": "高风险",
+    "final_risk_score": 69.03,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0032_S00000238",
+    "user_id": "U0032",
+    "risk_level": "高风险",
+    "final_risk_score": 68.99,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0042_S00004707",
+    "user_id": "U0042",
+    "risk_level": "高风险",
+    "final_risk_score": 67.62,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0068_S00001279",
+    "user_id": "U0068",
+    "risk_level": "高风险",
+    "final_risk_score": 67.62,
+    "matched_scene_list": [
+      "大批量导出",
+      "非工作时间高危操作",
+      "未审批高敏导出",
+      "跨域大量查询"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  },
+  {
+    "run_id": "run_20260508_184058_101920",
+    "candidate_event_id": "U0037_S00004678",
+    "user_id": "U0037",
+    "risk_level": "高风险",
+    "final_risk_score": 63.23,
+    "matched_scene_list": [
+      "未审批高敏导出",
+      "外发敏感数据",
+      "跨域大量查询",
+      "截图高敏内容"
+    ],
+    "need_human_review": true,
+    "human_confirmed": null,
+    "false_positive": null,
+    "review_comment": ""
+  }
+]

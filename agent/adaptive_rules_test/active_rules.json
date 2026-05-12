@@ -1,0 +1,267 @@
+{
+  "version": 1,
+  "updated_at": "2026-05-08 18:39:42",
+  "scene_rules": [
+    {
+      "id": "scene_bulk_export",
+      "name": "大批量导出",
+      "scope": "event",
+      "status": "active",
+      "source": "seed",
+      "conditions": [
+        {
+          "field": "export_count",
+          "op": ">",
+          "value": 50,
+          "learnable": true
+        }
+      ]
+    },
+    {
+      "id": "scene_offwork_export",
+      "name": "非工作时间高危操作",
+      "scope": "event",
+      "status": "active",
+      "source": "seed",
+      "conditions": [
+        {
+          "field": "off_work_flag",
+          "op": "==",
+          "value": 1,
+          "learnable": false
+        },
+        {
+          "field": "export_count",
+          "op": ">",
+          "value": 10,
+          "learnable": true
+        }
+      ]
+    },
+    {
+      "id": "scene_unapproved_sensitive_export",
+      "name": "未审批高敏导出",
+      "scope": "event",
+      "status": "active",
+      "source": "seed",
+      "conditions": [
+        {
+          "field": "approval_flag",
+          "op": "==",
+          "value": 0,
+          "learnable": false
+        },
+        {
+          "field": "sensitivity_level",
+          "op": ">=",
+          "value": 4,
+          "learnable": true
+        }
+      ]
+    },
+    {
+      "id": "scene_unregistered_usb_copy",
+      "name": "未备案USB拷贝",
+      "scope": "event",
+      "status": "active",
+      "source": "seed",
+      "conditions": [
+        {
+          "field": "copy_count",
+          "op": ">",
+          "value": 0,
+          "learnable": true
+        },
+        {
+          "field": "usb_registered_flag",
+          "op": "==",
+          "value": 0,
+          "learnable": false
+        }
+      ]
+    },
+    {
+      "id": "scene_external_send_sensitive",
+      "name": "外发敏感数据",
+      "scope": "event",
+      "status": "active",
+      "source": "seed",
+      "conditions": [
+        {
+          "field": "external_send_count",
+          "op": ">",
+          "value": 0,
+          "learnable": true
+        },
+        {
+          "field": "sensitivity_level",
+          "op": ">=",
+          "value": 3,
+          "learnable": true
+        }
+      ]
+    },
+    {
+      "id": "scene_cross_domain_query",
+      "name": "跨域大量查询",
+      "scope": "event",
+      "status": "active",
+      "source": "seed",
+      "conditions": [
+        {
+          "field": "cross_domain_count",
+          "op": ">=",
+          "value": 3,
+          "learnable": true
+        },
+        {
+          "field": "query_count",
+          "op": ">",
+          "value": 30,
+          "learnable": true
+        }
+      ]
+    },
+    {
+      "id": "scene_sensitive_screenshot",
+      "name": "截图高敏内容",
+      "scope": "event",
+      "status": "active",
+      "source": "seed",
+      "conditions": [
+        {
+          "field": "screenshot_count",
+          "op": ">",
+          "value": 5,
+          "learnable": true
+        },
+        {
+          "field": "sensitivity_level",
+          "op": ">=",
+          "value": 4,
+          "learnable": true
+        }
+      ]
+    }
+  ],
+  "high_risk_thresholds": [
+    {
+      "field": "export_count",
+      "op": ">",
+      "value": 100,
+      "scope": "event",
+      "source": "seed",
+      "learnable": true
+    },
+    {
+      "field": "print_pages",
+      "op": ">",
+      "value": 50,
+      "scope": "event",
+      "source": "seed",
+      "learnable": true
+    },
+    {
+      "field": "screenshot_count",
+      "op": ">",
+      "value": 20,
+      "scope": "event",
+      "source": "seed",
+      "learnable": true
+    },
+    {
+      "field": "external_send_count",
+      "op": ">",
+      "value": 5,
+      "scope": "event",
+      "source": "seed",
+      "learnable": true
+    }
+  ],
+  "weak_rules": [
+    {
+      "id": "weak_off_work",
+      "name": "非工作时间",
+      "scope": "event",
+      "status": "active",
+      "source": "seed",
+      "conditions": [
+        {
+          "field": "off_work_flag",
+          "op": "==",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "weak_new_device",
+      "name": "新设备",
+      "scope": "event",
+      "status": "active",
+      "source": "seed",
+      "conditions": [
+        {
+          "field": "device_new_flag",
+          "op": "==",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "weak_cross_dept",
+      "name": "跨部门",
+      "scope": "event",
+      "status": "active",
+      "source": "seed",
+      "conditions": [
+        {
+          "field": "cross_dept_flag",
+          "op": "==",
+          "value": 1
+        }
+      ]
+    },
+    {
+      "id": "weak_unapproved",
+      "name": "未审批",
+      "scope": "event",
+      "status": "active",
+      "source": "seed",
+      "conditions": [
+        {
+          "field": "approval_flag",
+          "op": "==",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "id": "weak_no_business",
+      "name": "无业务支撑",
+      "scope": "event",
+      "status": "active",
+      "source": "seed",
+      "conditions": [
+        {
+          "field": "business_flag",
+          "op": "==",
+          "value": 0
+        }
+      ]
+    },
+    {
+      "id": "weak_tool_abnormal",
+      "name": "异常工具",
+      "scope": "event",
+      "status": "active",
+      "source": "seed",
+      "conditions": [
+        {
+          "field": "tool_abnormal_flag",
+          "op": "==",
+          "value": 1
+        }
+      ]
+    }
+  ]
+}

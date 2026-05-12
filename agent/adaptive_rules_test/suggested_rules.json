@@ -1,0 +1,198 @@
+{
+  "generated_at": "2026-05-09 00:10:46",
+  "rules": [
+    {
+      "id": "ml_approval_missing_eq_1__device_new_flag_eq_1",
+      "name": "建议规则-未审批 + 新设备",
+      "scope": "session",
+      "status": "suggested",
+      "approved": false,
+      "source": "ml_rule_mining",
+      "generated_at": "2026-05-09 00:10:45",
+      "last_seen_at": "2026-05-09 00:10:46",
+      "review_comment": "",
+      "conditions": [
+        {
+          "field": "approval_missing",
+          "op": "==",
+          "value": 1
+        },
+        {
+          "field": "device_new_flag",
+          "op": "==",
+          "value": 1
+        }
+      ],
+      "metrics": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f05": 1.0,
+        "support_count": 267,
+        "positive_hits": 267,
+        "negative_hits": 0
+      },
+      "explanation": "根据历史反馈样本与风险分布挖掘出的候选组合规则，需人工确认后生效。"
+    },
+    {
+      "id": "ml_business_missing_eq_1__device_new_flag_eq_1",
+      "name": "建议规则-业务缺失 + 新设备",
+      "scope": "session",
+      "status": "suggested",
+      "approved": false,
+      "source": "ml_rule_mining",
+      "generated_at": "2026-05-09 00:10:45",
+      "last_seen_at": "2026-05-09 00:10:46",
+      "review_comment": "",
+      "conditions": [
+        {
+          "field": "business_missing",
+          "op": "==",
+          "value": 1
+        },
+        {
+          "field": "device_new_flag",
+          "op": "==",
+          "value": 1
+        }
+      ],
+      "metrics": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f05": 1.0,
+        "support_count": 267,
+        "positive_hits": 267,
+        "negative_hits": 0
+      },
+      "explanation": "根据历史反馈样本与风险分布挖掘出的候选组合规则，需人工确认后生效。"
+    },
+    {
+      "id": "ml_device_new_flag_eq_1__sensitivity_level_ge_4",
+      "name": "建议规则-新设备 + 敏感等级>=4",
+      "scope": "session",
+      "status": "suggested",
+      "approved": false,
+      "source": "ml_rule_mining",
+      "generated_at": "2026-05-09 00:10:45",
+      "last_seen_at": "2026-05-09 00:10:46",
+      "review_comment": "",
+      "conditions": [
+        {
+          "field": "device_new_flag",
+          "op": "==",
+          "value": 1
+        },
+        {
+          "field": "sensitivity_level",
+          "op": ">=",
+          "value": 4
+        }
+      ],
+      "metrics": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f05": 1.0,
+        "support_count": 267,
+        "positive_hits": 267,
+        "negative_hits": 0
+      },
+      "explanation": "根据历史反馈样本与风险分布挖掘出的候选组合规则，需人工确认后生效。"
+    },
+    {
+      "id": "ml_cross_domain_count_ge_3__device_new_flag_eq_1",
+      "name": "建议规则-跨域访问数>=3 + 新设备",
+      "scope": "session",
+      "status": "suggested",
+      "approved": false,
+      "source": "ml_rule_mining",
+      "generated_at": "2026-05-09 00:10:45",
+      "last_seen_at": "2026-05-09 00:10:46",
+      "review_comment": "",
+      "conditions": [
+        {
+          "field": "cross_domain_count",
+          "op": ">=",
+          "value": 3
+        },
+        {
+          "field": "device_new_flag",
+          "op": "==",
+          "value": 1
+        }
+      ],
+      "metrics": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f05": 1.0,
+        "support_count": 267,
+        "positive_hits": 267,
+        "negative_hits": 0
+      },
+      "explanation": "根据历史反馈样本与风险分布挖掘出的候选组合规则，需人工确认后生效。"
+    },
+    {
+      "id": "ml_approval_missing_eq_1__business_missing_eq_1",
+      "name": "建议规则-未审批 + 业务缺失",
+      "scope": "session",
+      "status": "suggested",
+      "approved": false,
+      "source": "ml_rule_mining",
+      "generated_at": "2026-05-09 00:10:45",
+      "last_seen_at": "2026-05-09 00:10:46",
+      "review_comment": "",
+      "conditions": [
+        {
+          "field": "approval_missing",
+          "op": "==",
+          "value": 1
+        },
+        {
+          "field": "business_missing",
+          "op": "==",
+          "value": 1
+        }
+      ],
+      "metrics": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f05": 1.0,
+        "support_count": 267,
+        "positive_hits": 267,
+        "negative_hits": 0
+      },
+      "explanation": "根据历史反馈样本与风险分布挖掘出的候选组合规则，需人工确认后生效。"
+    },
+    {
+      "id": "ml_device_new_flag_eq_1__query_count_gt_25",
+      "name": "建议规则-新设备 + 查询量>25",
+      "scope": "session",
+      "status": "suggested",
+      "approved": false,
+      "source": "ml_rule_mining",
+      "generated_at": "2026-05-08 23:48:18",
+      "last_seen_at": "2026-05-08 23:48:22",
+      "review_comment": "",
+      "conditions": [
+        {
+          "field": "device_new_flag",
+          "op": "==",
+          "value": 1
+        },
+        {
+          "field": "query_count",
+          "op": ">",
+          "value": 25
+        }
+      ],
+      "metrics": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f05": 1.0,
+        "support_count": 267,
+        "positive_hits": 267,
+        "negative_hits": 0
+      },
+      "explanation": "根据历史反馈样本与风险分布挖掘出的候选组合规则，需人工确认后生效。",
+      "stale": true
+    }
+  ]
+}

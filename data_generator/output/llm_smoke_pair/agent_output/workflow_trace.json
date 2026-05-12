@@ -1,0 +1,116 @@
+[
+  {
+    "step": "自适应规则准备模块",
+    "input": {
+      "output_dir": "/Users/oo/Documents/proj/dlp-sentinel/data_generator/output/llm_smoke_pair/agent_output"
+    },
+    "output": {
+      "feedback_sync": {
+        "synced": false,
+        "updated_items": 0
+      },
+      "activated_rules": 0,
+      "active_scene_rules": 7,
+      "active_high_risk_thresholds": 4,
+      "active_weak_rules": 6,
+      "pending_suggested_rules": 6
+    }
+  },
+  {
+    "step": "数据加载模块",
+    "input": {
+      "csv_path": "/Users/oo/Documents/proj/dlp-sentinel/data_generator/output/llm_smoke_pair/events.csv"
+    },
+    "output": {
+      "raw_event_count": 10,
+      "unique_sessions": 3
+    }
+  },
+  {
+    "agent": "规则识别Agent",
+    "time": "2026-05-09 00:08:41",
+    "input": {
+      "raw_event_count": 10
+    },
+    "output": {
+      "session_count": 3,
+      "candidate_count": 1,
+      "matched_scene_summary": {
+        "大批量导出": 1,
+        "非工作时间高危操作": 1,
+        "未审批高敏导出": 1,
+        "跨域大量查询": 1
+      },
+      "runtime_rules": {
+        "scene_rule_count": 7,
+        "high_risk_threshold_count": 4,
+        "weak_rule_count": 6,
+        "approved_ml_rule_count": 0
+      }
+    }
+  },
+  {
+    "agent": "行为理解Agent",
+    "time": "2026-05-09 00:08:41",
+    "input": {
+      "candidate_count": 1,
+      "permission_rule_count": 14
+    },
+    "output": {
+      "behavior_analyzed_count": 1,
+      "business_unreasonable_count": 1,
+      "high_chain_count": 0,
+      "high_deviation_count": 1
+    }
+  },
+  {
+    "agent": "风险评分Agent",
+    "time": "2026-05-09 00:08:41",
+    "input": {
+      "candidate_count": 1,
+      "use_behavior_result": true
+    },
+    "output": {
+      "scored_event_count": 1,
+      "high_risk_count": 1
+    }
+  },
+  {
+    "agent": "研判处置Agent",
+    "time": "2026-05-09 00:10:44",
+    "input": {
+      "scored_event_count": 1
+    },
+    "output": {
+      "report_count": 1,
+      "generated_disposition": true
+    }
+  },
+  {
+    "step": "反馈记录模块",
+    "input": {
+      "report_count": 1,
+      "run_id": "run_20260509_000841_954460"
+    },
+    "output": {
+      "feedback_items": 1,
+      "feedback_file": "/Users/oo/Documents/proj/dlp-sentinel/data_generator/output/llm_smoke_pair/agent_output/feedback.json"
+    }
+  },
+  {
+    "step": "规则自适应模块",
+    "input": {
+      "run_id": "run_20260509_000841_954460",
+      "candidate_count": 3,
+      "report_count": 1
+    },
+    "output": {
+      "run_id": "run_20260509_000841_954460",
+      "history_run_count": 4,
+      "labeled_sample_count": 0,
+      "threshold_updates": [],
+      "suggested_rule_count": 6,
+      "pending_suggested_rules": 6
+    }
+  }
+]
