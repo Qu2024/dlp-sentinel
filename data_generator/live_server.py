@@ -213,8 +213,18 @@ class LiveRequestHandler(BaseHTTPRequestHandler):
         if parsed.path == "/health":
             self._send_json({"ok": True, "service": "dlp-live-server"})
             return
+        if parsed.path == "/rules":
+            self._send_rules()
+            return
         if parsed.path == "/stream":
             self._send_stream(parsed.query)
+            return
+        self.send_error(HTTPStatus.NOT_FOUND, "Not Found")
+
+    def do_POST(self) -> None:
+        parsed = urlparse(self.path)
+        if parsed.path == "/rules/suggestions/review":
+            self._review_rule_suggestion()
             return
         self.send_error(HTTPStatus.NOT_FOUND, "Not Found")
 
@@ -228,7 +238,7 @@ class LiveRequestHandler(BaseHTTPRequestHandler):
 
     def _send_cors_headers(self) -> None:
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, OPTIONS")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.send_header("Cache-Control", "no-store")
 
@@ -240,6 +250,41 @@ class LiveRequestHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
+
+    def _read_json_body(self) -> dict[str, Any]:
+        length = int(self.headers.get("Content-Length", "0") or "0")
+        if length <= 0:
+            return {}
+        raw = self.rfile.read(length).decode("utf-8")
+        return json.loads(raw)
+
+    def _send_rules(self) -> None:
+        rule_dir = self.server.rule_dir
+        adaptive_rule_engine.ensure_store(rule_dir)
+        self._send_json({
+            "ok": True,
+            "rule_dir": str(rule_dir),
+            "active_rules": adaptive_rule_engine.load_active_rules(rule_dir),
+            "suggested_rules": adaptive_rule_engine.load_suggested_rules(rule_dir),
+        })
+
+    def _review_rule_suggestion(self) -> None:
+        try:
+            payload = self._read_json_body()
+            result = adaptive_rule_engine.review_suggested_rule(
+                rule_id=str(payload.get("rule_id", "")),
+                action=str(payload.get("action", "")),
+                rule_dir=self.server.rule_dir,
+                review_comment=str(payload.get("review_comment", "")),
+            )
+        except (json.JSONDecodeError, ValueError) as exc:
+            self._send_json({"ok": False, "error": str(exc)}, status=HTTPStatus.BAD_REQUEST)
+            return
+
+        status = HTTPStatus.OK if result.get("ok") else HTTPStatus.BAD_REQUEST
+        if result.get("ok"):
+            result["rule_dir"] = str(self.server.rule_dir)
+        self._send_json(result, status=status)
 
     def _send_stream(self, query: str) -> None:
         params = parse_qs(query)

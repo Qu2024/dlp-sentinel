@@ -1418,6 +1418,57 @@ tr:hover td {
   gap: 12px;
 }
 
+.suggestedRuleSide {
+  display: grid;
+  gap: 10px;
+  justify-items: end;
+  align-content: start;
+}
+
+.ruleActionRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.miniActionButton {
+  min-height: 30px;
+  border-radius: 7px;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--muted);
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.miniActionButton.approve {
+  color: var(--green);
+  border-color: #a7f3d0;
+  background: var(--green-2);
+}
+
+.miniActionButton.reject {
+  color: var(--red);
+  border-color: #fecaca;
+  background: var(--red-2);
+}
+
+.miniActionButton:disabled {
+  opacity: 0.62;
+}
+
+.ruleActionNotice {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fafc;
+  color: var(--muted);
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
 .suggestedRule h3 {
   font-size: 13px;
   margin-bottom: 7px;

@@ -88,6 +88,8 @@ def _default_suggested_rules() -> dict[str, Any]:
     return {
         "generated_at": _now(),
         "rules": [],
+        "reviewed_rules": [],
+        "rejected_rule_ids": [],
     }
 
 
@@ -146,7 +148,92 @@ def load_suggested_rules(rule_dir: str | Path | None = None) -> dict[str, Any]:
     store_dir = ensure_store(rule_dir)
     data = _read_json(store_dir / SUGGESTED_RULES_FILE, _default_suggested_rules())
     data.setdefault("rules", [])
+    data.setdefault("reviewed_rules", [])
+    data.setdefault("rejected_rule_ids", [])
     return data
+
+
+def review_suggested_rule(
+    rule_id: str,
+    action: str,
+    rule_dir: str | Path | None = None,
+    review_comment: str = "",
+) -> dict[str, Any]:
+    """Approve or reject one mined suggestion and remove it from the pending pool."""
+    store_dir = ensure_store(rule_dir)
+    active_rules = load_active_rules(store_dir)
+    suggested_rules = load_suggested_rules(store_dir)
+    action = action.lower().strip()
+    if action not in {"approve", "accept", "activate", "reject", "discard"}:
+        return {"ok": False, "error": f"Unsupported action: {action}"}
+
+    target = None
+    remaining_rules = []
+    for rule in suggested_rules["rules"]:
+        if rule.get("id") == rule_id:
+            target = deepcopy(rule)
+        else:
+            remaining_rules.append(rule)
+
+    if not target:
+        return {
+            "ok": False,
+            "error": "Suggested rule not found",
+            "active_rules": active_rules,
+            "suggested_rules": suggested_rules,
+        }
+
+    now = _now()
+    reviewed = deepcopy(target)
+    reviewed["reviewed_at"] = now
+    reviewed["review_comment"] = review_comment
+
+    if action in {"approve", "accept", "activate"}:
+        active_ids = {rule.get("id") for rule in active_rules["scene_rules"]}
+        active_signatures = {
+            _condition_signature(rule.get("conditions", []))
+            for rule in active_rules["scene_rules"]
+        }
+        target_signature = _condition_signature(target.get("conditions", []))
+        if target.get("id") not in active_ids and target_signature not in active_signatures:
+            promoted = deepcopy(target)
+            promoted["status"] = "active"
+            promoted["approved"] = True
+            promoted["source"] = "approved_suggestion"
+            promoted["activated_at"] = now
+            promoted["review_comment"] = review_comment
+            active_rules["scene_rules"].append(promoted)
+            active_rules["updated_at"] = now
+            _write_json(store_dir / ACTIVE_RULES_FILE, active_rules)
+
+        reviewed["status"] = "active"
+        reviewed["approved"] = True
+        reviewed["activated_at"] = now
+        result_action = "approved"
+    else:
+        reviewed["status"] = "rejected"
+        reviewed["approved"] = False
+        reviewed["rejected_at"] = now
+        rejected_ids = set(suggested_rules.get("rejected_rule_ids", []))
+        rejected_ids.add(rule_id)
+        suggested_rules["rejected_rule_ids"] = sorted(rejected_ids)
+        result_action = "rejected"
+
+    reviewed_rules = suggested_rules.get("reviewed_rules", [])
+    reviewed_rules = [rule for rule in reviewed_rules if rule.get("id") != rule_id]
+    reviewed_rules.insert(0, reviewed)
+    suggested_rules["reviewed_rules"] = reviewed_rules[:100]
+    suggested_rules["rules"] = remaining_rules
+    suggested_rules["generated_at"] = now
+    _write_json(store_dir / SUGGESTED_RULES_FILE, suggested_rules)
+
+    return {
+        "ok": True,
+        "action": result_action,
+        "rule_id": rule_id,
+        "active_rules": active_rules,
+        "suggested_rules": suggested_rules,
+    }
 
 
 def prepare_runtime(output_dir: str | Path = "output", rule_dir: str | Path | None = None) -> dict[str, Any]:
@@ -684,6 +771,12 @@ def _refresh_suggested_rules(samples: list[dict[str, Any]], active_rules: dict[s
         _condition_signature(rule.get("conditions", []))
         for rule in active_rules["scene_rules"]
     }
+    rejected_ids = set(existing.get("rejected_rule_ids", []))
+    rejected_signatures = {
+        _condition_signature(rule.get("conditions", []))
+        for rule in existing.get("reviewed_rules", [])
+        if rule.get("status") in {"rejected", "discarded"}
+    }
     atomic_rules = []
     for atom in BOOLEAN_ATOMS:
         metrics = _condition_metrics(rows, atom["field"], atom["op"], atom["value"])
@@ -709,6 +802,9 @@ def _refresh_suggested_rules(samples: list[dict[str, Any]], active_rules: dict[s
                 continue
             signature = _condition_signature(conditions)
             if signature in active_signatures:
+                continue
+            rule_id = _rule_id_from_conditions(sorted(conditions, key=lambda item: (item["field"], item["op"], str(item["value"]))))
+            if rule_id in rejected_ids or signature in rejected_signatures:
                 continue
             metrics = _combo_metrics(rows, conditions)
             if metrics["support_count"] < 2:
@@ -764,6 +860,8 @@ def _refresh_suggested_rules(samples: list[dict[str, Any]], active_rules: dict[s
     payload = {
         "generated_at": _now(),
         "rules": merged_rules,
+        "reviewed_rules": existing.get("reviewed_rules", []),
+        "rejected_rule_ids": sorted(rejected_ids),
     }
     _write_json(store_dir / SUGGESTED_RULES_FILE, payload)
 

@@ -31,6 +31,7 @@ const datasetOptions = {
 const defaultDatasetId = "adaptive_rules_test_large";
 const defaultDemoMode = "live";
 const liveApiBase = "http://127.0.0.1:8765";
+const ruleApiBase = liveApiBase;
 
 const demoModeOptions = {
   live: {
@@ -176,6 +177,8 @@ const state = {
   suggestedRules: {},
   learningLog: "",
   selectedId: "",
+  ruleActionMessage: "",
+  ruleActionBusyId: "",
   demoMode: demoModeFromUrl(),
   datasetId: datasetIdForDemoMode(demoModeFromUrl()),
   currentView: "live",
@@ -211,14 +214,13 @@ async function loadData() {
   if (state.live.overviewActive) storeLiveOverviewSnapshot();
   state.live.overviewActive = false;
   const paths = buildPaths(state.datasetId);
-  const [reports, riskEvents, feedback, evaluation, meta, activeRules, suggestedRules, learningLog] = await Promise.all([
+  const [reports, riskEvents, feedback, evaluation, meta, ruleStore, learningLog] = await Promise.all([
     loadJson(paths.reports, fallback.reports),
     loadJson(paths.riskEvents, fallback.riskEvents),
     loadJson(paths.feedback, fallback.feedback),
     loadJson(paths.evaluation, fallback.evaluation),
     loadJson(paths.meta, fallback.meta),
-    loadJson(paths.activeRules, fallback.activeRules),
-    loadJson(paths.suggestedRules, fallback.suggestedRules),
+    loadRuleStore(paths),
     loadText(paths.learningLog, fallback.learningLog),
   ]);
 
@@ -228,8 +230,8 @@ async function loadData() {
   state.feedback = feedback;
   state.evaluation = evaluation;
   state.meta = normalizeMeta(meta, evaluation);
-  state.activeRules = activeRules;
-  state.suggestedRules = suggestedRules;
+  state.activeRules = ruleStore.activeRules;
+  state.suggestedRules = ruleStore.suggestedRules;
   state.learningLog = learningLog;
   state.selectedId = state.reports[0]?.candidate_event_id || "";
 
@@ -275,6 +277,28 @@ async function loadJson(pathOrPaths, backup) {
     }
   }
   return backup;
+}
+
+async function loadRuleStore(paths) {
+  try {
+    const response = await fetch(`${ruleApiBase}/rules`, { cache: "no-store" });
+    if (!response.ok) throw new Error(response.statusText);
+    const payload = await response.json();
+    if (payload.ok) {
+      return {
+        activeRules: payload.active_rules || fallback.activeRules,
+        suggestedRules: payload.suggested_rules || fallback.suggestedRules,
+      };
+    }
+  } catch {
+    // The live server is optional for static viewing; fall back to files.
+  }
+
+  const [activeRules, suggestedRules] = await Promise.all([
+    loadJson(paths.activeRules, fallback.activeRules),
+    loadJson(paths.suggestedRules, fallback.suggestedRules),
+  ]);
+  return { activeRules, suggestedRules };
 }
 
 async function loadText(path, backup) {
@@ -479,6 +503,46 @@ function updateEvaluationRates() {
   state.evaluation.precision = precision;
   state.evaluation.recall = recall;
   state.evaluation.f1 = precision + recall ? (2 * precision * recall) / (precision + recall) : 0;
+}
+
+function pendingSuggestedRules() {
+  return (state.suggestedRules.rules || []).filter((rule) =>
+    rule.status !== "active"
+    && rule.status !== "rejected"
+    && !rule.approved
+  );
+}
+
+async function reviewSuggestedRule(ruleId, action) {
+  if (!ruleId || state.ruleActionBusyId) return;
+  const rule = (state.suggestedRules.rules || []).find((item) => item.id === ruleId);
+  state.ruleActionBusyId = ruleId;
+  state.ruleActionMessage = action === "approve" ? "正在加入规则库..." : "正在移出建议池...";
+  renderRules();
+
+  try {
+    const response = await fetch(`${ruleApiBase}/rules/suggestions/review`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ rule_id: ruleId, action }),
+    });
+    const payload = await response.json();
+    if (!response.ok || !payload.ok) {
+      throw new Error(payload.error || response.statusText);
+    }
+    state.activeRules = payload.active_rules || state.activeRules;
+    state.suggestedRules = payload.suggested_rules || state.suggestedRules;
+    state.ruleActionMessage = action === "approve"
+      ? `已加入规则库：${rule?.name || ruleId}`
+      : `已拒绝并移出建议池：${rule?.name || ruleId}`;
+  } catch (error) {
+    state.ruleActionMessage = `规则操作失败：${error.message || error}`;
+  } finally {
+    state.ruleActionBusyId = "";
+    renderRules();
+    renderSuggestions();
+    renderMetrics();
+  }
 }
 
 function renderOverviewFromLive(includeRiskViews) {
@@ -1035,7 +1099,7 @@ function renderSceneBars() {
 }
 
 function renderSuggestions() {
-  const rules = state.suggestedRules.rules || [];
+  const rules = pendingSuggestedRules();
   document.getElementById("suggestionCount").textContent = String(rules.length);
   document.getElementById("suggestionList").innerHTML = rules.slice(0, 4).map((rule) => `
     <article class="suggestionCard">
@@ -1095,10 +1159,12 @@ function renderRules() {
     </div>
   `).join("");
 
-  const suggested = state.suggestedRules.rules || [];
-  document.getElementById("pendingRuleCount").textContent = String(suggested.filter((rule) => !rule.approved).length);
-  document.getElementById("suggestedRuleTable").innerHTML = suggested.map((rule) => `
-    <article class="suggestedRule">
+  const suggested = pendingSuggestedRules();
+  document.getElementById("pendingRuleCount").textContent = String(suggested.length);
+  document.getElementById("suggestedRuleTable").innerHTML = `
+    ${state.ruleActionMessage ? `<div class="ruleActionNotice">${escapeHtml(state.ruleActionMessage)}</div>` : ""}
+    ${suggested.map((rule) => `
+    <article class="suggestedRule" data-rule-id="${escapeAttr(rule.id)}">
       <div>
         <h3>${escapeHtml(rule.name || rule.id)}</h3>
         <p>${escapeHtml(conditionText(rule.conditions || []))}</p>
@@ -1109,9 +1175,22 @@ function renderRules() {
           <span>Support ${fmt(rule.metrics?.support_count)}</span>
         </div>
       </div>
-      <span class="statusPill">${rule.approved ? "已批准" : "待确认"}</span>
+      <div class="suggestedRuleSide">
+        <span class="statusPill">待确认</span>
+        <div class="ruleActionRow">
+          <button class="miniActionButton approve" data-rule-action="approve" data-rule-id="${escapeAttr(rule.id)}" ${state.ruleActionBusyId === rule.id ? "disabled" : ""}>加入规则</button>
+          <button class="miniActionButton reject" data-rule-action="reject" data-rule-id="${escapeAttr(rule.id)}" ${state.ruleActionBusyId === rule.id ? "disabled" : ""}>弃用</button>
+        </div>
+      </div>
     </article>
-  `).join("") || `<div class="emptyState">暂无建议规则</div>`;
+  `).join("") || `<div class="emptyState">暂无建议规则</div>`}
+  `;
+
+  document.getElementById("suggestedRuleTable").querySelectorAll("[data-rule-action]").forEach((button) => {
+    button.addEventListener("click", () => {
+      reviewSuggestedRule(button.dataset.ruleId, button.dataset.ruleAction);
+    });
+  });
 }
 
 function renderAudit() {
