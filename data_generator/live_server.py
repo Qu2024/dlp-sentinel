@@ -7,6 +7,7 @@ import random
 import sys
 import time
 from dataclasses import asdict, is_dataclass
+from datetime import datetime
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -57,6 +58,10 @@ def _stream_sleep_seconds(speed_ms: int, event_name: str, rng: random.Random, ji
     return value / 1000
 
 
+def time_now() -> datetime:
+    return datetime.now().replace(microsecond=0)
+
+
 def _raw_event(row: dict[str, Any]) -> RawEvent:
     fields = RawEvent.__dataclass_fields__
     return RawEvent(**{name: row.get(name) for name in fields})
@@ -92,6 +97,7 @@ class LivePipeline:
         self.scoring_agent = ScoringAgent()
         self.session_events: dict[str, list[RawEvent]] = {}
         self.labels: dict[str, dict[str, Any]] = {}
+        self.active_sessions: list[dict[str, Any]] = []
         self.counts = {
             "events": 0,
             "sessions_started": 0,
@@ -102,16 +108,35 @@ class LivePipeline:
         }
         self.rule_dir = rule_dir
         self.config = config
+        self.started_at = time.strftime("%Y-%m-%d %H:%M:%S")
 
-    def iter_messages(self, max_events: int | None = None):
+    def iter_messages(self, max_events: int | None = None, max_active_sessions: int = 8):
         yield {
             "type": "meta",
             "rule_dir": str(self.rule_dir),
             "config": asdict(self.config),
-            "started_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+            "started_at": self.started_at,
+            "counts": dict(self.counts),
         }
 
-        for row, label, is_first_event, finished in self.engine.iter_stream(max_events=max_events):
+        emitted = 0
+        while max_events is None or emitted < max_events:
+            while len(self.active_sessions) < max_active_sessions:
+                user = self.engine.random.choice(self.engine.users)
+                is_anomaly = self.engine.random.random() < self.config.anomaly_rate
+                ctx = self.engine._create_session(user, time_now(), is_anomaly, live=True)
+                self.active_sessions.append(ctx)
+
+            ctx = self.engine.random.choice(self.active_sessions)
+            is_first_event = ctx["step_index"] == 0
+            row = self.engine._row_for_current_step(ctx)
+            ctx["step_index"] += 1
+            finished = ctx["step_index"] >= len(ctx["chain"])
+            if finished:
+                self.active_sessions.remove(ctx)
+            emitted += 1
+
+            label = ctx["label"]
             raw_event = _raw_event(row)
             self.session_events.setdefault(raw_event.session_id, []).append(raw_event)
             self.labels[raw_event.session_id] = label
@@ -223,6 +248,8 @@ class LiveRequestHandler(BaseHTTPRequestHandler):
         max_events = max_events_raw if max_events_raw > 0 else None
         jitter = params.get("jitter", ["1"])[0].lower() not in {"0", "false", "no"}
         seed = int(params.get("seed", [20260508])[0])
+        run_id = params.get("run_id", ["default"])[0] or "default"
+        reset_run = params.get("reset", ["0"])[0].lower() in {"1", "true", "yes"}
         sleep_rng = random.Random(time.time_ns() ^ seed)
 
         config = DataEngineConfig(
@@ -233,7 +260,15 @@ class LiveRequestHandler(BaseHTTPRequestHandler):
             seed=seed,
             start_date="2026-05-08",
         )
-        pipeline = LivePipeline(config, self.server.rule_dir, self.server.permission_path)
+        config_key = asdict(config)
+        cached = self.server.pipelines.get(run_id)
+        if reset_run or cached is None or cached["config_key"] != config_key:
+            pipeline = LivePipeline(config, self.server.rule_dir, self.server.permission_path)
+            self.server.pipelines[run_id] = {"config_key": config_key, "pipeline": pipeline}
+            resumed = False
+        else:
+            pipeline = cached["pipeline"]
+            resumed = True
 
         self.send_response(HTTPStatus.OK)
         self._send_cors_headers()
@@ -243,6 +278,9 @@ class LiveRequestHandler(BaseHTTPRequestHandler):
 
         try:
             for index, message in enumerate(pipeline.iter_messages(max_events=max_events), start=1):
+                if message.get("type") == "meta":
+                    message["run_id"] = run_id
+                    message["resumed"] = resumed
                 event_name = message.get("type", "message")
                 payload = f"id: {index}\nevent: {event_name}\ndata: {_to_json(message)}\n\n"
                 self.wfile.write(payload.encode("utf-8"))
@@ -250,6 +288,7 @@ class LiveRequestHandler(BaseHTTPRequestHandler):
                 time.sleep(_stream_sleep_seconds(speed_ms, event_name, sleep_rng, jitter))
             self.wfile.write(b"event: done\ndata: {\"type\":\"done\"}\n\n")
             self.wfile.flush()
+            self.close_connection = True
         except (BrokenPipeError, ConnectionResetError):
             return
 
@@ -265,6 +304,7 @@ def main() -> None:
     server = ThreadingHTTPServer((args.host, args.port), LiveRequestHandler)
     server.rule_dir = args.rule_dir.resolve()
     server.permission_path = args.permission_path.resolve()
+    server.pipelines = {}
     print(f"DLP live server listening on http://{args.host}:{args.port}")
     print(f"Using rule dir: {server.rule_dir}")
     try:

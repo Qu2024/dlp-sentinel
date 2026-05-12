@@ -29,7 +29,41 @@ const datasetOptions = {
 };
 
 const defaultDatasetId = "adaptive_rules_test_large";
+const defaultDemoMode = "live";
 const liveApiBase = "http://127.0.0.1:8765";
+
+const demoModeOptions = {
+  live: {
+    label: "实时生成",
+    description: "实时生成数据并同步处理风险",
+    targetView: "live",
+    datasetId: defaultDatasetId,
+  },
+  replay_large: {
+    label: "大样本复盘",
+    description: "查看离线批量评测结果",
+    targetView: "overview",
+    datasetId: "adaptive_rules_test_large",
+  },
+  llm_report: {
+    label: "LLM 报告样例",
+    description: "查看带 LLM 研判解释的样例",
+    targetView: "overview",
+    datasetId: "llm_smoke_pair",
+  },
+  anomaly_case: {
+    label: "单异常报告",
+    description: "查看单个高危异常会话",
+    targetView: "agents",
+    datasetId: "llm_smoke_high",
+  },
+  normal_check: {
+    label: "正常样本对照",
+    description: "查看正常样本误报情况",
+    targetView: "events",
+    datasetId: "llm_smoke_normal",
+  },
+};
 
 const agentDefs = [
   {
@@ -142,23 +176,21 @@ const state = {
   suggestedRules: {},
   learningLog: "",
   selectedId: "",
-  datasetId: datasetFromUrl(),
+  demoMode: demoModeFromUrl(),
+  datasetId: datasetIdForDemoMode(demoModeFromUrl()),
   currentView: "live",
   live: {
     source: null,
+    runId: "",
+    hasStarted: false,
     rawFeed: [],
     riskFeed: [],
     selectedRisk: null,
-    counts: {
-      events: 0,
-      sessions_started: 0,
-      sessions_completed: 0,
-      candidate_events: 0,
-      high_or_above: 0,
-      anomalies: 0,
-    },
+    counts: emptyLiveCounts(),
     connected: false,
+    paused: false,
     overviewActive: false,
+    overviewSnapshot: null,
   },
 };
 
@@ -169,13 +201,14 @@ async function init() {
   bindNavigation();
   bindFilters();
   bindLiveControls();
-  bindDatasetSelector();
   await loadData();
+  setActiveView((demoModeOptions[state.demoMode] || demoModeOptions[defaultDemoMode]).targetView);
   renderAll();
   renderLive();
 }
 
 async function loadData() {
+  if (state.live.overviewActive) storeLiveOverviewSnapshot();
   state.live.overviewActive = false;
   const paths = buildPaths(state.datasetId);
   const [reports, riskEvents, feedback, evaluation, meta, activeRules, suggestedRules, learningLog] = await Promise.all([
@@ -202,8 +235,17 @@ async function loadData() {
 
   const fromRealData = reports !== fallback.reports;
   const dataset = datasetOptions[state.datasetId] || datasetOptions[defaultDatasetId];
+  const mode = demoModeOptions[state.demoMode] || demoModeOptions[defaultDemoMode];
+  if (state.demoMode === "live") {
+    restoreLiveOverviewSnapshot();
+    document.getElementById("dataSourceLine").textContent = state.live.hasStarted
+      ? "实时生成模式：已保留本轮历史，可继续"
+      : "实时生成模式：点击启动开始";
+    return;
+  }
+
   document.getElementById("dataSourceLine").textContent = fromRealData
-    ? `读取 ${dataset.label} 运行结果`
+    ? `${mode.label}：${mode.description}`
     : `${dataset.label} 缺失，使用内置样例数据`;
 }
 
@@ -248,37 +290,21 @@ async function loadText(path, backup) {
 function bindNavigation() {
   document.querySelectorAll(".tab").forEach((button) => {
     button.addEventListener("click", () => {
-      const view = button.dataset.view;
-      state.currentView = view;
-      document.querySelectorAll(".tab").forEach((item) => item.classList.toggle("active", item === button));
-      document.querySelectorAll(".view").forEach((item) => item.classList.toggle("active", item.id === `view-${view}`));
+      setActiveView(button.dataset.view);
     });
   });
+}
+
+function setActiveView(view) {
+  state.currentView = view;
+  document.querySelectorAll(".tab").forEach((item) => item.classList.toggle("active", item.dataset.view === view));
+  document.querySelectorAll(".view").forEach((item) => item.classList.toggle("active", item.id === `view-${view}`));
 }
 
 function bindFilters() {
   ["riskSearch", "riskLevelFilter", "eventTableSearch", "eventTableLevel"].forEach((id) => {
     const node = document.getElementById(id);
     if (node) node.addEventListener("input", renderAll);
-  });
-}
-
-function bindDatasetSelector() {
-  const select = document.getElementById("datasetSelect");
-  if (!select) return;
-  select.innerHTML = Object.entries(datasetOptions)
-    .map(([id, item]) => `<option value="${escapeAttr(id)}">${escapeHtml(item.label)}</option>`)
-    .join("");
-  select.value = state.datasetId;
-  select.addEventListener("change", async () => {
-    stopLiveStream(false);
-    state.live.overviewActive = false;
-    state.datasetId = select.value;
-    const url = new URL(window.location.href);
-    url.searchParams.set("dataset", state.datasetId);
-    window.history.replaceState(null, "", url);
-    await loadData();
-    renderAll();
   });
 }
 
@@ -294,6 +320,83 @@ function renderAll() {
   renderEventTable();
   renderRules();
   renderAudit();
+}
+
+function emptyLiveCounts() {
+  return {
+    events: 0,
+    sessions_started: 0,
+    sessions_completed: 0,
+    candidate_events: 0,
+    high_or_above: 0,
+    anomalies: 0,
+  };
+}
+
+function cloneData(value) {
+  return JSON.parse(JSON.stringify(value ?? null));
+}
+
+function storeLiveOverviewSnapshot() {
+  if (!state.live.overviewActive) return;
+  state.live.overviewSnapshot = {
+    reports: cloneData(state.reports) || [],
+    riskEvents: cloneData(state.riskEvents) || [],
+    feedback: cloneData(state.feedback) || [],
+    evaluation: cloneData(state.evaluation) || {},
+    meta: cloneData(state.meta) || {},
+    selectedId: state.selectedId,
+  };
+}
+
+function restoreLiveOverviewSnapshot() {
+  const snapshot = state.live.overviewSnapshot;
+  if (!snapshot) {
+    resetOverviewForLive();
+    return;
+  }
+  state.live.overviewActive = true;
+  state.reports = cloneData(snapshot.reports) || [];
+  state.riskEvents = cloneData(snapshot.riskEvents) || [];
+  state.riskById = new Map(state.riskEvents.map((item) => [item.candidate_event_id, item]));
+  state.feedback = cloneData(snapshot.feedback) || [];
+  state.evaluation = cloneData(snapshot.evaluation) || {};
+  state.meta = cloneData(snapshot.meta) || {};
+  state.selectedId = snapshot.selectedId || state.reports[0]?.candidate_event_id || "";
+}
+
+function newLiveRunId() {
+  return `live-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function prepareNewLiveRun() {
+  state.live.runId = newLiveRunId();
+  state.live.hasStarted = true;
+  state.live.rawFeed = [];
+  state.live.riskFeed = [];
+  state.live.selectedRisk = null;
+  state.live.counts = emptyLiveCounts();
+  state.live.paused = false;
+  state.live.overviewSnapshot = null;
+  resetOverviewForLive();
+}
+
+function resetLiveRun(restart = false) {
+  stopLiveStream(false);
+  state.live.runId = "";
+  state.live.hasStarted = false;
+  state.live.rawFeed = [];
+  state.live.riskFeed = [];
+  state.live.selectedRisk = null;
+  state.live.counts = emptyLiveCounts();
+  state.live.paused = false;
+  state.live.overviewSnapshot = null;
+  resetOverviewForLive();
+  document.getElementById("liveSourceLine").textContent = "已重置，点击启动开始新一轮实时流";
+  updateLiveStatus("已重置", false);
+  renderLive();
+  renderOverviewFromLive(true);
+  if (restart) startLiveStream({ reset: true });
 }
 
 function resetOverviewForLive() {
@@ -323,6 +426,7 @@ function resetOverviewForLive() {
     f1: 0,
   };
   document.getElementById("dataSourceLine").textContent = "实时生成数据流";
+  storeLiveOverviewSnapshot();
 }
 
 function applyLiveEventToOverview(data) {
@@ -379,6 +483,7 @@ function updateEvaluationRates() {
 
 function renderOverviewFromLive(includeRiskViews) {
   if (!state.live.overviewActive) return;
+  storeLiveOverviewSnapshot();
   renderMetrics();
   renderEvaluation();
   renderSceneBars();
@@ -392,46 +497,62 @@ function renderOverviewFromLive(includeRiskViews) {
 }
 
 function bindLiveControls() {
-  document.getElementById("liveStart")?.addEventListener("click", startLiveStream);
+  document.getElementById("liveStart")?.addEventListener("click", () => startLiveStream());
   document.getElementById("liveStop")?.addEventListener("click", stopLiveStream);
+  document.getElementById("liveReset")?.addEventListener("click", () => resetLiveRun(false));
   document.getElementById("liveSpeed")?.addEventListener("change", () => {
     if (state.live.connected) startLiveStream();
   });
   document.getElementById("liveAnomalyRate")?.addEventListener("change", () => {
-    if (state.live.connected) startLiveStream();
+    if (state.live.connected) resetLiveRun(true);
+    else if (state.live.hasStarted) resetLiveRun(false);
   });
 }
 
-function startLiveStream() {
+function startLiveStream(options = {}) {
+  if (state.demoMode !== "live") {
+    state.demoMode = "live";
+    state.datasetId = datasetIdForDemoMode("live");
+    const url = new URL(window.location.href);
+    url.searchParams.set("mode", "live");
+    url.searchParams.delete("dataset");
+    window.history.replaceState(null, "", url);
+  }
+  const requestedReset = Boolean(options.reset);
   stopLiveStream(false);
-  state.live.rawFeed = [];
-  state.live.riskFeed = [];
-  state.live.selectedRisk = null;
-  state.live.counts = {
-    events: 0,
-    sessions_started: 0,
-    sessions_completed: 0,
-    candidate_events: 0,
-    high_or_above: 0,
-    anomalies: 0,
-  };
-  resetOverviewForLive();
+  const resetRun = requestedReset || !state.live.runId || !state.live.hasStarted || !state.live.overviewActive;
+  if (resetRun) {
+    prepareNewLiveRun();
+  } else {
+    state.live.overviewActive = true;
+  }
   state.live.connected = true;
+  state.live.paused = false;
   renderLive();
   renderOverviewFromLive(true);
 
   const speed = document.getElementById("liveSpeed")?.value || "420";
   const anomalyRate = document.getElementById("liveAnomalyRate")?.value || "0.18";
-  const url = `${liveApiBase}/stream?speed_ms=${encodeURIComponent(speed)}&anomaly_rate=${encodeURIComponent(anomalyRate)}&users=48&max_events=0`;
+  const params = new URLSearchParams({
+    speed_ms: speed,
+    anomaly_rate: anomalyRate,
+    users: "48",
+    max_events: "0",
+    run_id: state.live.runId,
+    reset: resetRun ? "1" : "0",
+  });
+  const url = `${liveApiBase}/stream?${params.toString()}`;
   const source = new EventSource(url);
   state.live.source = source;
 
   source.addEventListener("meta", (event) => {
     const data = safeParse(event.data);
+    if (data.counts) state.live.counts = data.counts;
     document.getElementById("liveSourceLine").textContent = data.rule_dir
-      ? `已连接 ${data.rule_dir}`
-      : "已连接本地实时流";
+      ? `${data.resumed ? "继续" : "已连接"} ${data.rule_dir}`
+      : `${data.resumed ? "继续" : "已连接"}本地实时流`;
     updateLiveStatus("运行中", true);
+    renderLiveMetrics();
   });
 
   source.addEventListener("event", (event) => {
@@ -472,12 +593,15 @@ function startLiveStream() {
   });
 
   source.onerror = () => {
-    updateLiveStatus("连接失败", false);
-    document.getElementById("liveSourceLine").textContent = `未连接 ${liveApiBase}`;
     source.close();
-    if (state.live.source === source) state.live.source = null;
-    state.live.connected = false;
-    renderLive();
+    if (state.live.source === source) {
+      state.live.source = null;
+      state.live.connected = false;
+      state.live.paused = state.live.hasStarted;
+      updateLiveStatus("连接失败", false);
+      document.getElementById("liveSourceLine").textContent = `未连接 ${liveApiBase}`;
+      renderLive();
+    }
   };
 }
 
@@ -487,11 +611,13 @@ function stopLiveStream(render = true) {
     state.live.source = null;
   }
   state.live.connected = false;
+  state.live.paused = state.live.hasStarted;
   updateLiveStatus("已暂停", false);
   if (render) renderLive();
 }
 
 function renderLive() {
+  updateLiveStartLabel();
   renderLiveMetrics();
   renderLiveAgentPipeline();
   renderLiveRawFeed();
@@ -1038,7 +1164,7 @@ function renderAgentView() {
   if (!reports.length) {
     caseList.innerHTML = `<div class="emptyState">暂无智能体轨迹</div>`;
     title.textContent = "暂无风险会话";
-    body.innerHTML = `<div class="emptyState">启动实时流或切换到有风险的数据集</div>`;
+    body.innerHTML = `<div class="emptyState">启动实时流或切换到有风险的复盘模式</div>`;
     return;
   }
 
@@ -1212,9 +1338,19 @@ function countBy(items, key) {
   }, {});
 }
 
-function datasetFromUrl() {
-  const id = new URLSearchParams(window.location.search).get("dataset") || defaultDatasetId;
-  return datasetOptions[id] ? id : defaultDatasetId;
+function demoModeFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const mode = params.get("mode");
+  if (demoModeOptions[mode]) return mode;
+
+  const legacyDataset = params.get("dataset");
+  const legacyMode = Object.entries(demoModeOptions).find(([, item]) => item.datasetId === legacyDataset && item.targetView !== "live");
+  return legacyMode?.[0] || defaultDemoMode;
+}
+
+function datasetIdForDemoMode(mode) {
+  const datasetId = (demoModeOptions[mode] || demoModeOptions[defaultDemoMode]).datasetId;
+  return datasetOptions[datasetId] ? datasetId : defaultDatasetId;
 }
 
 function normalizeMeta(meta, evaluation) {
@@ -1232,6 +1368,19 @@ function updateLiveStatus(label, active) {
   if (!node) return;
   node.textContent = label;
   node.classList.toggle("active", Boolean(active));
+  updateLiveStartLabel();
+}
+
+function updateLiveStartLabel() {
+  const node = document.getElementById("liveStart");
+  if (!node) return;
+  if (state.live.connected) {
+    node.textContent = "运行中";
+    node.disabled = true;
+    return;
+  }
+  node.textContent = state.live.paused ? "继续" : "启动";
+  node.disabled = false;
 }
 
 function safeParse(text) {

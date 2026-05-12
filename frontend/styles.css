@@ -44,6 +44,10 @@ button {
   cursor: pointer;
 }
 
+button:disabled {
+  cursor: not-allowed;
+}
+
 .shell {
   min-height: 100vh;
   display: flex;
@@ -160,19 +164,6 @@ p {
   margin-top: 3px;
 }
 
-.datasetSwitch {
-  width: 154px;
-  text-align: left;
-}
-
-.datasetSwitch select {
-  min-height: 32px;
-  margin-top: 4px;
-  padding: 5px 8px;
-  font-size: 12px;
-  font-weight: 800;
-}
-
 .avatar {
   width: 36px;
   height: 36px;
@@ -275,6 +266,11 @@ p {
   background: var(--blue);
   color: #fff;
   box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
+}
+
+.primaryButton:disabled {
+  opacity: 0.72;
+  box-shadow: none;
 }
 
 .ghostButton {
@@ -1508,7 +1504,9 @@ tr:hover td {
   }
 
   .operator {
-    display: none;
+    justify-self: start;
+    text-align: left;
+    flex-wrap: wrap;
   }
 
   .metricGrid {

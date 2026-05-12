@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>DLP 数据防泄漏智能体监控台</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./styles.css?v=20260512-start-label" />
   </head>
   <body>
     <div class="shell">
@@ -30,10 +30,10 @@
           <button class="tab" data-view="audit">审计</button>
         </nav>
         <div class="operator">
-          <label class="datasetSwitch">
-            <span>数据集</span>
-            <select id="datasetSelect"></select>
-          </label>
+          <div>
+            <span>运行模式</span>
+            <strong>实时生成</strong>
+          </div>
           <div>
             <span>当前日期</span>
             <strong id="todayText">--</strong>
@@ -71,6 +71,7 @@
               </label>
               <button class="primaryButton" id="liveStart">启动</button>
               <button class="ghostButton" id="liveStop">暂停</button>
+              <button class="ghostButton" id="liveReset">重置</button>
             </div>
           </div>
 
@@ -299,6 +300,6 @@
       </main>
     </div>
 
-    <script src="./app.js"></script>
+    <script src="./app.js?v=20260512-start-label"></script>
   </body>
 </html>
