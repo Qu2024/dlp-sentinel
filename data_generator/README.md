@@ -6,7 +6,7 @@
 
 ```bash
 python3 -m data_generator.cli batch \
-  --users 50 \
+  --users 100 \
   --days 7 \
   --sessions-per-user-day 8 \
   --anomaly-rate 0.03 \
@@ -24,7 +24,7 @@ python3 -m data_generator.cli batch \
 
 ```bash
 python3 -m data_generator.cli batch \
-  --users 50 \
+  --users 100 \
   --days 7 \
   --sessions-per-user-day 8 \
   --anomaly-rate 0.03 \
@@ -45,7 +45,7 @@ data_generator/output/batch/agent_output/
 ```bash
 python3 -m data_generator.cli stream \
   --max-events 300 \
-  --max-active-sessions 8 \
+  --max-active-sessions 16 \
   --microbatch-events 100 \
   --output-dir data_generator/output/stream
 ```
@@ -98,6 +98,23 @@ python3 -c "import sys; sys.path.insert(0, 'agent'); from modules import adaptiv
 ```
 
 `agent/adaptive_rules_test/` 已建议加入 `.gitignore`，适合放测试运行产生的 `runs/`、`latest_run.json`、`learning_log.jsonl` 等文件。
+
+
+## 用户规模说明
+
+当前数据引擎默认按照约 100 个用户生成模拟数据：
+
+- `DataEngineConfig.user_count` 默认值为 `100`；
+- 命令行 `--users` 默认值为 `100`；
+- 前端实时演示流默认请求 `users=100`；
+- 实时流默认活跃会话数提升为 `16`，避免 100 用户池下画面过于稀疏；
+- 批量模式下，只要 `sessions_per_user_day > 0`，每个用户每天至少生成 1 个会话，保证输出数据覆盖约 100 个用户。
+
+如需临时调整规模，仍可通过命令行覆盖：
+
+```bash
+python3 -m data_generator.cli batch --users 30 --days 3 --output-dir data_generator/output/small_demo
+```
 
 ## 说明
 

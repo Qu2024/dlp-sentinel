@@ -600,7 +600,8 @@ function startLiveStream(options = {}) {
   const params = new URLSearchParams({
     speed_ms: speed,
     anomaly_rate: anomalyRate,
-    users: "48",
+    users: "100",
+    max_active_sessions: "16",
     max_events: "0",
     run_id: state.live.runId,
     reset: resetRun ? "1" : "0",

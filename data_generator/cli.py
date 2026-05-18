@@ -34,7 +34,7 @@ def main() -> None:
     _add_agent_args(stream)
     stream.add_argument("--output-dir", default="data_generator/output/stream")
     stream.add_argument("--max-events", type=int, default=200)
-    stream.add_argument("--max-active-sessions", type=int, default=8)
+    stream.add_argument("--max-active-sessions", type=int, default=16)
     stream.add_argument("--interval", type=float, default=0.0)
     stream.add_argument("--microbatch-events", type=int, default=100)
     stream.add_argument("--run-agent", action="store_true")
@@ -59,7 +59,7 @@ def main() -> None:
 
 
 def _add_generation_args(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("--users", type=int, default=50)
+    parser.add_argument("--users", type=int, default=100)
     parser.add_argument("--days", type=int, default=7)
     parser.add_argument("--sessions-per-user-day", type=float, default=8.0)
     parser.add_argument("--anomaly-rate", type=float, default=0.03)
