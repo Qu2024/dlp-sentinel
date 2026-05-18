@@ -15,7 +15,7 @@
 快速验证命令：
 
 ```bash
-python -m data_generator.cli batch --users 10 --days 1 --sessions-per-user-day 3 --anomaly-rate 0.2 --output-dir data_generator/output/rule_test --run-agent --evaluate
+python -m data_generator.cli batch --users 100 --days 1 --sessions-per-user-day 3 --anomaly-rate 0.2 --output-dir data_generator/output/rule_test --run-agent --evaluate
 ```
 
 ## 目录说明
@@ -108,6 +108,11 @@ DEEPSEEK_MAX_RETRIES=0
 ```
 
 如果没有 API key，系统会自动降级为本地规则解释；流程仍能跑通。
+
+
+### 用户数量扩展说明
+
+当前数据生成模块已按约 100 个用户作为默认演示规模进行配置。批量生成、命令行默认参数、实时服务默认参数和前端实时演示请求均已同步到 100 用户规模；实时演示的默认活跃会话数同步提升到 16。批量模式下，只要 `sessions_per_user_day > 0`，每个用户每天至少生成 1 个会话，保证 `events.csv` 中能够覆盖完整用户池，便于展示用户画像、岗位基线和风险账户分布。
 
 ## 模式一：批量生成 + 离线评测
 

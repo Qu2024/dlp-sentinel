@@ -291,6 +291,7 @@ class LiveRequestHandler(BaseHTTPRequestHandler):
         speed_ms = max(int(params.get("speed_ms", [420])[0]), 50)
         max_events_raw = int(params.get("max_events", [0])[0])
         max_events = max_events_raw if max_events_raw > 0 else None
+        max_active_sessions = int(params.get("max_active_sessions", [16])[0])
         jitter = params.get("jitter", ["1"])[0].lower() not in {"0", "false", "no"}
         seed = int(params.get("seed", [20260508])[0])
         run_id = params.get("run_id", ["default"])[0] or "default"
@@ -298,7 +299,7 @@ class LiveRequestHandler(BaseHTTPRequestHandler):
         sleep_rng = random.Random(time.time_ns() ^ seed)
 
         config = DataEngineConfig(
-            user_count=int(params.get("users", [40])[0]),
+            user_count=int(params.get("users", [100])[0]),
             days=1,
             sessions_per_user_day=float(params.get("sessions_per_user_day", [5])[0]),
             anomaly_rate=float(params.get("anomaly_rate", [0.18])[0]),
@@ -322,7 +323,7 @@ class LiveRequestHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
         try:
-            for index, message in enumerate(pipeline.iter_messages(max_events=max_events), start=1):
+            for index, message in enumerate(pipeline.iter_messages(max_events=max_events, max_active_sessions=max_active_sessions), start=1):
                 if message.get("type") == "meta":
                     message["run_id"] = run_id
                     message["resumed"] = resumed

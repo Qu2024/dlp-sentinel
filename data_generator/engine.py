@@ -203,7 +203,7 @@ REGIONS = ["北京", "上海", "广州", "深圳", "天津", "成都", "杭州"]
 
 @dataclass
 class DataEngineConfig:
-    user_count: int = 50
+    user_count: int = 100
     days: int = 7
     sessions_per_user_day: float = 8.0
     anomaly_rate: float = 0.03
@@ -283,7 +283,11 @@ class DataEngine:
         multiplier = 0.65 if user["account_type"] == "外包" else 1.0
         mean = max(self.config.sessions_per_user_day * multiplier, 0.2)
         value = int(round(self.random.gauss(mean, max(mean * 0.25, 1.0))))
-        return max(value, 0)
+        # 只要配置为正向生成会话，就至少给每个用户每天 1 个会话。
+        # 这样当用户池扩大到 100 人时，批量数据中不会只随机出现少量用户，
+        # 便于前端和画像/基线模块展示完整用户规模。
+        minimum = 1 if self.config.sessions_per_user_day > 0 else 0
+        return max(value, minimum)
 
     def _create_session(self, user: dict[str, Any], day: datetime, is_anomaly: bool, live: bool = False) -> dict[str, Any]:
         session_id = self._next_session_id()
