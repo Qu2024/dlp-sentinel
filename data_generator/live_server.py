@@ -21,6 +21,7 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 AGENT_DIR = REPO_ROOT / "agent"
 DEFAULT_RULE_DIR = AGENT_DIR / "adaptive_rules_test"
 DEFAULT_PERMISSION_PATH = AGENT_DIR / "knowledge" / "role_permissions.csv"
+UI_STATE_FILENAME = "ui_state.json"
 
 if str(AGENT_DIR) not in sys.path:
     sys.path.insert(0, str(AGENT_DIR))
@@ -65,6 +66,55 @@ def time_now() -> datetime:
 def _raw_event(row: dict[str, Any]) -> RawEvent:
     fields = RawEvent.__dataclass_fields__
     return RawEvent(**{name: row.get(name) for name in fields})
+
+
+def _default_ui_state() -> dict[str, Any]:
+    return {
+        "updated_at": "",
+        "risk_weights": {"C2": 19.31, "C3": 7.46, "C4": 43.88, "C5": 29.35},
+        "ai_settings": {
+            "sensitivity": 68,
+            "optimization_cycle": "daily",
+            "self_learning_enabled": True,
+        },
+        "automation": {
+            "suspend_process": True,
+            "freeze_account": False,
+        },
+        "actions": [],
+    }
+
+
+def _ui_state_path(rule_dir: Path) -> Path:
+    return rule_dir / UI_STATE_FILENAME
+
+
+def _load_ui_state(rule_dir: Path) -> dict[str, Any]:
+    path = _ui_state_path(rule_dir)
+    if not path.exists():
+        return _default_ui_state()
+    try:
+        with path.open("r", encoding="utf-8") as f:
+            state = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        state = {}
+    defaults = _default_ui_state()
+    return {
+        **defaults,
+        **state,
+        "risk_weights": {**defaults["risk_weights"], **state.get("risk_weights", {})},
+        "ai_settings": {**defaults["ai_settings"], **state.get("ai_settings", {})},
+        "automation": {**defaults["automation"], **state.get("automation", {})},
+        "actions": state.get("actions", []),
+    }
+
+
+def _save_ui_state(rule_dir: Path, state: dict[str, Any]) -> None:
+    rule_dir.mkdir(parents=True, exist_ok=True)
+    state["updated_at"] = time.strftime("%Y-%m-%d %H:%M:%S")
+    with _ui_state_path(rule_dir).open("w", encoding="utf-8") as f:
+        json.dump(state, f, ensure_ascii=False, indent=2)
+        f.write("\n")
 
 
 def _local_llm_result(event: ScoredEvent, evidence_summary: str) -> dict[str, Any]:
@@ -216,6 +266,9 @@ class LiveRequestHandler(BaseHTTPRequestHandler):
         if parsed.path == "/rules":
             self._send_rules()
             return
+        if parsed.path == "/ui-state":
+            self._send_ui_state()
+            return
         if parsed.path == "/stream":
             self._send_stream(parsed.query)
             return
@@ -225,6 +278,9 @@ class LiveRequestHandler(BaseHTTPRequestHandler):
         parsed = urlparse(self.path)
         if parsed.path == "/rules/suggestions/review":
             self._review_rule_suggestion()
+            return
+        if parsed.path == "/ui-state/action":
+            self._record_ui_action()
             return
         self.send_error(HTTPStatus.NOT_FOUND, "Not Found")
 
@@ -267,6 +323,54 @@ class LiveRequestHandler(BaseHTTPRequestHandler):
             "active_rules": adaptive_rule_engine.load_active_rules(rule_dir),
             "suggested_rules": adaptive_rule_engine.load_suggested_rules(rule_dir),
         })
+
+    def _send_ui_state(self) -> None:
+        self._send_json({
+            "ok": True,
+            "rule_dir": str(self.server.rule_dir),
+            "ui_state": _load_ui_state(self.server.rule_dir),
+        })
+
+    def _record_ui_action(self) -> None:
+        try:
+            payload = self._read_json_body()
+        except json.JSONDecodeError as exc:
+            self._send_json({"ok": False, "error": str(exc)}, status=HTTPStatus.BAD_REQUEST)
+            return
+
+        action = str(payload.get("action", "")).strip()
+        if not action:
+            self._send_json({"ok": False, "error": "action is required"}, status=HTTPStatus.BAD_REQUEST)
+            return
+
+        state = _load_ui_state(self.server.rule_dir)
+        action_payload = payload.get("payload", {})
+        if not isinstance(action_payload, dict):
+            action_payload = {"value": action_payload}
+
+        if action == "save_settings":
+            state["risk_weights"] = {
+                **state.get("risk_weights", {}),
+                **action_payload.get("risk_weights", {}),
+            }
+            state["ai_settings"] = {
+                **state.get("ai_settings", {}),
+                **action_payload.get("ai_settings", {}),
+            }
+            state["automation"] = {
+                **state.get("automation", {}),
+                **action_payload.get("automation", {}),
+            }
+
+        entry = {
+            "time": time.strftime("%Y-%m-%d %H:%M:%S"),
+            "action": action,
+            "payload": action_payload,
+        }
+        state.setdefault("actions", []).append(entry)
+        state["actions"] = state["actions"][-200:]
+        _save_ui_state(self.server.rule_dir, state)
+        self._send_json({"ok": True, "entry": entry, "ui_state": state})
 
     def _review_rule_suggestion(self) -> None:
         try:

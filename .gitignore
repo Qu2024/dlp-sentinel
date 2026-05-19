@@ -7,3 +7,4 @@ __pycache__/
 .env
 .venv/
 *.log
+agent/adaptive_rules_test/ui_state.json

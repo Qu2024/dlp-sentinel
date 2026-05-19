@@ -279,6 +279,39 @@ p {
   border-color: var(--line);
 }
 
+.dangerButton {
+  min-height: 36px;
+  border-radius: 8px;
+  padding: 0 14px;
+  font-weight: 900;
+  border: 1px solid #fecaca;
+  background: var(--red);
+  color: #fff;
+}
+
+.compactAction {
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.inlineNotice {
+  margin: 0 18px 12px;
+  padding: 9px 11px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #f8fafc;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.inlineNotice:empty,
+.inlineNotice[hidden] {
+  display: none;
+}
+
 .liveMetricGrid {
   display: grid;
   grid-template-columns: repeat(4, minmax(150px, 1fr));
@@ -824,6 +857,14 @@ select:focus {
   font-weight: 800;
 }
 
+.detailHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
 .detailBody {
   height: calc(100vh - 318px);
   overflow: auto;
@@ -843,6 +884,78 @@ select:focus {
 .sectionBlock h3 {
   font-size: 13px;
   margin-bottom: 12px;
+}
+
+.attackPath {
+  display: grid;
+  gap: 10px;
+}
+
+.attackStep {
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  padding: 10px;
+  display: grid;
+  grid-template-columns: 30px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  color: var(--muted);
+  background: #f8fafc;
+}
+
+.attackStep.active {
+  border-color: rgba(37, 99, 235, 0.28);
+  background: #f8fbff;
+  color: var(--text);
+}
+
+.attackStep b {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #e2e8f0;
+  color: #475569;
+  font-size: 12px;
+}
+
+.attackStep.active b {
+  background: var(--blue);
+  color: #fff;
+}
+
+.attackStep strong,
+.attackStep span {
+  display: block;
+}
+
+.attackStep span,
+.attackStep em {
+  color: var(--muted-2);
+  font-size: 11px;
+  font-style: normal;
+}
+
+.radarBars {
+  display: grid;
+  gap: 10px;
+}
+
+.radarRow {
+  display: grid;
+  grid-template-columns: 76px minmax(80px, 1fr) 32px;
+  gap: 8px;
+  align-items: center;
+  font-size: 12px;
+}
+
+.radarRow span {
+  color: var(--muted);
+}
+
+.radarRow b {
+  text-align: right;
 }
 
 .sectionTitleRow {
@@ -1360,6 +1473,78 @@ tr:hover td {
   gap: 14px;
 }
 
+.rulesConsole {
+  display: grid;
+  gap: 14px;
+}
+
+.ruleHeaderPanel {
+  overflow: hidden;
+}
+
+.ruleStats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(120px, 1fr));
+  gap: 10px;
+  padding: 0 14px 12px;
+}
+
+.miniMetric {
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  padding: 11px;
+  background: #f8fafc;
+}
+
+.miniMetric span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.miniMetric strong {
+  display: block;
+  margin-top: 5px;
+  font-size: 22px;
+  font-weight: 950;
+}
+
+.ruleToolbar {
+  padding: 0 14px 12px;
+}
+
+.ruleToolbar input {
+  min-width: 280px;
+}
+
+.ruleTableWrap {
+  max-height: 360px;
+}
+
+.ruleTableWrap td strong,
+.ruleTableWrap td span {
+  display: block;
+}
+
+.ruleTableWrap td span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.tableActions {
+  white-space: nowrap;
+}
+
+.tableActions button {
+  border: 0;
+  background: transparent;
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 800;
+  padding: 4px 6px;
+}
+
 .ruleGroups {
   padding: 14px;
   display: grid;
@@ -1492,10 +1677,199 @@ tr:hover td {
   background: var(--green-2);
 }
 
+.settingsGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 14px;
+}
+
+.settingsMain,
+.settingsPreview {
+  overflow: hidden;
+}
+
+.presetRow {
+  padding: 0 14px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.presetRow button {
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--muted);
+  border-radius: 8px;
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.presetRow span {
+  margin-left: auto;
+  padding: 7px 9px;
+  border-radius: 8px;
+  background: var(--green-2);
+  color: var(--green);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.presetRow span.bad {
+  background: var(--red-2);
+  color: var(--red);
+}
+
+.weightControls,
+.settingsRows {
+  padding: 14px;
+  display: grid;
+  gap: 12px;
+}
+
+.weightRow {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(180px, 0.8fr) 76px 18px;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fbfdff;
+}
+
+.weightRow strong,
+.weightRow span {
+  display: block;
+}
+
+.weightRow span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.weightRow input[type="number"] {
+  width: 76px;
+  min-height: 32px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 8px;
+}
+
+.previewScore {
+  padding: 18px 18px 10px;
+  display: flex;
+  align-items: end;
+  gap: 10px;
+}
+
+.previewScore strong {
+  font-size: 46px;
+  line-height: 0.9;
+  color: var(--orange);
+}
+
+.previewScore span {
+  color: var(--muted);
+  font-weight: 900;
+}
+
+.previewTrack {
+  margin: 0 18px 14px;
+  height: 8px;
+  border-radius: 999px;
+  background: #e2e8f0;
+  overflow: hidden;
+}
+
+.previewTrack i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--orange);
+}
+
+.scenarioTips {
+  padding: 0 18px 18px;
+  display: grid;
+  gap: 8px;
+}
+
+.scenarioTips span {
+  display: block;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  padding: 9px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.settingsRows label {
+  display: grid;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.settingsRows select,
+.settingsRows input[type="range"] {
+  min-height: 34px;
+}
+
+.switchRow {
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  padding: 11px;
+  background: #fbfdff;
+}
+
+.switchRow.disabled {
+  opacity: 0.72;
+}
+
 .auditGrid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 420px;
   gap: 14px;
+}
+
+.auditGrid.expanded {
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+}
+
+.auditTrend {
+  height: 230px;
+  padding: 16px;
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 8px;
+  align-items: end;
+}
+
+.trendBar {
+  height: 100%;
+  display: grid;
+  align-items: end;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 10px;
+  text-align: center;
+}
+
+.trendBar i {
+  display: block;
+  min-height: 8px;
+  border-radius: 8px 8px 3px 3px;
+  background: linear-gradient(180deg, var(--blue), var(--cyan));
 }
 
 .auditList {
@@ -1568,9 +1942,19 @@ tr:hover td {
   .agentPipeline,
   .liveGrid,
   .agentConsoleGrid,
-  .overviewGrid,
-  .rulesGrid,
-  .auditGrid {
+	  .overviewGrid,
+	  .rulesGrid,
+	  .settingsGrid,
+	  .auditGrid,
+	  .auditGrid.expanded {
+	    grid-template-columns: 1fr;
+	  }
+
+  .ruleStats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .weightRow {
     grid-template-columns: 1fr;
   }
 

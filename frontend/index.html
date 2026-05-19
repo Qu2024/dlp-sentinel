@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>DLP 数据防泄漏智能体监控台</title>
-    <link rel="stylesheet" href="./styles.css?v=20260512-rule-review" />
+    <link rel="stylesheet" href="./styles.css?v=20260518-console-merge" />
   </head>
   <body>
     <div class="shell">
@@ -22,17 +22,17 @@
           </div>
         </div>
         <nav class="tabs" aria-label="主导航">
-          <button class="tab active" data-view="live">实时演示</button>
-          <button class="tab" data-view="overview">总览</button>
+          <button class="tab active" data-view="live">实时监控</button>
+          <button class="tab" data-view="overview">风险研判</button>
           <button class="tab" data-view="agents">智能体</button>
-          <button class="tab" data-view="events">风险事件</button>
-          <button class="tab" data-view="rules">自适应规则</button>
-          <button class="tab" data-view="audit">审计</button>
+          <button class="tab" data-view="rules">规则中心</button>
+          <button class="tab" data-view="settings">系统配置</button>
+          <button class="tab" data-view="audit">审计追溯</button>
         </nav>
         <div class="operator">
           <div>
-            <span>运行模式</span>
-            <strong>实时生成</strong>
+            <span>系统状态</span>
+            <strong>运行正常</strong>
           </div>
           <div>
             <span>当前日期</span>
@@ -212,14 +212,11 @@
               </section>
             </aside>
           </div>
-        </section>
-
-        <section id="view-events" class="view">
-          <div class="panel tablePanel">
+          <div class="panel tablePanel mergedEventTable">
             <div class="panelHead">
               <div>
                 <h2>风险事件清单</h2>
-                <p>按最终风险评分排序</p>
+                <p>与左侧风险会话联动，按最终风险评分排序</p>
               </div>
               <div class="toolbar thin">
                 <input id="eventTableSearch" type="search" placeholder="筛选事件" />
@@ -251,32 +248,199 @@
         </section>
 
         <section id="view-rules" class="view">
-          <div class="rulesGrid">
-            <section class="panel">
+          <div class="rulesConsole">
+            <section class="panel ruleHeaderPanel">
               <div class="panelHead">
                 <div>
-                  <h2>生效规则库</h2>
-                  <p>当前规则入口层配置</p>
+                  <h2>规则管理中心</h2>
+                  <p>场景规则、阈值规则、弱规则和机器挖掘建议统一管理</p>
                 </div>
-                <span class="countPill" id="activeRuleCount">0</span>
+                <div class="toolbar thin">
+                  <button class="primaryButton compactAction" data-ui-action="new_rule">新建规则</button>
+                  <button class="ghostButton compactAction" data-ui-action="export_rules">导出列表</button>
+                  <button class="ghostButton compactAction" data-ui-action="batch_rules">批量操作</button>
+                </div>
               </div>
-              <div class="ruleGroups" id="activeRuleGroups"></div>
+              <div class="inlineNotice" data-ui-action-message hidden></div>
+              <div class="ruleStats" id="ruleStats"></div>
+              <div class="toolbar ruleToolbar">
+                <input id="ruleSearch" type="search" placeholder="搜索规则名称、字段、条件" />
+                <select id="ruleTypeFilter">
+                  <option value="all">所有引擎</option>
+                  <option value="scene">场景规则</option>
+                  <option value="threshold">高危阈值</option>
+                  <option value="weak">弱规则</option>
+                </select>
+              </div>
+              <div class="tableWrap ruleTableWrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>规则详细</th>
+                      <th>检测引擎</th>
+                      <th>匹配/样本</th>
+                      <th>状态</th>
+                      <th>管理操作</th>
+                    </tr>
+                  </thead>
+                  <tbody id="activeRuleTable"></tbody>
+                </table>
+              </div>
             </section>
-            <section class="panel">
+
+            <div class="rulesGrid">
+              <section class="panel">
+                <div class="panelHead">
+                  <div>
+                    <h2>生效规则库</h2>
+                    <p>当前规则入口层配置</p>
+                  </div>
+                  <span class="countPill" id="activeRuleCount">0</span>
+                </div>
+                <div class="ruleGroups" id="activeRuleGroups"></div>
+              </section>
+              <section class="panel">
+                <div class="panelHead">
+                  <div>
+                    <h2>机器挖掘建议</h2>
+                    <p>只进入建议池，人工采用后生效</p>
+                  </div>
+                  <span class="countPill warn" id="pendingRuleCount">0</span>
+                </div>
+                <div class="suggestedRuleTable" id="suggestedRuleTable"></div>
+              </section>
+            </div>
+          </div>
+        </section>
+
+        <section id="view-settings" class="view">
+          <div class="settingsGrid">
+            <section class="panel settingsMain">
               <div class="panelHead">
                 <div>
-                  <h2>机器挖掘建议</h2>
-                  <p>只进入建议池，不自动启用</p>
+                  <h2>风险评分权重配置</h2>
+                  <p>对应 agent 当前 C2/C3/C4/C5 AHP 一级权重</p>
                 </div>
-                <span class="countPill warn" id="pendingRuleCount">0</span>
+                <div class="toolbar thin">
+                  <button class="ghostButton compactAction" data-ui-action="reset_weights">恢复默认</button>
+                  <button class="primaryButton compactAction" data-ui-action="save_settings">保存配置</button>
+                </div>
               </div>
-              <div class="suggestedRuleTable" id="suggestedRuleTable"></div>
+              <div class="inlineNotice" data-ui-action-message hidden></div>
+              <div class="presetRow">
+                <button data-ui-action="weight_preset" data-weight-preset="strict">严格模式</button>
+                <button data-ui-action="weight_preset" data-weight-preset="balanced">平衡模式</button>
+                <button data-ui-action="weight_preset" data-weight-preset="relaxed">宽松模式</button>
+                <span id="weightTotal">--</span>
+              </div>
+              <div class="weightControls" id="weightControls"></div>
             </section>
+
+            <aside class="panel settingsPreview">
+              <div class="panelHead">
+                <div>
+                  <h2>实时评分预览</h2>
+                  <p>使用固定样例维度分验证权重影响</p>
+                </div>
+              </div>
+              <div class="previewScore">
+                <strong id="weightPreviewScore">--</strong>
+                <span id="weightPreviewLevel">--</span>
+              </div>
+              <div class="previewTrack"><i id="weightPreviewBar"></i></div>
+              <div class="scenarioTips">
+                <span>公安网专线：提高业务缺口和链条证据权重</span>
+                <span>离职高发期：提高画像偏离权重</span>
+                <span>涉密专案：提高敏感影响面权重</span>
+              </div>
+            </aside>
+
+            <section class="panel settingsMain">
+              <div class="panelHead">
+                <div>
+                  <h2>AI 智能体核心参数</h2>
+                  <p>本地演示配置会写入 live server 的 UI 状态文件</p>
+                </div>
+              </div>
+              <div class="settingsRows">
+                <label>
+                  <span>异常行为检测敏感度 <b id="settingSensitivityText">--</b></span>
+                  <input id="settingSensitivity" type="range" min="0" max="100" />
+                </label>
+                <label>
+                  <span>自动规则优化周期</span>
+                  <select id="settingCycle">
+                    <option value="hourly">每小时</option>
+                    <option value="daily">每天</option>
+                    <option value="weekly">每周</option>
+                  </select>
+                </label>
+                <label class="switchRow">
+                  <span>自学习模式状态</span>
+                  <input id="settingSelfLearning" type="checkbox" />
+                </label>
+              </div>
+            </section>
+
+            <aside class="panel settingsPreview">
+              <div class="panelHead">
+                <div>
+                  <h2>自动化联动响应</h2>
+                  <p>仅记录演示动作，不触发真实外部系统</p>
+                </div>
+              </div>
+              <div class="settingsRows">
+                <label class="switchRow">
+                  <span>极高风险自动挂起进程</span>
+                  <input id="settingSuspendProcess" type="checkbox" />
+                </label>
+                <label class="switchRow disabled">
+                  <span>自动冻结 LDAP/AD 账号</span>
+                  <input id="settingFreezeAccount" type="checkbox" />
+                </label>
+              </div>
+            </aside>
           </div>
         </section>
 
         <section id="view-audit" class="view">
-          <div class="auditGrid">
+          <div class="auditGrid expanded">
+            <section class="panel">
+              <div class="panelHead">
+                <div>
+                  <h2>风险趋势分析</h2>
+                  <p>近 10 个审计窗口</p>
+                </div>
+                <div class="toolbar thin">
+                  <button class="ghostButton compactAction" data-ui-action="date_filter">日期筛选</button>
+                  <button class="primaryButton compactAction" data-ui-action="export_audit">导出审计报告</button>
+                </div>
+              </div>
+              <div class="inlineNotice" data-ui-action-message hidden></div>
+              <div class="auditTrend" id="auditTrend"></div>
+              <div class="miniStats" id="auditMetrics"></div>
+            </section>
+            <section class="panel">
+              <div class="panelHead">
+                <div>
+                  <h2>处置历史与复核反馈</h2>
+                  <p>前端操作会写入本地后端 UI 状态</p>
+                </div>
+              </div>
+              <div class="tableWrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>时间</th>
+                      <th>对象</th>
+                      <th>处置动作</th>
+                      <th>闭环说明</th>
+                    </tr>
+                  </thead>
+                  <tbody id="auditHistory"></tbody>
+                </table>
+              </div>
+            </section>
             <section class="panel">
               <div class="panelHead">
                 <div>
@@ -300,6 +464,6 @@
       </main>
     </div>
 
-    <script src="./app.js?v=20260512-rule-review"></script>
+    <script src="./app.js?v=20260518-console-merge"></script>
   </body>
 </html>

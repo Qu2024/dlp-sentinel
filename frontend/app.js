@@ -33,6 +33,33 @@ const defaultDemoMode = "live";
 const liveApiBase = "http://127.0.0.1:8765";
 const ruleApiBase = liveApiBase;
 
+const defaultUiState = {
+  risk_weights: { C2: 19.31, C3: 7.46, C4: 43.88, C5: 29.35 },
+  ai_settings: {
+    sensitivity: 68,
+    optimization_cycle: "daily",
+    self_learning_enabled: true,
+  },
+  automation: {
+    suspend_process: true,
+    freeze_account: false,
+  },
+  actions: [],
+};
+
+const weightDimensions = {
+  C2: { label: "用户/基线画像偏离", note: "个人行为、岗位同群、时空环境和访问范围偏离" },
+  C3: { label: "业务关联缺少", note: "审批、案件/任务关联、权限匹配和协同任务" },
+  C4: { label: "敏感影响面", note: "敏感等级、暴露内容、唯一识别性和泄露规模" },
+  C5: { label: "链条与扩散证据", note: "行为链完整度、落地扩散、接收方和清痕规避" },
+};
+
+const weightPresets = {
+  strict: { C2: 18, C3: 8, C4: 46, C5: 28 },
+  balanced: { ...defaultUiState.risk_weights },
+  relaxed: { C2: 24, C3: 10, C4: 36, C5: 30 },
+};
+
 const demoModeOptions = {
   live: {
     label: "实时生成",
@@ -61,7 +88,7 @@ const demoModeOptions = {
   normal_check: {
     label: "正常样本对照",
     description: "查看正常样本误报情况",
-    targetView: "events",
+    targetView: "overview",
     datasetId: "llm_smoke_normal",
   },
 };
@@ -175,6 +202,8 @@ const state = {
   meta: {},
   activeRules: {},
   suggestedRules: {},
+  uiState: cloneData(defaultUiState),
+  uiActionMessage: "",
   learningLog: "",
   selectedId: "",
   ruleActionMessage: "",
@@ -204,6 +233,8 @@ async function init() {
   bindNavigation();
   bindFilters();
   bindLiveControls();
+  bindUiActions();
+  bindSettingsControls();
   await loadData();
   setActiveView((demoModeOptions[state.demoMode] || demoModeOptions[defaultDemoMode]).targetView);
   renderAll();
@@ -214,13 +245,14 @@ async function loadData() {
   if (state.live.overviewActive) storeLiveOverviewSnapshot();
   state.live.overviewActive = false;
   const paths = buildPaths(state.datasetId);
-  const [reports, riskEvents, feedback, evaluation, meta, ruleStore, learningLog] = await Promise.all([
+  const [reports, riskEvents, feedback, evaluation, meta, ruleStore, uiState, learningLog] = await Promise.all([
     loadJson(paths.reports, fallback.reports),
     loadJson(paths.riskEvents, fallback.riskEvents),
     loadJson(paths.feedback, fallback.feedback),
     loadJson(paths.evaluation, fallback.evaluation),
     loadJson(paths.meta, fallback.meta),
     loadRuleStore(paths),
+    loadUiState(),
     loadText(paths.learningLog, fallback.learningLog),
   ]);
 
@@ -232,6 +264,7 @@ async function loadData() {
   state.meta = normalizeMeta(meta, evaluation);
   state.activeRules = ruleStore.activeRules;
   state.suggestedRules = ruleStore.suggestedRules;
+  state.uiState = normalizeUiState(uiState);
   state.learningLog = learningLog;
   state.selectedId = state.reports[0]?.candidate_event_id || "";
 
@@ -301,6 +334,18 @@ async function loadRuleStore(paths) {
   return { activeRules, suggestedRules };
 }
 
+async function loadUiState() {
+  try {
+    const response = await fetch(`${liveApiBase}/ui-state`, { cache: "no-store" });
+    if (!response.ok) throw new Error(response.statusText);
+    const payload = await response.json();
+    if (payload.ok) return payload.ui_state || defaultUiState;
+  } catch {
+    // UI state is optional for static file preview.
+  }
+  return defaultUiState;
+}
+
 async function loadText(path, backup) {
   try {
     const response = await fetch(path, { cache: "no-store" });
@@ -326,7 +371,7 @@ function setActiveView(view) {
 }
 
 function bindFilters() {
-  ["riskSearch", "riskLevelFilter", "eventTableSearch", "eventTableLevel"].forEach((id) => {
+  ["riskSearch", "riskLevelFilter", "eventTableSearch", "eventTableLevel", "ruleSearch", "ruleTypeFilter"].forEach((id) => {
     const node = document.getElementById(id);
     if (node) node.addEventListener("input", renderAll);
   });
@@ -343,7 +388,9 @@ function renderAll() {
   renderSuggestions();
   renderEventTable();
   renderRules();
+  renderSettings();
   renderAudit();
+  renderActionMessages();
 }
 
 function emptyLiveCounts() {
@@ -543,6 +590,133 @@ async function reviewSuggestedRule(ruleId, action) {
     renderSuggestions();
     renderMetrics();
   }
+}
+
+function bindUiActions() {
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-ui-action]");
+    if (!button) return;
+    const action = button.dataset.uiAction;
+    handleUiAction(action, button);
+  });
+}
+
+function bindSettingsControls() {
+  document.addEventListener("input", (event) => {
+    const input = event.target.closest("[data-weight-code]");
+    if (!input) return;
+    updateLocalWeight(input.dataset.weightCode, Number(input.value));
+  });
+  document.addEventListener("change", (event) => {
+    if (event.target.id === "settingSensitivity") {
+      state.uiState.ai_settings.sensitivity = Number(event.target.value || 0);
+      renderSettings();
+    }
+    if (event.target.id === "settingCycle") {
+      state.uiState.ai_settings.optimization_cycle = event.target.value;
+      renderSettings();
+    }
+    if (event.target.id === "settingSelfLearning") {
+      state.uiState.ai_settings.self_learning_enabled = event.target.checked;
+      renderSettings();
+    }
+    if (event.target.id === "settingSuspendProcess") {
+      state.uiState.automation.suspend_process = event.target.checked;
+      renderSettings();
+    }
+    if (event.target.id === "settingFreezeAccount") {
+      state.uiState.automation.freeze_account = event.target.checked;
+      renderSettings();
+    }
+  });
+}
+
+function updateLocalWeight(code, value) {
+  if (!weightDimensions[code]) return;
+  state.uiState.risk_weights[code] = Math.max(0, Math.min(100, Number.isFinite(value) ? value : 0));
+  renderSettings();
+}
+
+async function handleUiAction(action, button) {
+  if (!action) return;
+  if (action === "save_settings") {
+    await postUiAction(action, {
+      risk_weights: state.uiState.risk_weights,
+      ai_settings: state.uiState.ai_settings,
+      automation: state.uiState.automation,
+    }, "配置已写入本地演示后端");
+    renderSettings();
+    return;
+  }
+  if (action === "reset_weights") {
+    state.uiState.risk_weights = { ...defaultUiState.risk_weights };
+    state.uiActionMessage = "已恢复评分模型默认权重，点击保存后写入后端";
+    renderSettings();
+    return;
+  }
+  if (button?.dataset.weightPreset) {
+    state.uiState.risk_weights = { ...weightPresets[button.dataset.weightPreset] };
+    state.uiActionMessage = `已应用${button.textContent.trim()}，点击保存后写入后端`;
+    renderSettings();
+    return;
+  }
+
+  const report = selectedReport();
+  const payload = {
+    candidate_event_id: button?.dataset.candidateId || report?.candidate_event_id || "",
+    user_id: button?.dataset.userId || report?.user_id || "",
+    rule_id: button?.dataset.ruleId || "",
+    label: button?.textContent?.trim() || action,
+    view: state.currentView,
+  };
+  const successText = actionText(action, payload);
+  await postUiAction(action, payload, successText);
+  renderAudit();
+}
+
+async function postUiAction(action, payload, successText) {
+  state.uiActionMessage = "正在写入本地后端...";
+  renderActionMessages();
+  try {
+    const response = await fetch(`${liveApiBase}/ui-state/action`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action, payload }),
+    });
+    const data = await response.json();
+    if (!response.ok || !data.ok) throw new Error(data.error || response.statusText);
+    state.uiState = normalizeUiState(data.ui_state || state.uiState);
+    state.uiActionMessage = successText;
+  } catch (error) {
+    state.uiActionMessage = `本地后端未写入：${error.message || error}`;
+  }
+  renderActionMessages();
+}
+
+function renderActionMessages() {
+  document.querySelectorAll("[data-ui-action-message]").forEach((node) => {
+    node.textContent = state.uiActionMessage || "";
+    node.hidden = !state.uiActionMessage;
+  });
+}
+
+function actionText(action, payload) {
+  const id = payload.candidate_event_id || payload.rule_id || payload.user_id || "当前对象";
+  const map = {
+    mark_false_positive: `已记录误报复核：${id}`,
+    emergency_response: `已记录紧急处置请求：${id}`,
+    approve_review: `已记录复核通过：${id}`,
+    new_rule: "已记录新建规则入口请求",
+    export_rules: "已记录规则导出请求",
+    batch_rules: "已记录批量规则操作请求",
+    edit_rule: "已记录规则编辑请求",
+    pause_rule: "已记录规则停用请求",
+    activate_rule: "已记录规则激活请求",
+    optimize_log: "已记录优化日志查看请求",
+    export_audit: "已记录审计报告导出请求",
+    date_filter: "已记录审计日期筛选请求",
+  };
+  return map[action] || `已记录操作：${payload.label || action}`;
 }
 
 function renderOverviewFromLive(includeRiskViews) {
@@ -993,11 +1167,16 @@ function renderDetail() {
           <p>${escapeHtml(report.candidate_event_id)} · ${escapeHtml((report.matched_scene_list || []).join(" / "))}</p>
         </div>
       </div>
-      <div class="detailScore" style="--level-color:${style.color};--level-bg:${style.bg}">
-        <strong>${num(report.final_risk_score, 1)}</strong>
-        <span class="riskLevel">${escapeHtml(report.risk_level)}</span>
+      <div class="detailHeaderActions">
+        <button class="ghostButton compactAction" data-ui-action="mark_false_positive" data-candidate-id="${escapeAttr(report.candidate_event_id)}" data-user-id="${escapeAttr(report.user_id)}">标记误报</button>
+        <button class="dangerButton compactAction" data-ui-action="emergency_response" data-candidate-id="${escapeAttr(report.candidate_event_id)}" data-user-id="${escapeAttr(report.user_id)}">紧急处置</button>
+        <div class="detailScore" style="--level-color:${style.color};--level-bg:${style.bg}">
+          <strong>${num(report.final_risk_score, 1)}</strong>
+          <span class="riskLevel">${escapeHtml(report.risk_level)}</span>
+        </div>
       </div>
     </div>
+    <div class="inlineNotice" data-ui-action-message hidden></div>
     <div class="detailBody">
       <div class="detailMain">
         <section class="sectionBlock">
@@ -1012,12 +1191,8 @@ function renderDetail() {
           <p class="evidenceText narrativeText">${escapeHtml(report.risk_explanation || "暂无研判解释")}</p>
         </section>
         <section class="sectionBlock">
-          <h3>行为链</h3>
-          <div class="chain">
-            ${(report.behavior_chain || risk.behavior_chain || []).map((step, index) => `
-              <div class="chainStep"><b>${index + 1}</b>${escapeHtml(step)}</div>
-            `).join("")}
-          </div>
+          <h3>泄露行为链追踪</h3>
+          ${renderAttackPath(report, risk)}
         </section>
         <section class="sectionBlock">
           <h3>智能体协同轨迹</h3>
@@ -1038,6 +1213,10 @@ function renderDetail() {
         </section>
       </div>
       <div class="detailSide">
+        <section class="sectionBlock">
+          <h3>评分雷达</h3>
+          ${renderScoreRadar(report, risk)}
+        </section>
         <section class="sectionBlock">
           <h3>主要风险因子</h3>
           <div class="driverList">
@@ -1064,6 +1243,63 @@ function renderDetail() {
           </div>
         </section>
       </div>
+    </div>
+  `;
+}
+
+function renderAttackPath(report = {}, risk = {}) {
+  const chain = report.behavior_chain || risk.behavior_chain || [];
+  const rawEvents = risk.raw_events || [];
+  const allText = [...chain, ...rawEvents.map((event) => event.event_type)].join(" ").toLowerCase();
+  const has = (tokens) => tokens.some((token) => allText.includes(token));
+  const steps = [
+    ["Login", "账号登录", has(["login", "登录"]) || rawEvents.length > 0, rawEvents[0]?.event_time || "已开始"],
+    ["Search", "敏感查询", has(["query", "access", "查询", "访问"]), firstEventTime(rawEvents, ["query", "access"])],
+    ["Export", "数据导出", has(["export", "print", "screenshot", "导出", "打印", "截图"]), firstEventTime(rawEvents, ["export", "print", "screenshot"])],
+    ["Landing", "数据落地/外发", has(["copy", "send", "external", "usb", "拷贝", "外发"]), firstEventTime(rawEvents, ["copy", "send", "external"])],
+    ["Wipe", "清痕规避", has(["delete", "compress", "encrypt", "清痕", "加密", "压缩"]), firstEventTime(rawEvents, ["delete", "compress", "encrypt"])],
+  ];
+  return `
+    <div class="attackPath">
+      ${steps.map(([key, label, active, time], index) => `
+        <div class="attackStep ${active ? "active" : ""}">
+          <b>${index + 1}</b>
+          <div>
+            <strong>${escapeHtml(label)}</strong>
+            <span>${escapeHtml(active ? (time || "已触发") : "未触发")}</span>
+          </div>
+          <em>${escapeHtml(key)}</em>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function firstEventTime(events, types) {
+  const found = events.find((event) => types.some((type) => String(event.event_type || "").toLowerCase().includes(type)));
+  return found?.event_time || "";
+}
+
+function renderScoreRadar(report = {}, risk = {}) {
+  const drivers = risk.top_drivers || report.agent_trace?.scoring_agent?.top_drivers || [];
+  const text = drivers.map((item) => item.indicator).join(" ");
+  const score = Number(report.final_risk_score || risk.final_risk_score || 0);
+  const values = [
+    ["内容敏感度", Math.min(100, score + (text.includes("对象敏感") ? 12 : 0))],
+    ["行为偏离", Math.min(100, score * 0.86 + (text.includes("偏离") ? 18 : 0))],
+    ["扩散证据", Math.min(100, score * 0.78 + (text.includes("扩散") ? 24 : 0))],
+    ["业务缺口", Math.min(100, score * 0.68 + (text.includes("审批") || text.includes("业务") ? 18 : 0))],
+    ["操作隐蔽性", Math.min(100, score * 0.58 + (text.includes("规避") ? 28 : 0))],
+  ];
+  return `
+    <div class="radarBars">
+      ${values.map(([label, value]) => `
+        <div class="radarRow">
+          <span>${escapeHtml(label)}</span>
+          <div class="barTrack"><div class="barFill" style="width:${Math.max(4, value)}%"></div></div>
+          <b>${num(value, 0)}</b>
+        </div>
+      `).join("")}
     </div>
   `;
 }
@@ -1142,6 +1378,44 @@ function renderRules() {
     ["高危阈值", state.activeRules.high_risk_thresholds || []],
     ["弱规则", state.activeRules.weak_rules || []],
   ];
+  const allRules = flattenActiveRules();
+  const query = (document.getElementById("ruleSearch")?.value || "").trim().toLowerCase();
+  const typeFilter = document.getElementById("ruleTypeFilter")?.value || "all";
+  const visibleRules = allRules.filter((rule) => {
+    const text = [rule.name, rule.id, rule.typeLabel, conditionText(rule.conditions || [rule])].join(" ").toLowerCase();
+    return (!query || text.includes(query)) && (typeFilter === "all" || rule.type === typeFilter);
+  });
+  const ruleStats = [
+    ["总规则数", ruleCount(state.activeRules)],
+    ["场景规则", state.activeRules.scene_rules?.length || 0],
+    ["高危阈值", state.activeRules.high_risk_thresholds?.length || 0],
+    ["待复核建议", pendingSuggestedRules().length],
+  ];
+  const statsNode = document.getElementById("ruleStats");
+  if (statsNode) {
+    statsNode.innerHTML = ruleStats.map(([label, value]) => `
+      <article class="miniMetric"><span>${escapeHtml(label)}</span><strong>${fmt(value)}</strong></article>
+    `).join("");
+  }
+  const tableNode = document.getElementById("activeRuleTable");
+  if (tableNode) {
+    tableNode.innerHTML = visibleRules.slice(0, 80).map((rule) => `
+      <tr>
+        <td>
+          <strong>${escapeHtml(rule.name || rule.id || rule.field || "规则")}</strong>
+          <span>${escapeHtml(conditionText(rule.conditions || [rule]))}</span>
+        </td>
+        <td>${escapeHtml(rule.typeLabel)}</td>
+        <td>${fmt(rule.metrics?.support_count || rule.metrics?.positive_hits || 0)}</td>
+        <td><span class="riskLevel" style="--level-color:#2563eb;--level-bg:#dbeafe">${escapeHtml(rule.status || "active")}</span></td>
+        <td class="tableActions">
+          <button data-ui-action="edit_rule" data-rule-id="${escapeAttr(rule.id || rule.name || "")}">编辑</button>
+          <button data-ui-action="${rule.status === "disabled" ? "activate_rule" : "pause_rule"}" data-rule-id="${escapeAttr(rule.id || rule.name || "")}">${rule.status === "disabled" ? "激活" : "停用"}</button>
+          <button data-ui-action="optimize_log" data-rule-id="${escapeAttr(rule.id || rule.name || "")}">优化日志</button>
+        </td>
+      </tr>
+    `).join("") || `<tr><td colspan="5"><div class="emptyState">没有匹配规则</div></td></tr>`;
+  }
   document.getElementById("activeRuleCount").textContent = String(ruleCount(state.activeRules));
   document.getElementById("activeRuleGroups").innerHTML = groups.map(([title, rules]) => `
     <div class="ruleGroup">
@@ -1192,6 +1466,59 @@ function renderRules() {
       reviewSuggestedRule(button.dataset.ruleId, button.dataset.ruleAction);
     });
   });
+  renderActionMessages();
+}
+
+function renderSettings() {
+  const weights = state.uiState.risk_weights || defaultUiState.risk_weights;
+  const total = Object.values(weights).reduce((sum, value) => sum + Number(value || 0), 0);
+  const totalNode = document.getElementById("weightTotal");
+  if (!totalNode) return;
+  totalNode.textContent = `${num(total, 1)}%${Math.abs(total - 100) < 0.2 ? "（正常）" : "（需调整为100%）"}`;
+  totalNode.classList.toggle("bad", Math.abs(total - 100) >= 0.2);
+  const weightNode = document.getElementById("weightControls");
+  weightNode.innerHTML = Object.entries(weightDimensions).map(([code, config]) => `
+    <div class="weightRow">
+      <div>
+        <strong>${escapeHtml(config.label)}</strong>
+        <span>${escapeHtml(config.note)}</span>
+      </div>
+      <input type="range" min="0" max="70" step="0.1" value="${escapeAttr(weights[code])}" data-weight-code="${escapeAttr(code)}" />
+      <input type="number" min="0" max="100" step="0.1" value="${escapeAttr(weights[code])}" data-weight-code="${escapeAttr(code)}" />
+      <b>%</b>
+    </div>
+  `).join("");
+
+  const previewScore = weightedPreviewScore(weights);
+  document.getElementById("weightPreviewScore").textContent = num(previewScore, 1);
+  document.getElementById("weightPreviewLevel").textContent = previewScore >= 75 ? "极高风险" : previewScore >= 55 ? "高风险" : previewScore >= 30 ? "中风险" : "低风险";
+  document.getElementById("weightPreviewBar").style.width = `${Math.min(100, previewScore)}%`;
+
+  const ai = state.uiState.ai_settings || defaultUiState.ai_settings;
+  const automation = state.uiState.automation || defaultUiState.automation;
+  setControlValue("settingSensitivity", ai.sensitivity);
+  setControlValue("settingCycle", ai.optimization_cycle);
+  setControlChecked("settingSelfLearning", ai.self_learning_enabled);
+  setControlChecked("settingSuspendProcess", automation.suspend_process);
+  setControlChecked("settingFreezeAccount", automation.freeze_account);
+  const sensitivityText = document.getElementById("settingSensitivityText");
+  if (sensitivityText) sensitivityText.textContent = `${fmt(ai.sensitivity)}%`;
+  renderActionMessages();
+}
+
+function weightedPreviewScore(weights) {
+  const sampleScores = { C2: 76, C3: 64, C4: 88, C5: 83 };
+  return Object.entries(sampleScores).reduce((sum, [code, score]) => sum + score * Number(weights[code] || 0) / 100, 0);
+}
+
+function setControlValue(id, value) {
+  const node = document.getElementById(id);
+  if (node && node.value !== String(value)) node.value = value;
+}
+
+function setControlChecked(id, value) {
+  const node = document.getElementById(id);
+  if (node) node.checked = Boolean(value);
 }
 
 function renderAudit() {
@@ -1202,6 +1529,40 @@ function renderAudit() {
     final_risk_score: report.final_risk_score,
     need_human_review: true,
   }));
+  const actions = state.uiState.actions || [];
+  const trendNode = document.getElementById("auditTrend");
+  if (trendNode) {
+    const trend = buildAuditTrend();
+    const max = Math.max(...trend.map((item) => item.value), 1);
+    trendNode.innerHTML = trend.map((item) => `
+      <div class="trendBar" title="${escapeAttr(item.label)}: ${fmt(item.value)}">
+        <i style="height:${Math.max(8, item.value / max * 100)}%"></i>
+        <span>${escapeHtml(item.label)}</span>
+      </div>
+    `).join("");
+  }
+  const auditMetrics = document.getElementById("auditMetrics");
+  if (auditMetrics) {
+    const falsePositiveCount = actions.filter((item) => item.action === "mark_false_positive").length;
+    const emergencyCount = actions.filter((item) => item.action === "emergency_response").length;
+    const totalReviewed = Math.max(feedback.length, 1);
+    auditMetrics.innerHTML = [
+      ["误报标记率", pct(falsePositiveCount / totalReviewed)],
+      ["紧急处置", fmt(emergencyCount)],
+      ["平均响应时间", "1.2 分钟"],
+    ].map(([label, value]) => `<div class="miniStat"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join("");
+  }
+  const historyNode = document.getElementById("auditHistory");
+  if (historyNode) {
+    historyNode.innerHTML = actions.slice(-60).reverse().map((item) => `
+      <tr>
+        <td>${escapeHtml(item.time || "")}</td>
+        <td>${escapeHtml(item.payload?.candidate_event_id || item.payload?.user_id || "-")}</td>
+        <td>${escapeHtml(actionText(item.action, item.payload || {}))}</td>
+        <td>${escapeHtml(item.payload?.label || "本地演示记录")}</td>
+      </tr>
+    `).join("") || `<tr><td colspan="4"><div class="emptyState">暂无本地处置历史</div></td></tr>`;
+  }
   document.getElementById("feedbackList").innerHTML = feedback.slice(0, 80).map((item) => {
     const style = levelStyle(item.risk_level);
     return `
@@ -1230,6 +1591,16 @@ function renderAudit() {
     })
     .join("");
   document.getElementById("learningLog").innerHTML = lines || `<div class="emptyState">暂无学习日志</div>`;
+  renderActionMessages();
+}
+
+function buildAuditTrend() {
+  const base = [4, 7, 5, 9, 6, 11, 8, 13, 10, 15];
+  const recentActions = (state.uiState.actions || []).length;
+  return base.map((value, index) => ({
+    label: `${index + 1}日`,
+    value: value + (index > 6 ? Math.min(recentActions, 6) : 0),
+  }));
 }
 
 function renderAgentView() {
@@ -1410,6 +1781,14 @@ function ruleCount(ruleSet) {
   return (ruleSet.scene_rules?.length || 0) + (ruleSet.high_risk_thresholds?.length || 0) + (ruleSet.weak_rules?.length || 0);
 }
 
+function flattenActiveRules() {
+  return [
+    ...(state.activeRules.scene_rules || []).map((rule) => ({ ...rule, type: "scene", typeLabel: "场景规则" })),
+    ...(state.activeRules.high_risk_thresholds || []).map((rule) => ({ ...rule, type: "threshold", typeLabel: "高危阈值" })),
+    ...(state.activeRules.weak_rules || []).map((rule) => ({ ...rule, type: "weak", typeLabel: "弱规则" })),
+  ];
+}
+
 function countBy(items, key) {
   return items.reduce((acc, item) => {
     const value = item[key] || "未知";
@@ -1441,6 +1820,21 @@ function normalizeMeta(meta, evaluation) {
     event_count: meta.event_count ?? 0,
     scene_counts: meta.scene_counts || {},
   };
+}
+
+function normalizeUiState(uiState = {}) {
+  return {
+    ...defaultUiState,
+    ...uiState,
+    risk_weights: { ...defaultUiState.risk_weights, ...(uiState.risk_weights || {}) },
+    ai_settings: { ...defaultUiState.ai_settings, ...(uiState.ai_settings || {}) },
+    automation: { ...defaultUiState.automation, ...(uiState.automation || {}) },
+    actions: uiState.actions || [],
+  };
+}
+
+function selectedReport() {
+  return state.reports.find((item) => item.candidate_event_id === state.selectedId) || state.reports[0] || null;
 }
 
 function updateLiveStatus(label, active) {
