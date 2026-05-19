@@ -81,6 +81,7 @@ def _default_ui_state() -> dict[str, Any]:
             "suspend_process": True,
             "freeze_account": False,
         },
+        "feedback_reviews": [],
         "actions": [],
     }
 
@@ -105,6 +106,7 @@ def _load_ui_state(rule_dir: Path) -> dict[str, Any]:
         "risk_weights": {**defaults["risk_weights"], **state.get("risk_weights", {})},
         "ai_settings": {**defaults["ai_settings"], **state.get("ai_settings", {})},
         "automation": {**defaults["automation"], **state.get("automation", {})},
+        "feedback_reviews": state.get("feedback_reviews", []),
         "actions": state.get("actions", []),
     }
 
@@ -115,6 +117,64 @@ def _save_ui_state(rule_dir: Path, state: dict[str, Any]) -> None:
     with _ui_state_path(rule_dir).open("w", encoding="utf-8") as f:
         json.dump(state, f, ensure_ascii=False, indent=2)
         f.write("\n")
+
+
+def _record_ui_state_action(
+    rule_dir: Path,
+    action: str,
+    action_payload: dict[str, Any],
+    state: dict[str, Any] | None = None,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    state = state or _load_ui_state(rule_dir)
+    entry = {
+        "time": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "action": action,
+        "payload": action_payload,
+    }
+    state.setdefault("actions", []).append(entry)
+    state["actions"] = state["actions"][-200:]
+    _save_ui_state(rule_dir, state)
+    return entry, state
+
+
+RULE_COLLECTIONS = {
+    "scene": "scene_rules",
+    "scene_rules": "scene_rules",
+    "threshold": "high_risk_thresholds",
+    "high_risk_thresholds": "high_risk_thresholds",
+    "weak": "weak_rules",
+    "weak_rules": "weak_rules",
+}
+
+
+def _rule_collection(rule_type: str) -> str | None:
+    return RULE_COLLECTIONS.get(str(rule_type or "").strip())
+
+
+def _find_active_rule(active_rules: dict[str, Any], rule_type: str, rule_index: Any, rule_id: str) -> tuple[str, int, dict[str, Any]] | None:
+    collection = _rule_collection(rule_type)
+    if not collection:
+        return None
+
+    rules = active_rules.get(collection, [])
+    try:
+        index = int(rule_index)
+    except (TypeError, ValueError):
+        index = -1
+
+    if 0 <= index < len(rules):
+        return collection, index, rules[index]
+
+    for idx, rule in enumerate(rules):
+        if rule_id and rule_id in {str(rule.get("id", "")), str(rule.get("name", ""))}:
+            return collection, idx, rule
+    return None
+
+
+def _write_active_rules(rule_dir: Path, active_rules: dict[str, Any]) -> None:
+    active_rules["updated_at"] = time.strftime("%Y-%m-%d %H:%M:%S")
+    path = rule_dir / adaptive_rule_engine.ACTIVE_RULES_FILE
+    path.write_text(json.dumps(active_rules, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 def _local_llm_result(event: ScoredEvent, evidence_summary: str) -> dict[str, Any]:
@@ -266,6 +326,9 @@ class LiveRequestHandler(BaseHTTPRequestHandler):
         if parsed.path == "/rules":
             self._send_rules()
             return
+        if parsed.path == "/rules/active/log":
+            self._send_active_rule_log(parsed.query)
+            return
         if parsed.path == "/ui-state":
             self._send_ui_state()
             return
@@ -276,6 +339,9 @@ class LiveRequestHandler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:
         parsed = urlparse(self.path)
+        if parsed.path == "/rules/active/update":
+            self._update_active_rule()
+            return
         if parsed.path == "/rules/suggestions/review":
             self._review_rule_suggestion()
             return
@@ -362,15 +428,187 @@ class LiveRequestHandler(BaseHTTPRequestHandler):
                 **action_payload.get("automation", {}),
             }
 
-        entry = {
-            "time": time.strftime("%Y-%m-%d %H:%M:%S"),
-            "action": action,
-            "payload": action_payload,
-        }
-        state.setdefault("actions", []).append(entry)
-        state["actions"] = state["actions"][-200:]
-        _save_ui_state(self.server.rule_dir, state)
+        if action in {"mark_false_positive", "emergency_response", "approve_review"}:
+            candidate_id = action_payload.get("candidate_event_id")
+            if candidate_id:
+                reviews = [
+                    item for item in state.get("feedback_reviews", [])
+                    if item.get("candidate_event_id") != candidate_id
+                ]
+                review = {
+                    **action_payload,
+                    "candidate_event_id": candidate_id,
+                    "reviewed_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+                }
+                if action == "mark_false_positive":
+                    review.update({"false_positive": True, "human_confirmed": False, "review_comment": "人工标记为误报"})
+                elif action == "emergency_response":
+                    review.update({"false_positive": False, "human_confirmed": True, "review_comment": "已触发紧急处置流程"})
+                else:
+                    review.update({"false_positive": False, "human_confirmed": True, "review_comment": "人工复核通过"})
+                reviews.insert(0, review)
+                state["feedback_reviews"] = reviews[:200]
+
+        entry, state = _record_ui_state_action(self.server.rule_dir, action, action_payload, state)
         self._send_json({"ok": True, "entry": entry, "ui_state": state})
+
+    def _update_active_rule(self) -> None:
+        try:
+            payload = self._read_json_body()
+        except json.JSONDecodeError as exc:
+            self._send_json({"ok": False, "error": str(exc)}, status=HTTPStatus.BAD_REQUEST)
+            return
+
+        rule_ref = payload.get("rule_ref", {})
+        if not isinstance(rule_ref, dict):
+            rule_ref = {}
+        action = str(payload.get("action", "")).strip()
+        if action not in {"create_rule", "edit_rule", "pause_rule", "activate_rule", "batch_update_rules"}:
+            self._send_json({"ok": False, "error": f"Unsupported action: {action}"}, status=HTTPStatus.BAD_REQUEST)
+            return
+
+        rule_dir = self.server.rule_dir
+        active_rules = adaptive_rule_engine.load_active_rules(rule_dir)
+        if action == "create_rule":
+            collection = _rule_collection(str(rule_ref.get("rule_type", ""))) or "scene_rules"
+            new_rule = payload.get("rule")
+            if not isinstance(new_rule, dict):
+                self._send_json({"ok": False, "error": "rule must be an object"}, status=HTTPStatus.BAD_REQUEST)
+                return
+            if not new_rule.get("id"):
+                new_rule["id"] = f"manual_rule_{int(time.time())}"
+            new_rule.setdefault("status", "active")
+            new_rule.setdefault("source", "manual")
+            new_rule.setdefault("created_at", time.strftime("%Y-%m-%d %H:%M:%S"))
+            active_rules.setdefault(collection, []).append(new_rule)
+            _write_active_rules(rule_dir, active_rules)
+            entry, ui_state = _record_ui_state_action(rule_dir, action, {
+                **rule_ref,
+                "rule_type": rule_ref.get("rule_type") or collection,
+                "rule_id": new_rule.get("id", ""),
+                "rule_name": new_rule.get("name") or new_rule.get("field") or new_rule.get("id", ""),
+                "status": new_rule.get("status", "active"),
+            })
+            self._send_json({
+                "ok": True,
+                "entry": entry,
+                "ui_state": ui_state,
+                "active_rules": active_rules,
+                "suggested_rules": adaptive_rule_engine.load_suggested_rules(rule_dir),
+                "updated_rule": new_rule,
+            })
+            return
+
+        if action == "batch_update_rules":
+            status = str(payload.get("status", "")).strip()
+            if status not in {"active", "disabled"}:
+                self._send_json({"ok": False, "error": "status must be active or disabled"}, status=HTTPStatus.BAD_REQUEST)
+                return
+            requested = str(rule_ref.get("rule_type", "all")).strip()
+            collections = list(RULE_COLLECTIONS.values()) if requested == "all" else [_rule_collection(requested)]
+            collections = [collection for collection in dict.fromkeys(collections) if collection]
+            if not collections:
+                self._send_json({"ok": False, "error": "rule_type is invalid"}, status=HTTPStatus.BAD_REQUEST)
+                return
+            changed = 0
+            for collection in collections:
+                for rule in active_rules.get(collection, []):
+                    if rule.get("status", "active") != status:
+                        rule["status"] = status
+                        changed += 1
+            _write_active_rules(rule_dir, active_rules)
+            entry, ui_state = _record_ui_state_action(rule_dir, action, {
+                **rule_ref,
+                "status": status,
+                "changed_count": changed,
+            })
+            self._send_json({
+                "ok": True,
+                "entry": entry,
+                "ui_state": ui_state,
+                "active_rules": active_rules,
+                "suggested_rules": adaptive_rule_engine.load_suggested_rules(rule_dir),
+                "changed_count": changed,
+            })
+            return
+
+        found = _find_active_rule(
+            active_rules,
+            str(rule_ref.get("rule_type", "")),
+            rule_ref.get("rule_index"),
+            str(rule_ref.get("rule_id", "")),
+        )
+        if not found:
+            self._send_json({"ok": False, "error": "Active rule not found"}, status=HTTPStatus.NOT_FOUND)
+            return
+
+        collection, index, old_rule = found
+        if action == "edit_rule":
+            new_rule = payload.get("rule")
+            if not isinstance(new_rule, dict):
+                self._send_json({"ok": False, "error": "rule must be an object"}, status=HTTPStatus.BAD_REQUEST)
+                return
+            if old_rule.get("id") and not new_rule.get("id"):
+                new_rule["id"] = old_rule["id"]
+            active_rules[collection][index] = new_rule
+        else:
+            status = "disabled" if action == "pause_rule" else "active"
+            active_rules[collection][index]["status"] = status
+
+        _write_active_rules(rule_dir, active_rules)
+        updated_rule = active_rules[collection][index]
+        entry, ui_state = _record_ui_state_action(rule_dir, action, {
+            **rule_ref,
+            "rule_name": updated_rule.get("name") or updated_rule.get("field") or updated_rule.get("id", ""),
+            "status": updated_rule.get("status", "active"),
+        })
+        self._send_json({
+            "ok": True,
+            "entry": entry,
+            "ui_state": ui_state,
+            "active_rules": active_rules,
+            "suggested_rules": adaptive_rule_engine.load_suggested_rules(rule_dir),
+            "updated_rule": updated_rule,
+        })
+
+    def _send_active_rule_log(self, query: str) -> None:
+        params = parse_qs(query)
+        rule_type = params.get("rule_type", [""])[0]
+        rule_index = params.get("rule_index", [""])[0]
+        rule_id = params.get("rule_id", [""])[0]
+        rule_dir = self.server.rule_dir
+        active_rules = adaptive_rule_engine.load_active_rules(rule_dir)
+        found = _find_active_rule(active_rules, rule_type, rule_index, rule_id)
+        if not found:
+            self._send_json({"ok": False, "error": "Active rule not found"}, status=HTTPStatus.NOT_FOUND)
+            return
+
+        collection, index, rule = found
+        learning_entries = []
+        log_path = rule_dir / adaptive_rule_engine.LEARNING_LOG_FILE
+        if log_path.exists():
+            with log_path.open("r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        learning_entries.append(json.loads(line))
+                    except json.JSONDecodeError:
+                        learning_entries.append({"raw": line})
+
+        actions = [
+            item for item in _load_ui_state(rule_dir).get("actions", [])
+            if item.get("payload", {}).get("rule_id") in {rule_id, rule.get("id"), rule.get("name")}
+            or str(item.get("payload", {}).get("rule_index", "")) == str(index)
+        ]
+        self._send_json({
+            "ok": True,
+            "rule_ref": {"rule_type": rule_type, "rule_index": index, "rule_id": rule_id, "collection": collection},
+            "rule": rule,
+            "learning_entries": learning_entries[-20:],
+            "actions": actions[-20:],
+        })
 
     def _review_rule_suggestion(self) -> None:
         try:

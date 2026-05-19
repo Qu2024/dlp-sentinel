@@ -312,6 +312,215 @@ p {
   display: none;
 }
 
+.modalOpen {
+  overflow: hidden;
+}
+
+.ruleModal[hidden] {
+  display: none;
+}
+
+.ruleModal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+}
+
+.ruleModalBackdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.38);
+}
+
+.ruleModalCard {
+  position: relative;
+  z-index: 1;
+  width: min(760px, 100%);
+  max-height: min(760px, calc(100vh - 44px));
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.24);
+  overflow: hidden;
+}
+
+.ruleModalCard header,
+.ruleModalCard footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.ruleModalCard footer {
+  justify-content: flex-end;
+  border-top: 1px solid var(--line-soft);
+  border-bottom: 0;
+}
+
+.ruleModalCard h2 {
+  margin: 0 0 4px;
+  font-size: 18px;
+}
+
+.ruleModalCard p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.ruleModalBody {
+  overflow: auto;
+  padding: 16px 18px;
+}
+
+.iconButton {
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--muted);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.modalField {
+  display: grid;
+  gap: 8px;
+}
+
+.modalField.compact {
+  margin-bottom: 12px;
+}
+
+.modalField span,
+.modalSectionTitle {
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--text);
+}
+
+.modalField textarea {
+  min-height: 320px;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.55;
+  color: #111827;
+  background: #f8fafc;
+}
+
+.modalField input,
+.modalField select {
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 0 10px;
+  background: #fff;
+  color: var(--text);
+  font-weight: 800;
+}
+
+.dateRangeGrid,
+.batchActionGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.batchActionGrid button {
+  min-height: 42px;
+}
+
+.modalHint {
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.modalHint code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.modalNotice {
+  margin: 12px 0 0;
+}
+
+.ruleLogSummary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ruleLogSummary div {
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  padding: 10px;
+  background: #f8fafc;
+}
+
+.ruleLogSummary span,
+.ruleLogList span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.ruleLogSummary strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+}
+
+.modalSectionTitle {
+  margin: 16px 0 8px;
+}
+
+.ruleLogList {
+  display: grid;
+  gap: 8px;
+}
+
+.ruleLogList article {
+  border: 1px solid var(--line-soft);
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+}
+
+.ruleLogList strong {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.ruleLogList code {
+  display: block;
+  margin-top: 6px;
+  padding: 8px;
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #334155;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  white-space: pre-wrap;
+}
+
 .liveMetricGrid {
   display: grid;
   grid-template-columns: repeat(4, minmax(150px, 1fr));
@@ -1543,6 +1752,12 @@ tr:hover td {
   font-size: 12px;
   font-weight: 800;
   padding: 4px 6px;
+  cursor: pointer;
+}
+
+.tableActions button:disabled {
+  color: var(--muted);
+  cursor: default;
 }
 
 .ruleGroups {
@@ -2045,5 +2260,18 @@ tr:hover td {
 
   .detailScore {
     text-align: left;
+  }
+
+  .ruleModal {
+    padding: 10px;
+  }
+
+  .ruleLogSummary {
+    grid-template-columns: 1fr;
+  }
+
+  .dateRangeGrid,
+  .batchActionGrid {
+    grid-template-columns: 1fr;
   }
 }

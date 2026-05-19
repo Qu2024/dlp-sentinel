@@ -37,6 +37,8 @@ def _match_rule_on_session(session_summary: dict, rule: dict) -> bool:
 
 
 def _rule_matches(events: list[RawEvent], rule: dict, session_summary: dict) -> bool:
+    if rule.get("status", "active") in {"disabled", "paused", "inactive"}:
+        return False
     if rule.get("scope") == "session":
         return _match_rule_on_session(session_summary, rule)
     return any(_match_rule_on_event(event, rule) for event in events)
@@ -52,6 +54,8 @@ def _match_scenes(events: list[RawEvent], scene_rules: list[dict], session_summa
 
 def _high_risk_gate(events: list[RawEvent], thresholds: list[dict], session_summary: dict) -> bool:
     for threshold in thresholds:
+        if threshold.get("status", "active") in {"disabled", "paused", "inactive"}:
+            continue
         if threshold.get("scope") == "session":
             value = adaptive_rule_engine._feature_value(session_summary, threshold["field"])
             if _compare(value, threshold["op"], threshold["value"]):

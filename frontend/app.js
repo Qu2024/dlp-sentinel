@@ -44,6 +44,7 @@ const defaultUiState = {
     suspend_process: true,
     freeze_account: false,
   },
+  feedback_reviews: [],
   actions: [],
 };
 
@@ -208,6 +209,9 @@ const state = {
   selectedId: "",
   ruleActionMessage: "",
   ruleActionBusyId: "",
+  ruleAdminBusyKey: "",
+  ruleModalMessage: "",
+  auditFilter: { start: "", end: "" },
   demoMode: demoModeFromUrl(),
   datasetId: datasetIdForDemoMode(demoModeFromUrl()),
   currentView: "live",
@@ -234,6 +238,7 @@ async function init() {
   bindFilters();
   bindLiveControls();
   bindUiActions();
+  bindRuleModalControls();
   bindSettingsControls();
   await loadData();
   setActiveView((demoModeOptions[state.demoMode] || demoModeOptions[defaultDemoMode]).targetView);
@@ -601,6 +606,28 @@ function bindUiActions() {
   });
 }
 
+function bindRuleModalControls() {
+  document.addEventListener("click", (event) => {
+    if (event.target.closest("[data-rule-modal-close]")) {
+      closeRuleModal();
+      return;
+    }
+    const saveButton = event.target.closest("[data-rule-save]");
+    if (saveButton) saveRuleEdit(saveButton);
+    const createButton = event.target.closest("[data-create-rule-save]");
+    if (createButton) createActiveRule(createButton);
+    const batchButton = event.target.closest("[data-batch-rule-action]");
+    if (batchButton) runBatchRuleAction(batchButton);
+    const auditFilterButton = event.target.closest("[data-audit-filter-apply]");
+    if (auditFilterButton) applyAuditDateFilter();
+    const auditClearButton = event.target.closest("[data-audit-filter-clear]");
+    if (auditClearButton) clearAuditDateFilter();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeRuleModal();
+  });
+}
+
 function bindSettingsControls() {
   document.addEventListener("input", (event) => {
     const input = event.target.closest("[data-weight-code]");
@@ -660,6 +687,42 @@ async function handleUiAction(action, button) {
     renderSettings();
     return;
   }
+  if (action === "edit_rule") {
+    openRuleEditor(button);
+    return;
+  }
+  if (action === "pause_rule" || action === "activate_rule") {
+    await updateActiveRuleStatus(button, action);
+    return;
+  }
+  if (action === "optimize_log") {
+    await openRuleOptimizationLog(button);
+    return;
+  }
+  if (action === "new_rule") {
+    openNewRuleModal();
+    return;
+  }
+  if (action === "export_rules") {
+    await exportRulesFile();
+    return;
+  }
+  if (action === "batch_rules") {
+    openBatchRulesModal();
+    return;
+  }
+  if (action === "date_filter") {
+    openAuditDateFilter();
+    return;
+  }
+  if (action === "export_audit") {
+    await exportAuditReport();
+    return;
+  }
+  if (action === "mark_false_positive" || action === "emergency_response" || action === "approve_review") {
+    await applyRiskReviewAction(action, button);
+    return;
+  }
 
   const report = selectedReport();
   const payload = {
@@ -703,20 +766,592 @@ function renderActionMessages() {
 function actionText(action, payload) {
   const id = payload.candidate_event_id || payload.rule_id || payload.user_id || "当前对象";
   const map = {
-    mark_false_positive: `已记录误报复核：${id}`,
-    emergency_response: `已记录紧急处置请求：${id}`,
-    approve_review: `已记录复核通过：${id}`,
-    new_rule: "已记录新建规则入口请求",
-    export_rules: "已记录规则导出请求",
-    batch_rules: "已记录批量规则操作请求",
-    edit_rule: "已记录规则编辑请求",
-    pause_rule: "已记录规则停用请求",
-    activate_rule: "已记录规则激活请求",
-    optimize_log: "已记录优化日志查看请求",
-    export_audit: "已记录审计报告导出请求",
-    date_filter: "已记录审计日期筛选请求",
+    mark_false_positive: `已标记误报：${id}`,
+    emergency_response: `已触发紧急处置：${id}`,
+    approve_review: `已复核通过：${id}`,
+    new_rule: "已新建规则",
+    export_rules: "已导出规则列表",
+    batch_rules: "已完成批量规则操作",
+    edit_rule: "已保存规则编辑",
+    pause_rule: "已停用规则",
+    activate_rule: "已激活规则",
+    optimize_log: "已打开优化日志",
+    export_audit: "已导出审计报告",
+    date_filter: "已应用审计日期筛选",
   };
-  return map[action] || `已记录操作：${payload.label || action}`;
+  return map[action] || `已完成操作：${payload.label || action}`;
+}
+
+function ruleRefFromButton(button) {
+  return {
+    rule_type: button?.dataset.ruleType || "",
+    rule_index: Number(button?.dataset.ruleIndex || -1),
+    rule_id: button?.dataset.ruleId || "",
+  };
+}
+
+function ruleKey(ref) {
+  return `${ref.rule_type}:${ref.rule_index}:${ref.rule_id}`;
+}
+
+function findActiveRule(ref) {
+  const rules = flattenActiveRules();
+  const exact = rules.find((rule) =>
+    rule.type === ref.rule_type &&
+    Number(rule.index) === Number(ref.rule_index) &&
+    (!ref.rule_id || ref.ruleId === ref.rule_id)
+  );
+  if (exact) return exact;
+
+  if (ref.rule_id) {
+    return rules.find((rule) => ruleIdentityValues(rule).includes(ref.rule_id));
+  }
+
+  return rules.find((rule) =>
+    rule.type === ref.rule_type &&
+    Number(rule.index) === Number(ref.rule_index)
+  );
+}
+
+function ruleIdentityValues(rule) {
+  return [
+    rule.ruleId,
+    rule.id,
+    rule.name,
+    rule.field ? `${rule.field}:${rule.op || ""}:${rule.value ?? ""}` : "",
+  ].filter(Boolean).map(String);
+}
+
+function canonicalRuleRef(rule, fallbackRef = {}) {
+  if (!rule) return fallbackRef;
+  return {
+    rule_type: rule.type || fallbackRef.rule_type || "",
+    rule_index: Number.isInteger(rule.index) ? rule.index : Number(fallbackRef.rule_index || -1),
+    rule_id: rule.ruleId || rule.id || rule.name || fallbackRef.rule_id || "",
+  };
+}
+
+async function updateActiveRuleStatus(button, action) {
+  const buttonRef = ruleRefFromButton(button);
+  const rule = findActiveRule(buttonRef);
+  const ref = canonicalRuleRef(rule, buttonRef);
+  state.ruleAdminBusyKey = ruleKey(ref);
+  state.uiActionMessage = action === "pause_rule"
+    ? `正在停用规则：${rule?.name || ref.rule_id || ref.rule_index}`
+    : `正在激活规则：${rule?.name || ref.rule_id || ref.rule_index}`;
+  renderRules();
+  try {
+    const payload = await postActiveRuleUpdate({ action, rule_ref: ref });
+    state.activeRules = payload.active_rules || state.activeRules;
+    state.suggestedRules = payload.suggested_rules || state.suggestedRules;
+    state.uiState = normalizeUiState(payload.ui_state || state.uiState);
+    state.uiActionMessage = action === "pause_rule"
+      ? `已停用规则：${rule?.name || ref.rule_id || ref.rule_index}`
+      : `已激活规则：${rule?.name || ref.rule_id || ref.rule_index}`;
+  } catch (error) {
+    state.uiActionMessage = `规则状态更新失败：${error.message || error}`;
+  } finally {
+    state.ruleAdminBusyKey = "";
+    renderRules();
+    renderMetrics();
+    renderAudit();
+  }
+}
+
+function openRuleEditor(button) {
+  const buttonRef = ruleRefFromButton(button);
+  const rule = findActiveRule(buttonRef);
+  if (!rule) {
+    state.uiActionMessage = `没有找到这条规则：${buttonRef.rule_id || "缺少规则标识"}，请强制刷新页面后再试`;
+    renderActionMessages();
+    return;
+  }
+  const ref = canonicalRuleRef(rule, buttonRef);
+  state.ruleModalMessage = "";
+  showRuleModal({
+    title: "编辑规则",
+    subtitle: `${rule.typeLabel} · ${rule.name || rule.field || rule.ruleId}`,
+    body: `
+      <label class="modalField">
+        <span>规则 JSON</span>
+        <textarea id="ruleEditorJson" spellcheck="false">${escapeHtml(JSON.stringify(cleanRuleForEdit(rule), null, 2))}</textarea>
+      </label>
+      <div class="modalHint">保存后会写入本地测试规则库 active_rules.json；停用状态为 <code>"status": "disabled"</code>。</div>
+      <div class="inlineNotice modalNotice" id="ruleModalMessage" ${state.ruleModalMessage ? "" : "hidden"}>${escapeHtml(state.ruleModalMessage)}</div>
+    `,
+    footer: `
+      <button class="ghostButton compactAction" data-rule-modal-close>取消</button>
+      <button class="primaryButton compactAction" data-rule-save
+        data-rule-type="${escapeAttr(ref.rule_type)}"
+        data-rule-index="${escapeAttr(ref.rule_index)}"
+        data-rule-id="${escapeAttr(ref.rule_id)}">保存规则</button>
+    `,
+  });
+}
+
+async function saveRuleEdit(button) {
+  const textarea = document.getElementById("ruleEditorJson");
+  const messageNode = document.getElementById("ruleModalMessage");
+  let rule;
+  try {
+    rule = JSON.parse(textarea?.value || "{}");
+  } catch (error) {
+    setRuleModalMessage(`JSON 格式错误：${error.message || error}`);
+    return;
+  }
+  if (!rule || typeof rule !== "object" || Array.isArray(rule)) {
+    setRuleModalMessage("规则内容必须是一个 JSON object");
+    return;
+  }
+
+  const ref = ruleRefFromButton(button);
+  button.disabled = true;
+  if (messageNode) {
+    messageNode.hidden = false;
+    messageNode.textContent = "正在写入本地规则库...";
+  }
+  try {
+    const payload = await postActiveRuleUpdate({ action: "edit_rule", rule_ref: ref, rule });
+    state.activeRules = payload.active_rules || state.activeRules;
+    state.suggestedRules = payload.suggested_rules || state.suggestedRules;
+    state.uiState = normalizeUiState(payload.ui_state || state.uiState);
+    state.uiActionMessage = `已保存规则：${rule.name || rule.id || ref.rule_id || ref.rule_index}`;
+    closeRuleModal();
+    renderRules();
+    renderMetrics();
+    renderAudit();
+  } catch (error) {
+    setRuleModalMessage(`保存失败：${error.message || error}`);
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function openRuleOptimizationLog(button) {
+  const buttonRef = ruleRefFromButton(button);
+  const rule = findActiveRule(buttonRef);
+  const ref = canonicalRuleRef(rule, buttonRef);
+  showRuleModal({
+    title: "优化日志",
+    subtitle: `${rule?.typeLabel || "规则"} · ${rule?.name || rule?.field || ref.rule_id || ref.rule_index}`,
+    body: `<div class="emptyState">正在读取学习日志...</div>`,
+    footer: `<button class="primaryButton compactAction" data-rule-modal-close>关闭</button>`,
+  });
+  try {
+    const params = new URLSearchParams({
+      rule_type: ref.rule_type,
+      rule_index: String(ref.rule_index),
+      rule_id: ref.rule_id,
+    });
+    const response = await fetch(`${ruleApiBase}/rules/active/log?${params}`, { cache: "no-store" });
+    const payload = await response.json();
+    if (!response.ok || !payload.ok) throw new Error(payload.error || response.statusText);
+    showRuleModal({
+      title: "优化日志",
+      subtitle: `${rule?.typeLabel || "规则"} · ${rule?.name || rule?.field || ref.rule_id || ref.rule_index}`,
+      body: renderRuleLogBody(payload),
+      footer: `<button class="primaryButton compactAction" data-rule-modal-close>关闭</button>`,
+    });
+  } catch (error) {
+    showRuleModal({
+      title: "优化日志",
+      subtitle: `${rule?.typeLabel || "规则"} · ${rule?.name || rule?.field || ref.rule_id || ref.rule_index}`,
+      body: `<div class="emptyState">日志读取失败：${escapeHtml(error.message || error)}</div>`,
+      footer: `<button class="primaryButton compactAction" data-rule-modal-close>关闭</button>`,
+    });
+  }
+}
+
+async function postActiveRuleUpdate(payload) {
+  const response = await fetch(`${ruleApiBase}/rules/active/update`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  if (!response.ok || !data.ok) throw new Error(data.error || response.statusText);
+  return data;
+}
+
+function cleanRuleForEdit(rule) {
+  const { type, typeLabel, index, collection, ruleId, ...editable } = rule;
+  return editable;
+}
+
+function setRuleModalMessage(message) {
+  state.ruleModalMessage = message;
+  const messageNode = document.getElementById("ruleModalMessage");
+  if (messageNode) {
+    messageNode.hidden = !message;
+    messageNode.textContent = message || "";
+  }
+}
+
+function showRuleModal({ title, subtitle, body, footer }) {
+  const modal = document.getElementById("ruleModal");
+  if (!modal) return;
+  modal.innerHTML = `
+    <div class="ruleModalBackdrop" data-rule-modal-close></div>
+    <section class="ruleModalCard" role="dialog" aria-modal="true" aria-label="${escapeAttr(title)}">
+      <header>
+        <div>
+          <h2>${escapeHtml(title)}</h2>
+          <p>${escapeHtml(subtitle || "")}</p>
+        </div>
+        <button class="iconButton" data-rule-modal-close aria-label="关闭">×</button>
+      </header>
+      <div class="ruleModalBody">${body}</div>
+      <footer>${footer || ""}</footer>
+    </section>
+  `;
+  modal.hidden = false;
+  document.body.classList.add("modalOpen");
+}
+
+function closeRuleModal() {
+  const modal = document.getElementById("ruleModal");
+  if (!modal || modal.hidden) return;
+  modal.hidden = true;
+  modal.innerHTML = "";
+  document.body.classList.remove("modalOpen");
+}
+
+function renderRuleLogBody(payload) {
+  const rule = payload.rule || {};
+  const entries = payload.learning_entries || [];
+  const actions = payload.actions || [];
+  return `
+    <div class="ruleLogSummary">
+      <div><span>当前状态</span><strong>${escapeHtml(rule.status || "active")}</strong></div>
+      <div><span>来源</span><strong>${escapeHtml(rule.source || "本地规则库")}</strong></div>
+      <div><span>条件</span><strong>${escapeHtml(conditionText(rule.conditions || [rule]))}</strong></div>
+    </div>
+    <h3 class="modalSectionTitle">学习运行记录</h3>
+    <div class="ruleLogList">
+      ${entries.slice().reverse().map((item) => `
+        <article>
+          <strong>${escapeHtml(item.time || item.run_id || "学习记录")}</strong>
+          <span>历史运行 ${fmt(item.history_run_count)} · 标注样本 ${fmt(item.labeled_sample_count)} · 建议规则 ${fmt(item.suggested_rule_count)}</span>
+          <code>${escapeHtml(JSON.stringify(item.threshold_updates || [], null, 0))}</code>
+        </article>
+      `).join("") || `<div class="emptyState">暂无学习运行记录</div>`}
+    </div>
+    <h3 class="modalSectionTitle">人工管理记录</h3>
+    <div class="ruleLogList">
+      ${actions.slice().reverse().map((item) => `
+        <article>
+          <strong>${escapeHtml(item.time || "")}</strong>
+          <span>${escapeHtml(actionText(item.action, item.payload || {}))}</span>
+        </article>
+      `).join("") || `<div class="emptyState">暂无人工管理记录</div>`}
+    </div>
+  `;
+}
+
+function openNewRuleModal() {
+  const defaultRule = {
+    id: `manual_rule_${Date.now()}`,
+    name: "手工新增规则",
+    scope: "session",
+    status: "active",
+    source: "manual",
+    conditions: [
+      { field: "export_count", op: ">=", value: 30, learnable: true },
+      { field: "sensitivity_level", op: ">=", value: 4, learnable: true },
+    ],
+  };
+  showRuleModal({
+    title: "新建规则",
+    subtitle: "写入本地测试规则库 active_rules.json",
+    body: `
+      <label class="modalField compact">
+        <span>规则类型</span>
+        <select id="newRuleType">
+          <option value="scene">场景规则</option>
+          <option value="threshold">高危阈值</option>
+          <option value="weak">弱规则</option>
+        </select>
+      </label>
+      <label class="modalField">
+        <span>规则 JSON</span>
+        <textarea id="newRuleJson" spellcheck="false">${escapeHtml(JSON.stringify(defaultRule, null, 2))}</textarea>
+      </label>
+      <div class="modalHint">保存后会立即进入生效规则库；如果要暂不生效，可把 <code>status</code> 改为 <code>disabled</code>。</div>
+      <div class="inlineNotice modalNotice" id="ruleModalMessage" hidden></div>
+    `,
+    footer: `
+      <button class="ghostButton compactAction" data-rule-modal-close>取消</button>
+      <button class="primaryButton compactAction" data-create-rule-save>保存规则</button>
+    `,
+  });
+}
+
+async function createActiveRule(button) {
+  const textarea = document.getElementById("newRuleJson");
+  const ruleType = document.getElementById("newRuleType")?.value || "scene";
+  let rule;
+  try {
+    rule = JSON.parse(textarea?.value || "{}");
+  } catch (error) {
+    setRuleModalMessage(`JSON 格式错误：${error.message || error}`);
+    return;
+  }
+  if (!rule || typeof rule !== "object" || Array.isArray(rule)) {
+    setRuleModalMessage("规则内容必须是一个 JSON object");
+    return;
+  }
+  button.disabled = true;
+  setRuleModalMessage("正在写入本地规则库...");
+  try {
+    const payload = await postActiveRuleUpdate({
+      action: "create_rule",
+      rule_ref: { rule_type: ruleType, rule_index: -1, rule_id: rule.id || "" },
+      rule,
+    });
+    state.activeRules = payload.active_rules || state.activeRules;
+    state.suggestedRules = payload.suggested_rules || state.suggestedRules;
+    state.uiState = normalizeUiState(payload.ui_state || state.uiState);
+    state.uiActionMessage = `已新建规则：${rule.name || rule.id || "未命名规则"}`;
+    closeRuleModal();
+    renderRules();
+    renderMetrics();
+    renderAudit();
+  } catch (error) {
+    setRuleModalMessage(`保存失败：${error.message || error}`);
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function openBatchRulesModal() {
+  showRuleModal({
+    title: "批量规则操作",
+    subtitle: "会直接写入本地测试规则库",
+    body: `
+      <div class="batchActionGrid">
+        <button class="ghostButton" data-batch-rule-action data-rule-type="weak" data-status="disabled">停用全部弱规则</button>
+        <button class="ghostButton" data-batch-rule-action data-rule-type="weak" data-status="active">激活全部弱规则</button>
+        <button class="ghostButton" data-batch-rule-action data-rule-type="threshold" data-status="disabled">停用全部高危阈值</button>
+        <button class="ghostButton" data-batch-rule-action data-rule-type="threshold" data-status="active">激活全部高危阈值</button>
+        <button class="dangerButton" data-batch-rule-action data-rule-type="all" data-status="disabled">停用全部规则</button>
+        <button class="primaryButton" data-batch-rule-action data-rule-type="all" data-status="active">激活全部规则</button>
+      </div>
+      <div class="inlineNotice modalNotice" id="ruleModalMessage" hidden></div>
+    `,
+    footer: `<button class="primaryButton compactAction" data-rule-modal-close>关闭</button>`,
+  });
+}
+
+async function runBatchRuleAction(button) {
+  const ruleType = button.dataset.ruleType || "all";
+  const status = button.dataset.status || "active";
+  button.disabled = true;
+  setRuleModalMessage("正在批量更新规则状态...");
+  try {
+    const payload = await postActiveRuleUpdate({
+      action: "batch_update_rules",
+      rule_ref: { rule_type: ruleType, rule_index: -1, rule_id: "" },
+      status,
+    });
+    state.activeRules = payload.active_rules || state.activeRules;
+    state.suggestedRules = payload.suggested_rules || state.suggestedRules;
+    state.uiState = normalizeUiState(payload.ui_state || state.uiState);
+    state.uiActionMessage = `批量更新完成：${fmt(payload.changed_count)} 条规则变为 ${status}`;
+    setRuleModalMessage(state.uiActionMessage);
+    renderRules();
+    renderMetrics();
+    renderAudit();
+  } catch (error) {
+    setRuleModalMessage(`批量操作失败：${error.message || error}`);
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function exportRulesFile() {
+  const filename = `dlp_rules_${fileTimestamp()}.json`;
+  downloadJson(filename, {
+    exported_at: nowText(),
+    active_rules: state.activeRules,
+    suggested_rules: state.suggestedRules,
+  });
+  await postUiAction("export_rules", { filename, rule_count: ruleCount(state.activeRules) }, `已导出规则列表：${filename}`);
+  renderAudit();
+}
+
+function openAuditDateFilter() {
+  showRuleModal({
+    title: "日期筛选",
+    subtitle: "筛选审计追溯页的处置历史和趋势统计",
+    body: `
+      <div class="dateRangeGrid">
+        <label class="modalField compact">
+          <span>开始日期</span>
+          <input id="auditFilterStart" type="date" value="${escapeAttr(state.auditFilter.start)}" />
+        </label>
+        <label class="modalField compact">
+          <span>结束日期</span>
+          <input id="auditFilterEnd" type="date" value="${escapeAttr(state.auditFilter.end)}" />
+        </label>
+      </div>
+      <div class="modalHint">不填写日期表示不过滤。筛选只影响当前本地展示，不会修改 agent 输出文件。</div>
+    `,
+    footer: `
+      <button class="ghostButton compactAction" data-audit-filter-clear>清除筛选</button>
+      <button class="primaryButton compactAction" data-audit-filter-apply>应用筛选</button>
+    `,
+  });
+}
+
+async function applyAuditDateFilter() {
+  state.auditFilter = {
+    start: document.getElementById("auditFilterStart")?.value || "",
+    end: document.getElementById("auditFilterEnd")?.value || "",
+  };
+  closeRuleModal();
+  await postUiAction("date_filter", state.auditFilter, `已应用审计日期筛选：${auditFilterText()}`);
+  renderAudit();
+}
+
+async function clearAuditDateFilter() {
+  state.auditFilter = { start: "", end: "" };
+  closeRuleModal();
+  await postUiAction("date_filter", state.auditFilter, "已清除审计日期筛选");
+  renderAudit();
+}
+
+async function exportAuditReport() {
+  const filename = `dlp_audit_report_${fileTimestamp()}.json`;
+  downloadJson(filename, buildAuditExportPayload());
+  await postUiAction("export_audit", { filename, filter: state.auditFilter }, `已导出审计报告：${filename}`);
+  renderAudit();
+}
+
+async function applyRiskReviewAction(action, button) {
+  const report = selectedReport();
+  if (!report) return;
+  const payload = {
+    candidate_event_id: button?.dataset.candidateId || report.candidate_event_id || "",
+    user_id: button?.dataset.userId || report.user_id || "",
+    label: button?.textContent?.trim() || action,
+    view: state.currentView,
+  };
+  if (action === "mark_false_positive") {
+    upsertFeedback({
+      ...payload,
+      false_positive: true,
+      human_confirmed: false,
+      review_comment: "人工标记为误报",
+      reviewed_at: nowText(),
+      risk_level: report.risk_level,
+      final_risk_score: report.final_risk_score,
+    });
+  }
+  if (action === "emergency_response") {
+    upsertFeedback({
+      ...payload,
+      false_positive: false,
+      human_confirmed: true,
+      review_comment: "已触发紧急处置流程",
+      reviewed_at: nowText(),
+      risk_level: report.risk_level,
+      final_risk_score: report.final_risk_score,
+    });
+  }
+  await postUiAction(action, payload, actionText(action, payload));
+  renderAudit();
+  renderDetail();
+  renderEventTable();
+}
+
+function upsertFeedback(item) {
+  const id = item.candidate_event_id;
+  if (!id) return;
+  const index = state.feedback.findIndex((entry) => entry.candidate_event_id === id);
+  if (index >= 0) {
+    state.feedback[index] = { ...state.feedback[index], ...item };
+  } else {
+    state.feedback.unshift(item);
+  }
+}
+
+function buildAuditExportPayload() {
+  return {
+    exported_at: nowText(),
+    filter: state.auditFilter,
+    metrics: {
+      report_count: state.reports.length,
+      feedback_count: state.feedback.length,
+      action_count: auditVisibleActions().length,
+      high_or_above: state.reports.filter((item) => ["高风险", "极高风险"].includes(item.risk_level)).length,
+    },
+    evaluation: state.evaluation,
+    actions: auditVisibleActions(),
+    feedback: auditVisibleFeedback(),
+    reports: state.reports.slice(0, 200),
+    rules: {
+      active_count: ruleCount(state.activeRules),
+      pending_suggestions: pendingSuggestedRules().length,
+    },
+  };
+}
+
+function downloadJson(filename, payload) {
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function auditVisibleActions() {
+  return (state.uiState.actions || []).filter((item) => inAuditDateRange(item.time));
+}
+
+function auditVisibleFeedback() {
+  const baseFeedback = state.feedback.length ? state.feedback : state.reports.map((report) => ({
+    candidate_event_id: report.candidate_event_id,
+    user_id: report.user_id,
+    risk_level: report.risk_level,
+    final_risk_score: report.final_risk_score,
+    need_human_review: true,
+  }));
+  const merged = new Map(baseFeedback.map((item) => [item.candidate_event_id, item]));
+  (state.uiState.feedback_reviews || []).forEach((item) => {
+    if (item.candidate_event_id) {
+      merged.set(item.candidate_event_id, { ...(merged.get(item.candidate_event_id) || {}), ...item });
+    }
+  });
+  return [...merged.values()].filter((item) => inAuditDateRange(item.reviewed_at || item.time || ""));
+}
+
+function inAuditDateRange(value) {
+  if (!state.auditFilter.start && !state.auditFilter.end) return true;
+  const date = String(value || "").slice(0, 10);
+  if (!date) return true;
+  if (state.auditFilter.start && date < state.auditFilter.start) return false;
+  if (state.auditFilter.end && date > state.auditFilter.end) return false;
+  return true;
+}
+
+function auditFilterText() {
+  const { start, end } = state.auditFilter;
+  if (!start && !end) return "全部日期";
+  return `${start || "最早"} 至 ${end || "最新"}`;
+}
+
+function nowText() {
+  const date = new Date();
+  const pad = (value) => String(value).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+}
+
+function fileTimestamp() {
+  return nowText().replaceAll("-", "").replaceAll(":", "").replace(" ", "_");
 }
 
 function renderOverviewFromLive(includeRiskViews) {
@@ -1409,9 +2044,9 @@ function renderRules() {
         <td>${fmt(rule.metrics?.support_count || rule.metrics?.positive_hits || 0)}</td>
         <td><span class="riskLevel" style="--level-color:#2563eb;--level-bg:#dbeafe">${escapeHtml(rule.status || "active")}</span></td>
         <td class="tableActions">
-          <button data-ui-action="edit_rule" data-rule-id="${escapeAttr(rule.id || rule.name || "")}">编辑</button>
-          <button data-ui-action="${rule.status === "disabled" ? "activate_rule" : "pause_rule"}" data-rule-id="${escapeAttr(rule.id || rule.name || "")}">${rule.status === "disabled" ? "激活" : "停用"}</button>
-          <button data-ui-action="optimize_log" data-rule-id="${escapeAttr(rule.id || rule.name || "")}">优化日志</button>
+          ${ruleActionButton("edit_rule", "编辑", rule)}
+          ${ruleActionButton(rule.status === "disabled" ? "activate_rule" : "pause_rule", rule.status === "disabled" ? "激活" : "停用", rule)}
+          ${ruleActionButton("optimize_log", "优化日志", rule)}
         </td>
       </tr>
     `).join("") || `<tr><td colspan="5"><div class="emptyState">没有匹配规则</div></td></tr>`;
@@ -1522,14 +2157,8 @@ function setControlChecked(id, value) {
 }
 
 function renderAudit() {
-  const feedback = state.feedback.length ? state.feedback : state.reports.map((report) => ({
-    candidate_event_id: report.candidate_event_id,
-    user_id: report.user_id,
-    risk_level: report.risk_level,
-    final_risk_score: report.final_risk_score,
-    need_human_review: true,
-  }));
-  const actions = state.uiState.actions || [];
+  const feedback = auditVisibleFeedback();
+  const actions = auditVisibleActions();
   const trendNode = document.getElementById("auditTrend");
   if (trendNode) {
     const trend = buildAuditTrend();
@@ -1547,6 +2176,7 @@ function renderAudit() {
     const emergencyCount = actions.filter((item) => item.action === "emergency_response").length;
     const totalReviewed = Math.max(feedback.length, 1);
     auditMetrics.innerHTML = [
+      ["日期范围", auditFilterText()],
       ["误报标记率", pct(falsePositiveCount / totalReviewed)],
       ["紧急处置", fmt(emergencyCount)],
       ["平均响应时间", "1.2 分钟"],
@@ -1595,11 +2225,19 @@ function renderAudit() {
 }
 
 function buildAuditTrend() {
+  const actions = auditVisibleActions();
+  if (actions.length) {
+    const grouped = countBy(actions.map((item) => ({ date: String(item.time || "").slice(5, 10) || "未知" })), "date");
+    return Object.entries(grouped)
+      .sort(([left], [right]) => left.localeCompare(right))
+      .slice(-10)
+      .map(([label, value]) => ({ label, value }));
+  }
+
   const base = [4, 7, 5, 9, 6, 11, 8, 13, 10, 15];
-  const recentActions = (state.uiState.actions || []).length;
   return base.map((value, index) => ({
     label: `${index + 1}日`,
-    value: value + (index > 6 ? Math.min(recentActions, 6) : 0),
+    value,
   }));
 }
 
@@ -1781,11 +2419,44 @@ function ruleCount(ruleSet) {
   return (ruleSet.scene_rules?.length || 0) + (ruleSet.high_risk_thresholds?.length || 0) + (ruleSet.weak_rules?.length || 0);
 }
 
+function ruleActionButton(action, label, rule) {
+  const ref = { rule_type: rule.type, rule_index: rule.index, rule_id: rule.ruleId };
+  const busy = state.ruleAdminBusyKey === ruleKey(ref);
+  return `
+    <button data-ui-action="${escapeAttr(action)}"
+      data-rule-type="${escapeAttr(rule.type)}"
+      data-rule-index="${escapeAttr(rule.index)}"
+      data-rule-id="${escapeAttr(rule.ruleId)}"
+      ${busy ? "disabled" : ""}>${escapeHtml(busy ? "处理中" : label)}</button>
+  `;
+}
+
 function flattenActiveRules() {
   return [
-    ...(state.activeRules.scene_rules || []).map((rule) => ({ ...rule, type: "scene", typeLabel: "场景规则" })),
-    ...(state.activeRules.high_risk_thresholds || []).map((rule) => ({ ...rule, type: "threshold", typeLabel: "高危阈值" })),
-    ...(state.activeRules.weak_rules || []).map((rule) => ({ ...rule, type: "weak", typeLabel: "弱规则" })),
+    ...(state.activeRules.scene_rules || []).map((rule, index) => ({
+      ...rule,
+      index,
+      collection: "scene_rules",
+      type: "scene",
+      typeLabel: "场景规则",
+      ruleId: rule.id || rule.name || `scene_rules:${index}`,
+    })),
+    ...(state.activeRules.high_risk_thresholds || []).map((rule, index) => ({
+      ...rule,
+      index,
+      collection: "high_risk_thresholds",
+      type: "threshold",
+      typeLabel: "高危阈值",
+      ruleId: rule.id || rule.name || `${rule.field || "threshold"}:${rule.op || ""}:${rule.value ?? ""}`,
+    })),
+    ...(state.activeRules.weak_rules || []).map((rule, index) => ({
+      ...rule,
+      index,
+      collection: "weak_rules",
+      type: "weak",
+      typeLabel: "弱规则",
+      ruleId: rule.id || rule.name || `weak_rules:${index}`,
+    })),
   ];
 }
 
@@ -1829,6 +2500,7 @@ function normalizeUiState(uiState = {}) {
     risk_weights: { ...defaultUiState.risk_weights, ...(uiState.risk_weights || {}) },
     ai_settings: { ...defaultUiState.ai_settings, ...(uiState.ai_settings || {}) },
     automation: { ...defaultUiState.automation, ...(uiState.automation || {}) },
+    feedback_reviews: uiState.feedback_reviews || [],
     actions: uiState.actions || [],
   };
 }
