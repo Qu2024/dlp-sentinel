@@ -33,6 +33,34 @@ const defaultDemoMode = "live";
 const liveApiBase = "http://127.0.0.1:8765";
 const ruleApiBase = liveApiBase;
 
+const defaultUiState = {
+  risk_weights: { C2: 19.31, C3: 7.46, C4: 43.88, C5: 29.35 },
+  ai_settings: {
+    sensitivity: 68,
+    optimization_cycle: "daily",
+    self_learning_enabled: true,
+  },
+  automation: {
+    suspend_process: true,
+    freeze_account: false,
+  },
+  feedback_reviews: [],
+  actions: [],
+};
+
+const weightDimensions = {
+  C2: { label: "用户/基线画像偏离", note: "个人行为、岗位同群、时空环境和访问范围偏离" },
+  C3: { label: "业务关联缺少", note: "审批、案件/任务关联、权限匹配和协同任务" },
+  C4: { label: "敏感影响面", note: "敏感等级、暴露内容、唯一识别性和泄露规模" },
+  C5: { label: "链条与扩散证据", note: "行为链完整度、落地扩散、接收方和清痕规避" },
+};
+
+const weightPresets = {
+  strict: { C2: 18, C3: 8, C4: 46, C5: 28 },
+  balanced: { ...defaultUiState.risk_weights },
+  relaxed: { C2: 24, C3: 10, C4: 36, C5: 30 },
+};
+
 const demoModeOptions = {
   live: {
     label: "实时生成",
@@ -61,7 +89,7 @@ const demoModeOptions = {
   normal_check: {
     label: "正常样本对照",
     description: "查看正常样本误报情况",
-    targetView: "events",
+    targetView: "overview",
     datasetId: "llm_smoke_normal",
   },
 };
@@ -175,10 +203,15 @@ const state = {
   meta: {},
   activeRules: {},
   suggestedRules: {},
+  uiState: cloneData(defaultUiState),
+  uiActionMessage: "",
   learningLog: "",
   selectedId: "",
   ruleActionMessage: "",
   ruleActionBusyId: "",
+  ruleAdminBusyKey: "",
+  ruleModalMessage: "",
+  auditFilter: { start: "", end: "" },
   demoMode: demoModeFromUrl(),
   datasetId: datasetIdForDemoMode(demoModeFromUrl()),
   currentView: "live",
@@ -204,6 +237,9 @@ async function init() {
   bindNavigation();
   bindFilters();
   bindLiveControls();
+  bindUiActions();
+  bindRuleModalControls();
+  bindSettingsControls();
   await loadData();
   setActiveView((demoModeOptions[state.demoMode] || demoModeOptions[defaultDemoMode]).targetView);
   renderAll();
@@ -214,13 +250,14 @@ async function loadData() {
   if (state.live.overviewActive) storeLiveOverviewSnapshot();
   state.live.overviewActive = false;
   const paths = buildPaths(state.datasetId);
-  const [reports, riskEvents, feedback, evaluation, meta, ruleStore, learningLog] = await Promise.all([
+  const [reports, riskEvents, feedback, evaluation, meta, ruleStore, uiState, learningLog] = await Promise.all([
     loadJson(paths.reports, fallback.reports),
     loadJson(paths.riskEvents, fallback.riskEvents),
     loadJson(paths.feedback, fallback.feedback),
     loadJson(paths.evaluation, fallback.evaluation),
     loadJson(paths.meta, fallback.meta),
     loadRuleStore(paths),
+    loadUiState(),
     loadText(paths.learningLog, fallback.learningLog),
   ]);
 
@@ -232,6 +269,7 @@ async function loadData() {
   state.meta = normalizeMeta(meta, evaluation);
   state.activeRules = ruleStore.activeRules;
   state.suggestedRules = ruleStore.suggestedRules;
+  state.uiState = normalizeUiState(uiState);
   state.learningLog = learningLog;
   state.selectedId = state.reports[0]?.candidate_event_id || "";
 
@@ -301,6 +339,18 @@ async function loadRuleStore(paths) {
   return { activeRules, suggestedRules };
 }
 
+async function loadUiState() {
+  try {
+    const response = await fetch(`${liveApiBase}/ui-state`, { cache: "no-store" });
+    if (!response.ok) throw new Error(response.statusText);
+    const payload = await response.json();
+    if (payload.ok) return payload.ui_state || defaultUiState;
+  } catch {
+    // UI state is optional for static file preview.
+  }
+  return defaultUiState;
+}
+
 async function loadText(path, backup) {
   try {
     const response = await fetch(path, { cache: "no-store" });
@@ -326,7 +376,7 @@ function setActiveView(view) {
 }
 
 function bindFilters() {
-  ["riskSearch", "riskLevelFilter", "eventTableSearch", "eventTableLevel"].forEach((id) => {
+  ["riskSearch", "riskLevelFilter", "eventTableSearch", "eventTableLevel", "ruleSearch", "ruleTypeFilter"].forEach((id) => {
     const node = document.getElementById(id);
     if (node) node.addEventListener("input", renderAll);
   });
@@ -343,7 +393,9 @@ function renderAll() {
   renderSuggestions();
   renderEventTable();
   renderRules();
+  renderSettings();
   renderAudit();
+  renderActionMessages();
 }
 
 function emptyLiveCounts() {
@@ -543,6 +595,763 @@ async function reviewSuggestedRule(ruleId, action) {
     renderSuggestions();
     renderMetrics();
   }
+}
+
+function bindUiActions() {
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-ui-action]");
+    if (!button) return;
+    const action = button.dataset.uiAction;
+    handleUiAction(action, button);
+  });
+}
+
+function bindRuleModalControls() {
+  document.addEventListener("click", (event) => {
+    if (event.target.closest("[data-rule-modal-close]")) {
+      closeRuleModal();
+      return;
+    }
+    const saveButton = event.target.closest("[data-rule-save]");
+    if (saveButton) saveRuleEdit(saveButton);
+    const createButton = event.target.closest("[data-create-rule-save]");
+    if (createButton) createActiveRule(createButton);
+    const batchButton = event.target.closest("[data-batch-rule-action]");
+    if (batchButton) runBatchRuleAction(batchButton);
+    const auditFilterButton = event.target.closest("[data-audit-filter-apply]");
+    if (auditFilterButton) applyAuditDateFilter();
+    const auditClearButton = event.target.closest("[data-audit-filter-clear]");
+    if (auditClearButton) clearAuditDateFilter();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeRuleModal();
+  });
+}
+
+function bindSettingsControls() {
+  document.addEventListener("input", (event) => {
+    const input = event.target.closest("[data-weight-code]");
+    if (!input) return;
+    updateLocalWeight(input.dataset.weightCode, Number(input.value));
+  });
+  document.addEventListener("change", (event) => {
+    if (event.target.id === "settingSensitivity") {
+      state.uiState.ai_settings.sensitivity = Number(event.target.value || 0);
+      renderSettings();
+    }
+    if (event.target.id === "settingCycle") {
+      state.uiState.ai_settings.optimization_cycle = event.target.value;
+      renderSettings();
+    }
+    if (event.target.id === "settingSelfLearning") {
+      state.uiState.ai_settings.self_learning_enabled = event.target.checked;
+      renderSettings();
+    }
+    if (event.target.id === "settingSuspendProcess") {
+      state.uiState.automation.suspend_process = event.target.checked;
+      renderSettings();
+    }
+    if (event.target.id === "settingFreezeAccount") {
+      state.uiState.automation.freeze_account = event.target.checked;
+      renderSettings();
+    }
+  });
+}
+
+function updateLocalWeight(code, value) {
+  if (!weightDimensions[code]) return;
+  state.uiState.risk_weights[code] = Math.max(0, Math.min(100, Number.isFinite(value) ? value : 0));
+  renderSettings();
+}
+
+async function handleUiAction(action, button) {
+  if (!action) return;
+  if (action === "save_settings") {
+    await postUiAction(action, {
+      risk_weights: state.uiState.risk_weights,
+      ai_settings: state.uiState.ai_settings,
+      automation: state.uiState.automation,
+    }, "配置已写入本地演示后端");
+    renderSettings();
+    return;
+  }
+  if (action === "reset_weights") {
+    state.uiState.risk_weights = { ...defaultUiState.risk_weights };
+    state.uiActionMessage = "已恢复评分模型默认权重，点击保存后写入后端";
+    renderSettings();
+    return;
+  }
+  if (button?.dataset.weightPreset) {
+    state.uiState.risk_weights = { ...weightPresets[button.dataset.weightPreset] };
+    state.uiActionMessage = `已应用${button.textContent.trim()}，点击保存后写入后端`;
+    renderSettings();
+    return;
+  }
+  if (action === "edit_rule") {
+    openRuleEditor(button);
+    return;
+  }
+  if (action === "pause_rule" || action === "activate_rule") {
+    await updateActiveRuleStatus(button, action);
+    return;
+  }
+  if (action === "optimize_log") {
+    await openRuleOptimizationLog(button);
+    return;
+  }
+  if (action === "new_rule") {
+    openNewRuleModal();
+    return;
+  }
+  if (action === "export_rules") {
+    await exportRulesFile();
+    return;
+  }
+  if (action === "batch_rules") {
+    openBatchRulesModal();
+    return;
+  }
+  if (action === "date_filter") {
+    openAuditDateFilter();
+    return;
+  }
+  if (action === "export_audit") {
+    await exportAuditReport();
+    return;
+  }
+  if (action === "mark_false_positive" || action === "emergency_response" || action === "approve_review") {
+    await applyRiskReviewAction(action, button);
+    return;
+  }
+
+  const report = selectedReport();
+  const payload = {
+    candidate_event_id: button?.dataset.candidateId || report?.candidate_event_id || "",
+    user_id: button?.dataset.userId || report?.user_id || "",
+    rule_id: button?.dataset.ruleId || "",
+    label: button?.textContent?.trim() || action,
+    view: state.currentView,
+  };
+  const successText = actionText(action, payload);
+  await postUiAction(action, payload, successText);
+  renderAudit();
+}
+
+async function postUiAction(action, payload, successText) {
+  state.uiActionMessage = "正在写入本地后端...";
+  renderActionMessages();
+  try {
+    const response = await fetch(`${liveApiBase}/ui-state/action`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action, payload }),
+    });
+    const data = await response.json();
+    if (!response.ok || !data.ok) throw new Error(data.error || response.statusText);
+    state.uiState = normalizeUiState(data.ui_state || state.uiState);
+    state.uiActionMessage = successText;
+  } catch (error) {
+    state.uiActionMessage = `本地后端未写入：${error.message || error}`;
+  }
+  renderActionMessages();
+}
+
+function renderActionMessages() {
+  document.querySelectorAll("[data-ui-action-message]").forEach((node) => {
+    node.textContent = state.uiActionMessage || "";
+    node.hidden = !state.uiActionMessage;
+  });
+}
+
+function actionText(action, payload) {
+  const id = payload.candidate_event_id || payload.rule_id || payload.user_id || "当前对象";
+  const map = {
+    mark_false_positive: `已标记误报：${id}`,
+    emergency_response: `已触发紧急处置：${id}`,
+    approve_review: `已复核通过：${id}`,
+    new_rule: "已新建规则",
+    export_rules: "已导出规则列表",
+    batch_rules: "已完成批量规则操作",
+    edit_rule: "已保存规则编辑",
+    pause_rule: "已停用规则",
+    activate_rule: "已激活规则",
+    optimize_log: "已打开优化日志",
+    export_audit: "已导出审计报告",
+    date_filter: "已应用审计日期筛选",
+  };
+  return map[action] || `已完成操作：${payload.label || action}`;
+}
+
+function ruleRefFromButton(button) {
+  return {
+    rule_type: button?.dataset.ruleType || "",
+    rule_index: Number(button?.dataset.ruleIndex || -1),
+    rule_id: button?.dataset.ruleId || "",
+  };
+}
+
+function ruleKey(ref) {
+  return `${ref.rule_type}:${ref.rule_index}:${ref.rule_id}`;
+}
+
+function findActiveRule(ref) {
+  const rules = flattenActiveRules();
+  const exact = rules.find((rule) =>
+    rule.type === ref.rule_type &&
+    Number(rule.index) === Number(ref.rule_index) &&
+    (!ref.rule_id || ref.ruleId === ref.rule_id)
+  );
+  if (exact) return exact;
+
+  if (ref.rule_id) {
+    return rules.find((rule) => ruleIdentityValues(rule).includes(ref.rule_id));
+  }
+
+  return rules.find((rule) =>
+    rule.type === ref.rule_type &&
+    Number(rule.index) === Number(ref.rule_index)
+  );
+}
+
+function ruleIdentityValues(rule) {
+  return [
+    rule.ruleId,
+    rule.id,
+    rule.name,
+    rule.field ? `${rule.field}:${rule.op || ""}:${rule.value ?? ""}` : "",
+  ].filter(Boolean).map(String);
+}
+
+function canonicalRuleRef(rule, fallbackRef = {}) {
+  if (!rule) return fallbackRef;
+  return {
+    rule_type: rule.type || fallbackRef.rule_type || "",
+    rule_index: Number.isInteger(rule.index) ? rule.index : Number(fallbackRef.rule_index || -1),
+    rule_id: rule.ruleId || rule.id || rule.name || fallbackRef.rule_id || "",
+  };
+}
+
+async function updateActiveRuleStatus(button, action) {
+  const buttonRef = ruleRefFromButton(button);
+  const rule = findActiveRule(buttonRef);
+  const ref = canonicalRuleRef(rule, buttonRef);
+  state.ruleAdminBusyKey = ruleKey(ref);
+  state.uiActionMessage = action === "pause_rule"
+    ? `正在停用规则：${rule?.name || ref.rule_id || ref.rule_index}`
+    : `正在激活规则：${rule?.name || ref.rule_id || ref.rule_index}`;
+  renderRules();
+  try {
+    const payload = await postActiveRuleUpdate({ action, rule_ref: ref });
+    state.activeRules = payload.active_rules || state.activeRules;
+    state.suggestedRules = payload.suggested_rules || state.suggestedRules;
+    state.uiState = normalizeUiState(payload.ui_state || state.uiState);
+    state.uiActionMessage = action === "pause_rule"
+      ? `已停用规则：${rule?.name || ref.rule_id || ref.rule_index}`
+      : `已激活规则：${rule?.name || ref.rule_id || ref.rule_index}`;
+  } catch (error) {
+    state.uiActionMessage = `规则状态更新失败：${error.message || error}`;
+  } finally {
+    state.ruleAdminBusyKey = "";
+    renderRules();
+    renderMetrics();
+    renderAudit();
+  }
+}
+
+function openRuleEditor(button) {
+  const buttonRef = ruleRefFromButton(button);
+  const rule = findActiveRule(buttonRef);
+  if (!rule) {
+    state.uiActionMessage = `没有找到这条规则：${buttonRef.rule_id || "缺少规则标识"}，请强制刷新页面后再试`;
+    renderActionMessages();
+    return;
+  }
+  const ref = canonicalRuleRef(rule, buttonRef);
+  state.ruleModalMessage = "";
+  showRuleModal({
+    title: "编辑规则",
+    subtitle: `${rule.typeLabel} · ${rule.name || rule.field || rule.ruleId}`,
+    body: `
+      <label class="modalField">
+        <span>规则 JSON</span>
+        <textarea id="ruleEditorJson" spellcheck="false">${escapeHtml(JSON.stringify(cleanRuleForEdit(rule), null, 2))}</textarea>
+      </label>
+      <div class="modalHint">保存后会写入本地测试规则库 active_rules.json；停用状态为 <code>"status": "disabled"</code>。</div>
+      <div class="inlineNotice modalNotice" id="ruleModalMessage" ${state.ruleModalMessage ? "" : "hidden"}>${escapeHtml(state.ruleModalMessage)}</div>
+    `,
+    footer: `
+      <button class="ghostButton compactAction" data-rule-modal-close>取消</button>
+      <button class="primaryButton compactAction" data-rule-save
+        data-rule-type="${escapeAttr(ref.rule_type)}"
+        data-rule-index="${escapeAttr(ref.rule_index)}"
+        data-rule-id="${escapeAttr(ref.rule_id)}">保存规则</button>
+    `,
+  });
+}
+
+async function saveRuleEdit(button) {
+  const textarea = document.getElementById("ruleEditorJson");
+  const messageNode = document.getElementById("ruleModalMessage");
+  let rule;
+  try {
+    rule = JSON.parse(textarea?.value || "{}");
+  } catch (error) {
+    setRuleModalMessage(`JSON 格式错误：${error.message || error}`);
+    return;
+  }
+  if (!rule || typeof rule !== "object" || Array.isArray(rule)) {
+    setRuleModalMessage("规则内容必须是一个 JSON object");
+    return;
+  }
+
+  const ref = ruleRefFromButton(button);
+  button.disabled = true;
+  if (messageNode) {
+    messageNode.hidden = false;
+    messageNode.textContent = "正在写入本地规则库...";
+  }
+  try {
+    const payload = await postActiveRuleUpdate({ action: "edit_rule", rule_ref: ref, rule });
+    state.activeRules = payload.active_rules || state.activeRules;
+    state.suggestedRules = payload.suggested_rules || state.suggestedRules;
+    state.uiState = normalizeUiState(payload.ui_state || state.uiState);
+    state.uiActionMessage = `已保存规则：${rule.name || rule.id || ref.rule_id || ref.rule_index}`;
+    closeRuleModal();
+    renderRules();
+    renderMetrics();
+    renderAudit();
+  } catch (error) {
+    setRuleModalMessage(`保存失败：${error.message || error}`);
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function openRuleOptimizationLog(button) {
+  const buttonRef = ruleRefFromButton(button);
+  const rule = findActiveRule(buttonRef);
+  const ref = canonicalRuleRef(rule, buttonRef);
+  showRuleModal({
+    title: "优化日志",
+    subtitle: `${rule?.typeLabel || "规则"} · ${rule?.name || rule?.field || ref.rule_id || ref.rule_index}`,
+    body: `<div class="emptyState">正在读取学习日志...</div>`,
+    footer: `<button class="primaryButton compactAction" data-rule-modal-close>关闭</button>`,
+  });
+  try {
+    const params = new URLSearchParams({
+      rule_type: ref.rule_type,
+      rule_index: String(ref.rule_index),
+      rule_id: ref.rule_id,
+    });
+    const response = await fetch(`${ruleApiBase}/rules/active/log?${params}`, { cache: "no-store" });
+    const payload = await response.json();
+    if (!response.ok || !payload.ok) throw new Error(payload.error || response.statusText);
+    showRuleModal({
+      title: "优化日志",
+      subtitle: `${rule?.typeLabel || "规则"} · ${rule?.name || rule?.field || ref.rule_id || ref.rule_index}`,
+      body: renderRuleLogBody(payload),
+      footer: `<button class="primaryButton compactAction" data-rule-modal-close>关闭</button>`,
+    });
+  } catch (error) {
+    showRuleModal({
+      title: "优化日志",
+      subtitle: `${rule?.typeLabel || "规则"} · ${rule?.name || rule?.field || ref.rule_id || ref.rule_index}`,
+      body: `<div class="emptyState">日志读取失败：${escapeHtml(error.message || error)}</div>`,
+      footer: `<button class="primaryButton compactAction" data-rule-modal-close>关闭</button>`,
+    });
+  }
+}
+
+async function postActiveRuleUpdate(payload) {
+  const response = await fetch(`${ruleApiBase}/rules/active/update`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  if (!response.ok || !data.ok) throw new Error(data.error || response.statusText);
+  return data;
+}
+
+function cleanRuleForEdit(rule) {
+  const { type, typeLabel, index, collection, ruleId, ...editable } = rule;
+  return editable;
+}
+
+function setRuleModalMessage(message) {
+  state.ruleModalMessage = message;
+  const messageNode = document.getElementById("ruleModalMessage");
+  if (messageNode) {
+    messageNode.hidden = !message;
+    messageNode.textContent = message || "";
+  }
+}
+
+function showRuleModal({ title, subtitle, body, footer }) {
+  const modal = document.getElementById("ruleModal");
+  if (!modal) return;
+  modal.innerHTML = `
+    <div class="ruleModalBackdrop" data-rule-modal-close></div>
+    <section class="ruleModalCard" role="dialog" aria-modal="true" aria-label="${escapeAttr(title)}">
+      <header>
+        <div>
+          <h2>${escapeHtml(title)}</h2>
+          <p>${escapeHtml(subtitle || "")}</p>
+        </div>
+        <button class="iconButton" data-rule-modal-close aria-label="关闭">×</button>
+      </header>
+      <div class="ruleModalBody">${body}</div>
+      <footer>${footer || ""}</footer>
+    </section>
+  `;
+  modal.hidden = false;
+  document.body.classList.add("modalOpen");
+}
+
+function closeRuleModal() {
+  const modal = document.getElementById("ruleModal");
+  if (!modal || modal.hidden) return;
+  modal.hidden = true;
+  modal.innerHTML = "";
+  document.body.classList.remove("modalOpen");
+}
+
+function renderRuleLogBody(payload) {
+  const rule = payload.rule || {};
+  const entries = payload.learning_entries || [];
+  const actions = payload.actions || [];
+  return `
+    <div class="ruleLogSummary">
+      <div><span>当前状态</span><strong>${escapeHtml(rule.status || "active")}</strong></div>
+      <div><span>来源</span><strong>${escapeHtml(rule.source || "本地规则库")}</strong></div>
+      <div><span>条件</span><strong>${escapeHtml(conditionText(rule.conditions || [rule]))}</strong></div>
+    </div>
+    <h3 class="modalSectionTitle">学习运行记录</h3>
+    <div class="ruleLogList">
+      ${entries.slice().reverse().map((item) => `
+        <article>
+          <strong>${escapeHtml(item.time || item.run_id || "学习记录")}</strong>
+          <span>历史运行 ${fmt(item.history_run_count)} · 标注样本 ${fmt(item.labeled_sample_count)} · 建议规则 ${fmt(item.suggested_rule_count)}</span>
+          <code>${escapeHtml(JSON.stringify(item.threshold_updates || [], null, 0))}</code>
+        </article>
+      `).join("") || `<div class="emptyState">暂无学习运行记录</div>`}
+    </div>
+    <h3 class="modalSectionTitle">人工管理记录</h3>
+    <div class="ruleLogList">
+      ${actions.slice().reverse().map((item) => `
+        <article>
+          <strong>${escapeHtml(item.time || "")}</strong>
+          <span>${escapeHtml(actionText(item.action, item.payload || {}))}</span>
+        </article>
+      `).join("") || `<div class="emptyState">暂无人工管理记录</div>`}
+    </div>
+  `;
+}
+
+function openNewRuleModal() {
+  const defaultRule = {
+    id: `manual_rule_${Date.now()}`,
+    name: "手工新增规则",
+    scope: "session",
+    status: "active",
+    source: "manual",
+    conditions: [
+      { field: "export_count", op: ">=", value: 30, learnable: true },
+      { field: "sensitivity_level", op: ">=", value: 4, learnable: true },
+    ],
+  };
+  showRuleModal({
+    title: "新建规则",
+    subtitle: "写入本地测试规则库 active_rules.json",
+    body: `
+      <label class="modalField compact">
+        <span>规则类型</span>
+        <select id="newRuleType">
+          <option value="scene">场景规则</option>
+          <option value="threshold">高危阈值</option>
+          <option value="weak">弱规则</option>
+        </select>
+      </label>
+      <label class="modalField">
+        <span>规则 JSON</span>
+        <textarea id="newRuleJson" spellcheck="false">${escapeHtml(JSON.stringify(defaultRule, null, 2))}</textarea>
+      </label>
+      <div class="modalHint">保存后会立即进入生效规则库；如果要暂不生效，可把 <code>status</code> 改为 <code>disabled</code>。</div>
+      <div class="inlineNotice modalNotice" id="ruleModalMessage" hidden></div>
+    `,
+    footer: `
+      <button class="ghostButton compactAction" data-rule-modal-close>取消</button>
+      <button class="primaryButton compactAction" data-create-rule-save>保存规则</button>
+    `,
+  });
+}
+
+async function createActiveRule(button) {
+  const textarea = document.getElementById("newRuleJson");
+  const ruleType = document.getElementById("newRuleType")?.value || "scene";
+  let rule;
+  try {
+    rule = JSON.parse(textarea?.value || "{}");
+  } catch (error) {
+    setRuleModalMessage(`JSON 格式错误：${error.message || error}`);
+    return;
+  }
+  if (!rule || typeof rule !== "object" || Array.isArray(rule)) {
+    setRuleModalMessage("规则内容必须是一个 JSON object");
+    return;
+  }
+  button.disabled = true;
+  setRuleModalMessage("正在写入本地规则库...");
+  try {
+    const payload = await postActiveRuleUpdate({
+      action: "create_rule",
+      rule_ref: { rule_type: ruleType, rule_index: -1, rule_id: rule.id || "" },
+      rule,
+    });
+    state.activeRules = payload.active_rules || state.activeRules;
+    state.suggestedRules = payload.suggested_rules || state.suggestedRules;
+    state.uiState = normalizeUiState(payload.ui_state || state.uiState);
+    state.uiActionMessage = `已新建规则：${rule.name || rule.id || "未命名规则"}`;
+    closeRuleModal();
+    renderRules();
+    renderMetrics();
+    renderAudit();
+  } catch (error) {
+    setRuleModalMessage(`保存失败：${error.message || error}`);
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function openBatchRulesModal() {
+  showRuleModal({
+    title: "批量规则操作",
+    subtitle: "会直接写入本地测试规则库",
+    body: `
+      <div class="batchActionGrid">
+        <button class="ghostButton" data-batch-rule-action data-rule-type="weak" data-status="disabled">停用全部弱规则</button>
+        <button class="ghostButton" data-batch-rule-action data-rule-type="weak" data-status="active">激活全部弱规则</button>
+        <button class="ghostButton" data-batch-rule-action data-rule-type="threshold" data-status="disabled">停用全部高危阈值</button>
+        <button class="ghostButton" data-batch-rule-action data-rule-type="threshold" data-status="active">激活全部高危阈值</button>
+        <button class="dangerButton" data-batch-rule-action data-rule-type="all" data-status="disabled">停用全部规则</button>
+        <button class="primaryButton" data-batch-rule-action data-rule-type="all" data-status="active">激活全部规则</button>
+      </div>
+      <div class="inlineNotice modalNotice" id="ruleModalMessage" hidden></div>
+    `,
+    footer: `<button class="primaryButton compactAction" data-rule-modal-close>关闭</button>`,
+  });
+}
+
+async function runBatchRuleAction(button) {
+  const ruleType = button.dataset.ruleType || "all";
+  const status = button.dataset.status || "active";
+  button.disabled = true;
+  setRuleModalMessage("正在批量更新规则状态...");
+  try {
+    const payload = await postActiveRuleUpdate({
+      action: "batch_update_rules",
+      rule_ref: { rule_type: ruleType, rule_index: -1, rule_id: "" },
+      status,
+    });
+    state.activeRules = payload.active_rules || state.activeRules;
+    state.suggestedRules = payload.suggested_rules || state.suggestedRules;
+    state.uiState = normalizeUiState(payload.ui_state || state.uiState);
+    state.uiActionMessage = `批量更新完成：${fmt(payload.changed_count)} 条规则变为 ${status}`;
+    setRuleModalMessage(state.uiActionMessage);
+    renderRules();
+    renderMetrics();
+    renderAudit();
+  } catch (error) {
+    setRuleModalMessage(`批量操作失败：${error.message || error}`);
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function exportRulesFile() {
+  const filename = `dlp_rules_${fileTimestamp()}.json`;
+  downloadJson(filename, {
+    exported_at: nowText(),
+    active_rules: state.activeRules,
+    suggested_rules: state.suggestedRules,
+  });
+  await postUiAction("export_rules", { filename, rule_count: ruleCount(state.activeRules) }, `已导出规则列表：${filename}`);
+  renderAudit();
+}
+
+function openAuditDateFilter() {
+  showRuleModal({
+    title: "日期筛选",
+    subtitle: "筛选审计追溯页的处置历史和趋势统计",
+    body: `
+      <div class="dateRangeGrid">
+        <label class="modalField compact">
+          <span>开始日期</span>
+          <input id="auditFilterStart" type="date" value="${escapeAttr(state.auditFilter.start)}" />
+        </label>
+        <label class="modalField compact">
+          <span>结束日期</span>
+          <input id="auditFilterEnd" type="date" value="${escapeAttr(state.auditFilter.end)}" />
+        </label>
+      </div>
+      <div class="modalHint">不填写日期表示不过滤。筛选只影响当前本地展示，不会修改 agent 输出文件。</div>
+    `,
+    footer: `
+      <button class="ghostButton compactAction" data-audit-filter-clear>清除筛选</button>
+      <button class="primaryButton compactAction" data-audit-filter-apply>应用筛选</button>
+    `,
+  });
+}
+
+async function applyAuditDateFilter() {
+  state.auditFilter = {
+    start: document.getElementById("auditFilterStart")?.value || "",
+    end: document.getElementById("auditFilterEnd")?.value || "",
+  };
+  closeRuleModal();
+  await postUiAction("date_filter", state.auditFilter, `已应用审计日期筛选：${auditFilterText()}`);
+  renderAudit();
+}
+
+async function clearAuditDateFilter() {
+  state.auditFilter = { start: "", end: "" };
+  closeRuleModal();
+  await postUiAction("date_filter", state.auditFilter, "已清除审计日期筛选");
+  renderAudit();
+}
+
+async function exportAuditReport() {
+  const filename = `dlp_audit_report_${fileTimestamp()}.json`;
+  downloadJson(filename, buildAuditExportPayload());
+  await postUiAction("export_audit", { filename, filter: state.auditFilter }, `已导出审计报告：${filename}`);
+  renderAudit();
+}
+
+async function applyRiskReviewAction(action, button) {
+  const report = selectedReport();
+  if (!report) return;
+  const payload = {
+    candidate_event_id: button?.dataset.candidateId || report.candidate_event_id || "",
+    user_id: button?.dataset.userId || report.user_id || "",
+    label: button?.textContent?.trim() || action,
+    view: state.currentView,
+  };
+  if (action === "mark_false_positive") {
+    upsertFeedback({
+      ...payload,
+      false_positive: true,
+      human_confirmed: false,
+      review_comment: "人工标记为误报",
+      reviewed_at: nowText(),
+      risk_level: report.risk_level,
+      final_risk_score: report.final_risk_score,
+    });
+  }
+  if (action === "emergency_response") {
+    upsertFeedback({
+      ...payload,
+      false_positive: false,
+      human_confirmed: true,
+      review_comment: "已触发紧急处置流程",
+      reviewed_at: nowText(),
+      risk_level: report.risk_level,
+      final_risk_score: report.final_risk_score,
+    });
+  }
+  await postUiAction(action, payload, actionText(action, payload));
+  renderAudit();
+  renderDetail();
+  renderEventTable();
+}
+
+function upsertFeedback(item) {
+  const id = item.candidate_event_id;
+  if (!id) return;
+  const index = state.feedback.findIndex((entry) => entry.candidate_event_id === id);
+  if (index >= 0) {
+    state.feedback[index] = { ...state.feedback[index], ...item };
+  } else {
+    state.feedback.unshift(item);
+  }
+}
+
+function buildAuditExportPayload() {
+  return {
+    exported_at: nowText(),
+    filter: state.auditFilter,
+    metrics: {
+      report_count: state.reports.length,
+      feedback_count: state.feedback.length,
+      action_count: auditVisibleActions().length,
+      high_or_above: state.reports.filter((item) => ["高风险", "极高风险"].includes(item.risk_level)).length,
+    },
+    evaluation: state.evaluation,
+    actions: auditVisibleActions(),
+    feedback: auditVisibleFeedback(),
+    reports: state.reports.slice(0, 200),
+    rules: {
+      active_count: ruleCount(state.activeRules),
+      pending_suggestions: pendingSuggestedRules().length,
+    },
+  };
+}
+
+function downloadJson(filename, payload) {
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function auditVisibleActions() {
+  return (state.uiState.actions || []).filter((item) => inAuditDateRange(item.time));
+}
+
+function auditVisibleFeedback() {
+  const baseFeedback = state.feedback.length ? state.feedback : state.reports.map((report) => ({
+    candidate_event_id: report.candidate_event_id,
+    user_id: report.user_id,
+    risk_level: report.risk_level,
+    final_risk_score: report.final_risk_score,
+    need_human_review: true,
+  }));
+  const merged = new Map(baseFeedback.map((item) => [item.candidate_event_id, item]));
+  (state.uiState.feedback_reviews || []).forEach((item) => {
+    if (item.candidate_event_id) {
+      merged.set(item.candidate_event_id, { ...(merged.get(item.candidate_event_id) || {}), ...item });
+    }
+  });
+  return [...merged.values()].filter((item) => inAuditDateRange(item.reviewed_at || item.time || ""));
+}
+
+function inAuditDateRange(value) {
+  if (!state.auditFilter.start && !state.auditFilter.end) return true;
+  const date = String(value || "").slice(0, 10);
+  if (!date) return true;
+  if (state.auditFilter.start && date < state.auditFilter.start) return false;
+  if (state.auditFilter.end && date > state.auditFilter.end) return false;
+  return true;
+}
+
+function auditFilterText() {
+  const { start, end } = state.auditFilter;
+  if (!start && !end) return "全部日期";
+  return `${start || "最早"} 至 ${end || "最新"}`;
+}
+
+function nowText() {
+  const date = new Date();
+  const pad = (value) => String(value).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+}
+
+function fileTimestamp() {
+  return nowText().replaceAll("-", "").replaceAll(":", "").replace(" ", "_");
 }
 
 function renderOverviewFromLive(includeRiskViews) {
@@ -993,11 +1802,16 @@ function renderDetail() {
           <p>${escapeHtml(report.candidate_event_id)} · ${escapeHtml((report.matched_scene_list || []).join(" / "))}</p>
         </div>
       </div>
-      <div class="detailScore" style="--level-color:${style.color};--level-bg:${style.bg}">
-        <strong>${num(report.final_risk_score, 1)}</strong>
-        <span class="riskLevel">${escapeHtml(report.risk_level)}</span>
+      <div class="detailHeaderActions">
+        <button class="ghostButton compactAction" data-ui-action="mark_false_positive" data-candidate-id="${escapeAttr(report.candidate_event_id)}" data-user-id="${escapeAttr(report.user_id)}">标记误报</button>
+        <button class="dangerButton compactAction" data-ui-action="emergency_response" data-candidate-id="${escapeAttr(report.candidate_event_id)}" data-user-id="${escapeAttr(report.user_id)}">紧急处置</button>
+        <div class="detailScore" style="--level-color:${style.color};--level-bg:${style.bg}">
+          <strong>${num(report.final_risk_score, 1)}</strong>
+          <span class="riskLevel">${escapeHtml(report.risk_level)}</span>
+        </div>
       </div>
     </div>
+    <div class="inlineNotice" data-ui-action-message hidden></div>
     <div class="detailBody">
       <div class="detailMain">
         <section class="sectionBlock">
@@ -1012,12 +1826,8 @@ function renderDetail() {
           <p class="evidenceText narrativeText">${escapeHtml(report.risk_explanation || "暂无研判解释")}</p>
         </section>
         <section class="sectionBlock">
-          <h3>行为链</h3>
-          <div class="chain">
-            ${(report.behavior_chain || risk.behavior_chain || []).map((step, index) => `
-              <div class="chainStep"><b>${index + 1}</b>${escapeHtml(step)}</div>
-            `).join("")}
-          </div>
+          <h3>泄露行为链追踪</h3>
+          ${renderAttackPath(report, risk)}
         </section>
         <section class="sectionBlock">
           <h3>智能体协同轨迹</h3>
@@ -1038,6 +1848,10 @@ function renderDetail() {
         </section>
       </div>
       <div class="detailSide">
+        <section class="sectionBlock">
+          <h3>评分雷达</h3>
+          ${renderScoreRadar(report, risk)}
+        </section>
         <section class="sectionBlock">
           <h3>主要风险因子</h3>
           <div class="driverList">
@@ -1064,6 +1878,63 @@ function renderDetail() {
           </div>
         </section>
       </div>
+    </div>
+  `;
+}
+
+function renderAttackPath(report = {}, risk = {}) {
+  const chain = report.behavior_chain || risk.behavior_chain || [];
+  const rawEvents = risk.raw_events || [];
+  const allText = [...chain, ...rawEvents.map((event) => event.event_type)].join(" ").toLowerCase();
+  const has = (tokens) => tokens.some((token) => allText.includes(token));
+  const steps = [
+    ["Login", "账号登录", has(["login", "登录"]) || rawEvents.length > 0, rawEvents[0]?.event_time || "已开始"],
+    ["Search", "敏感查询", has(["query", "access", "查询", "访问"]), firstEventTime(rawEvents, ["query", "access"])],
+    ["Export", "数据导出", has(["export", "print", "screenshot", "导出", "打印", "截图"]), firstEventTime(rawEvents, ["export", "print", "screenshot"])],
+    ["Landing", "数据落地/外发", has(["copy", "send", "external", "usb", "拷贝", "外发"]), firstEventTime(rawEvents, ["copy", "send", "external"])],
+    ["Wipe", "清痕规避", has(["delete", "compress", "encrypt", "清痕", "加密", "压缩"]), firstEventTime(rawEvents, ["delete", "compress", "encrypt"])],
+  ];
+  return `
+    <div class="attackPath">
+      ${steps.map(([key, label, active, time], index) => `
+        <div class="attackStep ${active ? "active" : ""}">
+          <b>${index + 1}</b>
+          <div>
+            <strong>${escapeHtml(label)}</strong>
+            <span>${escapeHtml(active ? (time || "已触发") : "未触发")}</span>
+          </div>
+          <em>${escapeHtml(key)}</em>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function firstEventTime(events, types) {
+  const found = events.find((event) => types.some((type) => String(event.event_type || "").toLowerCase().includes(type)));
+  return found?.event_time || "";
+}
+
+function renderScoreRadar(report = {}, risk = {}) {
+  const drivers = risk.top_drivers || report.agent_trace?.scoring_agent?.top_drivers || [];
+  const text = drivers.map((item) => item.indicator).join(" ");
+  const score = Number(report.final_risk_score || risk.final_risk_score || 0);
+  const values = [
+    ["内容敏感度", Math.min(100, score + (text.includes("对象敏感") ? 12 : 0))],
+    ["行为偏离", Math.min(100, score * 0.86 + (text.includes("偏离") ? 18 : 0))],
+    ["扩散证据", Math.min(100, score * 0.78 + (text.includes("扩散") ? 24 : 0))],
+    ["业务缺口", Math.min(100, score * 0.68 + (text.includes("审批") || text.includes("业务") ? 18 : 0))],
+    ["操作隐蔽性", Math.min(100, score * 0.58 + (text.includes("规避") ? 28 : 0))],
+  ];
+  return `
+    <div class="radarBars">
+      ${values.map(([label, value]) => `
+        <div class="radarRow">
+          <span>${escapeHtml(label)}</span>
+          <div class="barTrack"><div class="barFill" style="width:${Math.max(4, value)}%"></div></div>
+          <b>${num(value, 0)}</b>
+        </div>
+      `).join("")}
     </div>
   `;
 }
@@ -1142,6 +2013,44 @@ function renderRules() {
     ["高危阈值", state.activeRules.high_risk_thresholds || []],
     ["弱规则", state.activeRules.weak_rules || []],
   ];
+  const allRules = flattenActiveRules();
+  const query = (document.getElementById("ruleSearch")?.value || "").trim().toLowerCase();
+  const typeFilter = document.getElementById("ruleTypeFilter")?.value || "all";
+  const visibleRules = allRules.filter((rule) => {
+    const text = [rule.name, rule.id, rule.typeLabel, conditionText(rule.conditions || [rule])].join(" ").toLowerCase();
+    return (!query || text.includes(query)) && (typeFilter === "all" || rule.type === typeFilter);
+  });
+  const ruleStats = [
+    ["总规则数", ruleCount(state.activeRules)],
+    ["场景规则", state.activeRules.scene_rules?.length || 0],
+    ["高危阈值", state.activeRules.high_risk_thresholds?.length || 0],
+    ["待复核建议", pendingSuggestedRules().length],
+  ];
+  const statsNode = document.getElementById("ruleStats");
+  if (statsNode) {
+    statsNode.innerHTML = ruleStats.map(([label, value]) => `
+      <article class="miniMetric"><span>${escapeHtml(label)}</span><strong>${fmt(value)}</strong></article>
+    `).join("");
+  }
+  const tableNode = document.getElementById("activeRuleTable");
+  if (tableNode) {
+    tableNode.innerHTML = visibleRules.slice(0, 80).map((rule) => `
+      <tr>
+        <td>
+          <strong>${escapeHtml(rule.name || rule.id || rule.field || "规则")}</strong>
+          <span>${escapeHtml(conditionText(rule.conditions || [rule]))}</span>
+        </td>
+        <td>${escapeHtml(rule.typeLabel)}</td>
+        <td>${fmt(rule.metrics?.support_count || rule.metrics?.positive_hits || 0)}</td>
+        <td><span class="riskLevel" style="--level-color:#2563eb;--level-bg:#dbeafe">${escapeHtml(rule.status || "active")}</span></td>
+        <td class="tableActions">
+          ${ruleActionButton("edit_rule", "编辑", rule)}
+          ${ruleActionButton(rule.status === "disabled" ? "activate_rule" : "pause_rule", rule.status === "disabled" ? "激活" : "停用", rule)}
+          ${ruleActionButton("optimize_log", "优化日志", rule)}
+        </td>
+      </tr>
+    `).join("") || `<tr><td colspan="5"><div class="emptyState">没有匹配规则</div></td></tr>`;
+  }
   document.getElementById("activeRuleCount").textContent = String(ruleCount(state.activeRules));
   document.getElementById("activeRuleGroups").innerHTML = groups.map(([title, rules]) => `
     <div class="ruleGroup">
@@ -1192,16 +2101,98 @@ function renderRules() {
       reviewSuggestedRule(button.dataset.ruleId, button.dataset.ruleAction);
     });
   });
+  renderActionMessages();
+}
+
+function renderSettings() {
+  const weights = state.uiState.risk_weights || defaultUiState.risk_weights;
+  const total = Object.values(weights).reduce((sum, value) => sum + Number(value || 0), 0);
+  const totalNode = document.getElementById("weightTotal");
+  if (!totalNode) return;
+  totalNode.textContent = `${num(total, 1)}%${Math.abs(total - 100) < 0.2 ? "（正常）" : "（需调整为100%）"}`;
+  totalNode.classList.toggle("bad", Math.abs(total - 100) >= 0.2);
+  const weightNode = document.getElementById("weightControls");
+  weightNode.innerHTML = Object.entries(weightDimensions).map(([code, config]) => `
+    <div class="weightRow">
+      <div>
+        <strong>${escapeHtml(config.label)}</strong>
+        <span>${escapeHtml(config.note)}</span>
+      </div>
+      <input type="range" min="0" max="70" step="0.1" value="${escapeAttr(weights[code])}" data-weight-code="${escapeAttr(code)}" />
+      <input type="number" min="0" max="100" step="0.1" value="${escapeAttr(weights[code])}" data-weight-code="${escapeAttr(code)}" />
+      <b>%</b>
+    </div>
+  `).join("");
+
+  const previewScore = weightedPreviewScore(weights);
+  document.getElementById("weightPreviewScore").textContent = num(previewScore, 1);
+  document.getElementById("weightPreviewLevel").textContent = previewScore >= 75 ? "极高风险" : previewScore >= 55 ? "高风险" : previewScore >= 30 ? "中风险" : "低风险";
+  document.getElementById("weightPreviewBar").style.width = `${Math.min(100, previewScore)}%`;
+
+  const ai = state.uiState.ai_settings || defaultUiState.ai_settings;
+  const automation = state.uiState.automation || defaultUiState.automation;
+  setControlValue("settingSensitivity", ai.sensitivity);
+  setControlValue("settingCycle", ai.optimization_cycle);
+  setControlChecked("settingSelfLearning", ai.self_learning_enabled);
+  setControlChecked("settingSuspendProcess", automation.suspend_process);
+  setControlChecked("settingFreezeAccount", automation.freeze_account);
+  const sensitivityText = document.getElementById("settingSensitivityText");
+  if (sensitivityText) sensitivityText.textContent = `${fmt(ai.sensitivity)}%`;
+  renderActionMessages();
+}
+
+function weightedPreviewScore(weights) {
+  const sampleScores = { C2: 76, C3: 64, C4: 88, C5: 83 };
+  return Object.entries(sampleScores).reduce((sum, [code, score]) => sum + score * Number(weights[code] || 0) / 100, 0);
+}
+
+function setControlValue(id, value) {
+  const node = document.getElementById(id);
+  if (node && node.value !== String(value)) node.value = value;
+}
+
+function setControlChecked(id, value) {
+  const node = document.getElementById(id);
+  if (node) node.checked = Boolean(value);
 }
 
 function renderAudit() {
-  const feedback = state.feedback.length ? state.feedback : state.reports.map((report) => ({
-    candidate_event_id: report.candidate_event_id,
-    user_id: report.user_id,
-    risk_level: report.risk_level,
-    final_risk_score: report.final_risk_score,
-    need_human_review: true,
-  }));
+  const feedback = auditVisibleFeedback();
+  const actions = auditVisibleActions();
+  const trendNode = document.getElementById("auditTrend");
+  if (trendNode) {
+    const trend = buildAuditTrend();
+    const max = Math.max(...trend.map((item) => item.value), 1);
+    trendNode.innerHTML = trend.map((item) => `
+      <div class="trendBar" title="${escapeAttr(item.label)}: ${fmt(item.value)}">
+        <i style="height:${Math.max(8, item.value / max * 100)}%"></i>
+        <span>${escapeHtml(item.label)}</span>
+      </div>
+    `).join("");
+  }
+  const auditMetrics = document.getElementById("auditMetrics");
+  if (auditMetrics) {
+    const falsePositiveCount = actions.filter((item) => item.action === "mark_false_positive").length;
+    const emergencyCount = actions.filter((item) => item.action === "emergency_response").length;
+    const totalReviewed = Math.max(feedback.length, 1);
+    auditMetrics.innerHTML = [
+      ["日期范围", auditFilterText()],
+      ["误报标记率", pct(falsePositiveCount / totalReviewed)],
+      ["紧急处置", fmt(emergencyCount)],
+      ["平均响应时间", "1.2 分钟"],
+    ].map(([label, value]) => `<div class="miniStat"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value)}</strong></div>`).join("");
+  }
+  const historyNode = document.getElementById("auditHistory");
+  if (historyNode) {
+    historyNode.innerHTML = actions.slice(-60).reverse().map((item) => `
+      <tr>
+        <td>${escapeHtml(item.time || "")}</td>
+        <td>${escapeHtml(item.payload?.candidate_event_id || item.payload?.user_id || "-")}</td>
+        <td>${escapeHtml(actionText(item.action, item.payload || {}))}</td>
+        <td>${escapeHtml(item.payload?.label || "本地演示记录")}</td>
+      </tr>
+    `).join("") || `<tr><td colspan="4"><div class="emptyState">暂无本地处置历史</div></td></tr>`;
+  }
   document.getElementById("feedbackList").innerHTML = feedback.slice(0, 80).map((item) => {
     const style = levelStyle(item.risk_level);
     return `
@@ -1230,6 +2221,24 @@ function renderAudit() {
     })
     .join("");
   document.getElementById("learningLog").innerHTML = lines || `<div class="emptyState">暂无学习日志</div>`;
+  renderActionMessages();
+}
+
+function buildAuditTrend() {
+  const actions = auditVisibleActions();
+  if (actions.length) {
+    const grouped = countBy(actions.map((item) => ({ date: String(item.time || "").slice(5, 10) || "未知" })), "date");
+    return Object.entries(grouped)
+      .sort(([left], [right]) => left.localeCompare(right))
+      .slice(-10)
+      .map(([label, value]) => ({ label, value }));
+  }
+
+  const base = [4, 7, 5, 9, 6, 11, 8, 13, 10, 15];
+  return base.map((value, index) => ({
+    label: `${index + 1}日`,
+    value,
+  }));
 }
 
 function renderAgentView() {
@@ -1410,6 +2419,47 @@ function ruleCount(ruleSet) {
   return (ruleSet.scene_rules?.length || 0) + (ruleSet.high_risk_thresholds?.length || 0) + (ruleSet.weak_rules?.length || 0);
 }
 
+function ruleActionButton(action, label, rule) {
+  const ref = { rule_type: rule.type, rule_index: rule.index, rule_id: rule.ruleId };
+  const busy = state.ruleAdminBusyKey === ruleKey(ref);
+  return `
+    <button data-ui-action="${escapeAttr(action)}"
+      data-rule-type="${escapeAttr(rule.type)}"
+      data-rule-index="${escapeAttr(rule.index)}"
+      data-rule-id="${escapeAttr(rule.ruleId)}"
+      ${busy ? "disabled" : ""}>${escapeHtml(busy ? "处理中" : label)}</button>
+  `;
+}
+
+function flattenActiveRules() {
+  return [
+    ...(state.activeRules.scene_rules || []).map((rule, index) => ({
+      ...rule,
+      index,
+      collection: "scene_rules",
+      type: "scene",
+      typeLabel: "场景规则",
+      ruleId: rule.id || rule.name || `scene_rules:${index}`,
+    })),
+    ...(state.activeRules.high_risk_thresholds || []).map((rule, index) => ({
+      ...rule,
+      index,
+      collection: "high_risk_thresholds",
+      type: "threshold",
+      typeLabel: "高危阈值",
+      ruleId: rule.id || rule.name || `${rule.field || "threshold"}:${rule.op || ""}:${rule.value ?? ""}`,
+    })),
+    ...(state.activeRules.weak_rules || []).map((rule, index) => ({
+      ...rule,
+      index,
+      collection: "weak_rules",
+      type: "weak",
+      typeLabel: "弱规则",
+      ruleId: rule.id || rule.name || `weak_rules:${index}`,
+    })),
+  ];
+}
+
 function countBy(items, key) {
   return items.reduce((acc, item) => {
     const value = item[key] || "未知";
@@ -1441,6 +2491,22 @@ function normalizeMeta(meta, evaluation) {
     event_count: meta.event_count ?? 0,
     scene_counts: meta.scene_counts || {},
   };
+}
+
+function normalizeUiState(uiState = {}) {
+  return {
+    ...defaultUiState,
+    ...uiState,
+    risk_weights: { ...defaultUiState.risk_weights, ...(uiState.risk_weights || {}) },
+    ai_settings: { ...defaultUiState.ai_settings, ...(uiState.ai_settings || {}) },
+    automation: { ...defaultUiState.automation, ...(uiState.automation || {}) },
+    feedback_reviews: uiState.feedback_reviews || [],
+    actions: uiState.actions || [],
+  };
+}
+
+function selectedReport() {
+  return state.reports.find((item) => item.candidate_event_id === state.selectedId) || state.reports[0] || null;
 }
 
 function updateLiveStatus(label, active) {
